@@ -1,0 +1,32 @@
+{
+  "name": "homebridge-devolo",
+  "version": "0.1.1",
+  "description": "Homebridge plugin for Devolo Home Control",
+  "author": "Kevin Dietrich",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "keywords": [
+    "homebridge-plugin",
+    "devolo",
+    "home control"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kdietrich/homebridge-devolo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kdietrich/homebridge-devolo/issues"
+  },
+  "homepage": "https://github.com/kdietrich/homebridge-devolo#readme",
+  "engines": {
+    "node": ">=0.12.0",
+    "homebridge": ">=0.2.0"
+  },
+  "dependencies": {
+    "node-devolo": "git+https://github.com/kdietrich/node-devolo.git#77d5c148e089305c80ae8e14986b1f7ad144991e"
+  },
+  "devDependencies": {
+    "@types/node": "^7.0.5",
+    "typescript": "^2.1.6"
+  }
+}
