@@ -12,7 +12,7 @@ var Service;
 var Characteristic;
 var HBDevoloPlatform = (function () {
     function HBDevoloPlatform(log, config) {
-        this.version = '201702202120';
+        this.version = '201702221607';
         this.log = log;
         this.log.debug('%s > Initializing (Version: %s)', this.constructor.name, this.version);
         this.config = config;

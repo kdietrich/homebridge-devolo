@@ -68,7 +68,7 @@ var HBDevoloCentralUnit = (function () {
                             oldDevice.heartbeat(refreshedDevice);
                         }
                         itemsProcessed++;
-                        if (itemsProcessed === self.accessoryList.length) {
+                        if (itemsProcessed === devices.length) {
                             self.heartBeating = false;
                             self.log.debug('%s > Heartbeat: %s done', self.constructor.name, beat);
                         }

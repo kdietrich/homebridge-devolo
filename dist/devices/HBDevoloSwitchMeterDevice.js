@@ -8,7 +8,9 @@ var HBDevoloDevice_1 = require("../HBDevoloDevice");
 var HBDevoloSwitchMeterDevice = (function (_super) {
     __extends(HBDevoloSwitchMeterDevice, _super);
     function HBDevoloSwitchMeterDevice() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.heartbeatsSinceLastStateSwitch = 1;
+        return _this;
     }
     HBDevoloSwitchMeterDevice.prototype.getServices = function () {
         this.informationService = new this.Service.AccessoryInformation();
@@ -29,6 +31,11 @@ var HBDevoloSwitchMeterDevice = (function (_super) {
     /* HEARTBEAT */
     HBDevoloSwitchMeterDevice.prototype.heartbeat = function (device) {
         this.log.debug('%s > Hearbeat', this.constructor.name);
+        this.heartbeatsSinceLastStateSwitch++;
+        if (this.heartbeatsSinceLastStateSwitch <= 1) {
+            this.log.debug('%s > Skip this heartbeat because of fast switching.', this.constructor.name);
+            return;
+        }
         var self = this;
         /* Service.Outlet */
         var oldState = self.dDevice.getState();
@@ -36,6 +43,7 @@ var HBDevoloSwitchMeterDevice = (function (_super) {
             self.log.info('%s > State %s > %s', this.constructor.name, oldState, device.getState());
             self.dDevice.setState(device.getState(), function (err) { });
             self.switchService.setCharacteristic(self.Characteristic.On, (device.getState() == 1));
+            self.heartbeatsSinceLastStateSwitch = 0;
         }
     };
     HBDevoloSwitchMeterDevice.prototype.getSwitchState = function (callback) {
@@ -46,13 +54,16 @@ var HBDevoloSwitchMeterDevice = (function (_super) {
         this.log.debug('%s > setSwitchState to %s', this.constructor.name, value);
         if (value == this.dDevice.getState())
             return;
+        var self = this;
         if (value) {
             this.dDevice.turnOn(function (err) {
+                self.heartbeatsSinceLastStateSwitch = 0;
                 callback();
             });
         }
         else {
             this.dDevice.turnOff(function (err) {
+                self.heartbeatsSinceLastStateSwitch = 0;
                 callback();
             });
         }

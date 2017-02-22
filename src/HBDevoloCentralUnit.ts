@@ -89,7 +89,7 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
                         }
 
                         itemsProcessed++;
-                        if(itemsProcessed === self.accessoryList.length) {
+                        if(itemsProcessed === devices.length) {
                           self.heartBeating = false;
                           self.log.debug('%s > Heartbeat: %s done', (self.constructor as any).name, beat);
                         }

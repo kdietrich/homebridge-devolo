@@ -24,7 +24,7 @@ class HBDevoloPlatform {
     config: HBDevoloPlatformConfig;
     centralUnit: HBDevoloCentralUnit;
     log;
-    version: string = '201702202120';
+    version: string = '201702221607';
 
     constructor(log, config: HBDevoloPlatformConfig) {
         this.log = log;
