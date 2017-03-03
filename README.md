@@ -44,10 +44,13 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 
 ##Changes
 
-####v.0.1.2 (2017-02-22)
+####v0.1.3-dev
+- Bugfix: Fast switching of switch meter device.
+
+####v0.1.2 (2017-02-22)
 - Bugfix: Switching of switch meter device.
 
-####v.0.1.1 (2017-02-21)
+####v0.1.1 (2017-02-21)
 - First version.
 
 ##License
