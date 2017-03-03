@@ -36,7 +36,7 @@ var HBDevoloDoorWindowDevice = (function (_super) {
         //this.switchService.addCharacteristic(Characteristic.StatusActive, false);
         //switchService.addCharacteristic(Consumption);
         //switchService.addCharacteristic(Characteristic.TargetTemperature);
-        return [this.informationService, this.contactSensorService, this.temperatureService, this.batteryService];
+        return [this.informationService, this.contactSensorService, this.temperatureService, this.batteryService, this.lightSensorService];
     };
     /* HEARTBEAT */
     HBDevoloDoorWindowDevice.prototype.heartbeat = function (device) {

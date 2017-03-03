@@ -36,7 +36,7 @@ var HBDevoloMotionDevice = (function (_super) {
         //this.switchService.addCharacteristic(Characteristic.StatusActive, false);
         //switchService.addCharacteristic(Consumption);
         //switchService.addCharacteristic(Characteristic.TargetTemperature);
-        return [this.informationService, this.motionSensorService, this.temperatureService, this.batteryService];
+        return [this.informationService, this.motionSensorService, this.temperatureService, this.batteryService, this.lightSensorService];
     };
     /* HEARTBEAT */
     HBDevoloMotionDevice.prototype.heartbeat = function (device) {

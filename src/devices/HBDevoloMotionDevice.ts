@@ -40,7 +40,7 @@ export class HBDevoloMotionDevice extends HBDevoloDevice {
         //switchService.addCharacteristic(Consumption);
         //switchService.addCharacteristic(Characteristic.TargetTemperature);
 
-        return [this.informationService, this.motionSensorService, this.temperatureService, this.batteryService];
+        return [this.informationService, this.motionSensorService, this.temperatureService, this.batteryService, this.lightSensorService];
     }
 
     /* HEARTBEAT */
