@@ -124,18 +124,44 @@ export = function(homebridge) {
     Homebridge = homebridge;
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
-    /*Consumption = function() {
-        Characteristic.call(this, 'Consumption', 'E863F10D-079E-48FF-8F27-9C2605A29F52');
+
+    Characteristic.CurrentConsumption = function() {
+        Characteristic.call(this, 'CurrentConsumption', '00000010-0000-0000-0000-199207310822');
 
         this.setProps({
-            format: Characteristic.Formats.UINT16,
+            format: Characteristic.Formats.FLOAT,
             unit: 'W',
             perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
         });
 
         this.value = 0;
     };
-    util.inherits(Consumption, Characteristic);*/
+    util.inherits(Characteristic.CurrentConsumption, Characteristic);
+
+    Characteristic.TotalConsumption = function() {
+        Characteristic.call(this, 'TotalConsumption', '00000011-0000-0000-0000-199207310822');
+
+        this.setProps({
+            format: Characteristic.Formats.FLOAT,
+            unit: 'W',
+            perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+        });
+
+        this.value = 0;
+    };
+    util.inherits(Characteristic.TotalConsumption, Characteristic);
+
+    Characteristic.TotalConsumptionSince = function() {
+        Characteristic.call(this, 'TotalConsumptionSince', '00000012-0000-0000-0000-199207310822');
+
+        this.setProps({
+            format: Characteristic.Formats.STRING,
+            perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+        });
+
+        this.value = '';
+    };
+    util.inherits(Characteristic.TotalConsumptionSince, Characteristic);
 
     homebridge.registerPlatform("homebridge-devolo", "Devolo", HBDevoloPlatform, false);
 };

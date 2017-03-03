@@ -5,6 +5,7 @@ export class HBDevoloDoorWindowDevice extends HBDevoloDevice {
     contactSensorService;
     temperatureService;
     batteryService;
+    lightSensorService;
 
     getServices() {
         this.informationService = new this.Service.AccessoryInformation();
@@ -28,6 +29,10 @@ export class HBDevoloDoorWindowDevice extends HBDevoloDevice {
                      .on('get', this.getChargingState.bind(this));
         this.batteryService.getCharacteristic(this.Characteristic.StatusLowBattery)
                      .on('get', this.getStatusLowBattery.bind(this));
+
+        this.lightSensorService = new this.Service.LightSensor(this.name);
+        this.lightSensorService.getCharacteristic(this.Characteristic.CurrentAmbientLightLevel)
+                    .on('get', this.getCurrentAmbientLightLevel.bind(this));
 
         //this.updateReachability(false);
         //this.switchService.addCharacteristic(Characteristic.StatusActive, false);
@@ -57,6 +62,14 @@ export class HBDevoloDoorWindowDevice extends HBDevoloDevice {
             self.temperatureService.setCharacteristic(self.Characteristic.CurrentTemperature, device.getValue('temperature'));
         }
 
+        /* Service.LightSensor */
+        var oldLight = self.dDevice.getValue('light');
+        if(device.getValue('light') != oldLight) {
+            self.log.info('%s > Light %s > %s', (this.constructor as any).name, oldLight, device.getValue('light'));
+            self.dDevice.setValue('light', device.getValue('light'));
+            self.lightSensorService.setCharacteristic(self.Characteristic.CurrentAmbientLightLevel, device.getValue('light')/100*500); //convert percentage to lux
+        }
+
         /* Service.BatteryService */
         var oldBatteryLevel = self.dDevice.getBatteryLevel();
         if(device.getBatteryLevel() != oldBatteryLevel) {
@@ -80,6 +93,11 @@ export class HBDevoloDoorWindowDevice extends HBDevoloDevice {
     getCurrentTemperature(callback) {
         this.log.debug('%s > getCurrentTemperature', (this.constructor as any).name);
         return callback(null, this.dDevice.getValue('temperature'));
+    }
+
+    getCurrentAmbientLightLevel(callback) {
+        this.log.debug('%s > getCurrentAmbientLightLevel', (this.constructor as any).name);
+        return callback(null, this.dDevice.getValue('light')/100*500); //convert percentage to lux
     }
 
     getBatteryLevel(callback) {

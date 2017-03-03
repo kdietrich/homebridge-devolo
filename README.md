@@ -51,6 +51,8 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 ##Changes
 
 ####v0.1.3-dev
+- Switch Meter Device shows current consumption and total consumption.
+- Door Sensor / Window Contact and Motion Device show light level.
 - Heartrate interval can be specified in config.
 - Bugfix: Fast switching of switch meter device.
 
