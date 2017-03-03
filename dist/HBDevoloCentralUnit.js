@@ -9,14 +9,14 @@ var Homebridge;
 var Service;
 var Characteristic;
 var HBDevoloCentralUnit = (function () {
-    function HBDevoloCentralUnit(log, dAPI) {
+    function HBDevoloCentralUnit(log, config, dAPI) {
         this.accessoryList = [];
         this.heartBeating = false;
         this.log = log;
         this.dAPI = dAPI;
+        this.config = config;
         this.log.debug('%s > Initializing', this.constructor.name);
         this.name = 'Devolo Central Unit';
-        this.heartrate = 3;
     }
     HBDevoloCentralUnit.prototype.setHomebridge = function (homebridge) {
         Homebridge = homebridge;
@@ -44,7 +44,7 @@ var HBDevoloCentralUnit = (function () {
     /* HEARTBEAT */
     HBDevoloCentralUnit.prototype.heartbeat = function (beat) {
         var self = this;
-        if ((beat % this.heartrate) === 0 && !self.heartBeating) {
+        if ((beat % this.config.heartrate) === 0 && !self.heartBeating) {
             this.log.debug('%s > Heartbeat', this.constructor.name);
             self.heartBeating = true;
             var deviceIDs = [];

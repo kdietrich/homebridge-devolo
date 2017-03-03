@@ -2,11 +2,6 @@
 var util = require('util');
 var HBDevoloCentralUnit_1 = require("./HBDevoloCentralUnit");
 var Devolo_1 = require("node-devolo/dist/Devolo");
-var HBDevoloPlatformConfig = (function () {
-    function HBDevoloPlatformConfig() {
-    }
-    return HBDevoloPlatformConfig;
-}());
 var Homebridge;
 var Service;
 var Characteristic;
@@ -18,6 +13,7 @@ var HBDevoloPlatform = (function () {
         this.config = config;
         this.config.platform = config.platform || 'Devolo';
         this.config.name = config.name || 'Devolo';
+        this.config.heartrate = config.heartrate || 3;
         var debugconfig = JSON.parse(JSON.stringify(this.config));
         if (debugconfig.email)
             debugconfig.email = 'xxx';
@@ -100,7 +96,7 @@ var HBDevoloPlatform = (function () {
                 return;
             }
             self.log.debug('%s > Devolo API Version: %s', self.constructor.name, d.version);
-            self.centralUnit = new HBDevoloCentralUnit_1.HBDevoloCentralUnit(self.log, d);
+            self.centralUnit = new HBDevoloCentralUnit_1.HBDevoloCentralUnit(self.log, self.config, d);
             self.centralUnit.setHomebridge(Homebridge);
             callback(null, d._options);
         });

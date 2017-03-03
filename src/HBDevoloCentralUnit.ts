@@ -1,4 +1,4 @@
-import {HBIDevoloDevice} from './HBDevoloMisc';
+import {HBDevoloPlatformConfig,HBIDevoloDevice} from './HBDevoloMisc';
 import {HBDevoloDevice} from './HBDevoloDevice';
 import {HBDevoloSwitchMeterDevice} from './devices/HBDevoloSwitchMeterDevice';
 import {HBDevoloHumidityDevice} from './devices/HBDevoloHumidityDevice';
@@ -15,19 +15,19 @@ let Characteristic;
 export class HBDevoloCentralUnit implements HBIDevoloDevice {
 
     log;
+    config: HBDevoloPlatformConfig;
     name: string;
     informationService;
     accessoryList: HBIDevoloDevice[] = [];
     dAPI: Devolo;
-    heartrate: number;
     heartBeating: boolean = false;
 
-    constructor(log, dAPI: Devolo) {
+    constructor(log, config: HBDevoloPlatformConfig, dAPI: Devolo) {
         this.log = log;
         this.dAPI = dAPI;
+        this.config = config;
         this.log.debug('%s > Initializing', (this.constructor as any).name);
         this.name = 'Devolo Central Unit';
-        this.heartrate = 3;
     }
 
     setHomebridge(homebridge) {
@@ -59,7 +59,7 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
     /* HEARTBEAT */
     heartbeat(beat: number) : void {
         var self = this;
-        if((beat % this.heartrate)===0 && !self.heartBeating) {
+        if((beat % this.config.heartrate)===0 && !self.heartBeating) {
 
             this.log.debug('%s > Heartbeat', (this.constructor as any).name);
             self.heartBeating = true;

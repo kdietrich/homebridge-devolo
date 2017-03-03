@@ -33,6 +33,12 @@ Feel free to submit an issue or pull request to add more.
 ]
 ```
 
+##Optional parameters
+
+| Name of parameter | Default value | Notes |
+|---|---|---|
+| `heartrate`  | `3` | specifies in seconds how often devolo-homebridge polls the central unit. |
+
 ##Credits
 
 Powered by [node-devolo](https://github.com/kdietrich/node-devolo).
@@ -45,6 +51,7 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 ##Changes
 
 ####v0.1.3-dev
+- Heartrate interval can be specified in config.
 - Bugfix: Fast switching of switch meter device.
 
 ####v0.1.2 (2017-02-22)

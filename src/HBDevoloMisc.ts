@@ -7,3 +7,15 @@ export interface HBIDevoloDevice {
     setHomebridge(homebridge);
     getServices();
 }
+
+export class HBDevoloPlatformConfig {
+    platform: string;
+    name: string;
+    email: string;
+    host: string;
+    password: string;
+    uuid: string;
+    gateway: string;
+    passkey: string;
+    heartrate: number;
+}

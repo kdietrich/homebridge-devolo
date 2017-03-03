@@ -1,19 +1,7 @@
 var util = require('util');
 import {HBDevoloCentralUnit} from './HBDevoloCentralUnit';
-import {HBIDevoloDevice} from './HBDevoloMisc';
+import {HBDevoloPlatformConfig,HBIDevoloDevice} from './HBDevoloMisc';
 import {Devolo} from 'node-devolo/dist/Devolo';
-
-
-class HBDevoloPlatformConfig {
-    platform: string;
-    name: string;
-    email: string;
-    host: string;
-    password: string;
-    uuid: string;
-    gateway: string;
-    passkey: string;
-}
 
 let Homebridge;
 let Service;
@@ -33,6 +21,7 @@ class HBDevoloPlatform {
         this.config = config;
         this.config.platform = config.platform || 'Devolo';
         this.config.name = config.name || 'Devolo';
+        this.config.heartrate = config.heartrate || 3;
 
         var debugconfig = JSON.parse(JSON.stringify(this.config));
         if(debugconfig.email) debugconfig.email = 'xxx';
@@ -122,7 +111,7 @@ class HBDevoloPlatform {
                 callback(err); return;
             }
             self.log.debug('%s > Devolo API Version: %s', (self.constructor as any).name, d.version);
-            self.centralUnit = new HBDevoloCentralUnit(self.log, d);
+            self.centralUnit = new HBDevoloCentralUnit(self.log, self.config, d);
             self.centralUnit.setHomebridge(Homebridge);
             callback(null, d._options);
         });
