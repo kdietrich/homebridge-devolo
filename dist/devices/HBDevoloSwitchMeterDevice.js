@@ -30,30 +30,32 @@ var HBDevoloSwitchMeterDevice = (function (_super) {
     };
     /* HEARTBEAT */
     HBDevoloSwitchMeterDevice.prototype.heartbeat = function (device) {
-        this.log.debug('%s > Hearbeat', this.constructor.name);
+        this.log.debug('%s (%s) > Hearbeat', this.constructor.name, device.id);
         this.heartbeatsSinceLastStateSwitch++;
         if (this.heartbeatsSinceLastStateSwitch <= 1) {
-            this.log.debug('%s > Skip this heartbeat because of fast switching.', this.constructor.name);
+            this.log.debug('%s (%s) > Skip this heartbeat because of fast switching.', this.constructor.name, device.id);
             return;
         }
         var self = this;
         /* Service.Outlet */
         var oldState = self.dDevice.getState();
         if (device.getState() != oldState) {
-            self.log.info('%s > State %s > %s', this.constructor.name, oldState, device.getState());
-            self.dDevice.setState(device.getState(), function (err) { });
-            self.switchService.setCharacteristic(self.Characteristic.On, (device.getState() == 1));
-            self.heartbeatsSinceLastStateSwitch = 0;
+            self.log.info('%s (%s) > State %s > %s', this.constructor.name, device.id, oldState, device.getState());
+            self.dDevice.setState(device.getState(), function (err) {
+                self.switchService.setCharacteristic(self.Characteristic.On, (device.getState() == 1));
+            });
         }
     };
     HBDevoloSwitchMeterDevice.prototype.getSwitchState = function (callback) {
-        this.log.debug('%s > getSwitchState', this.constructor.name);
+        this.log.debug('%s (%s) > getSwitchState', this.constructor.name, this.dDevice.id);
         return callback(null, this.dDevice.getState() != 0);
     };
     HBDevoloSwitchMeterDevice.prototype.setSwitchState = function (value, callback) {
-        this.log.debug('%s > setSwitchState to %s', this.constructor.name, value);
-        if (value == this.dDevice.getState())
+        this.log.debug('%s (%s) > setSwitchState to %s', this.constructor.name, this.dDevice.id, value);
+        if (value == this.dDevice.getState()) {
+            callback();
             return;
+        }
         var self = this;
         if (value) {
             this.dDevice.turnOn(function (err) {
