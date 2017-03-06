@@ -143,7 +143,7 @@ export = function(homebridge) {
 
         this.setProps({
             format: Characteristic.Formats.FLOAT,
-            unit: 'W',
+            unit: 'kWh',
             perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
         });
 

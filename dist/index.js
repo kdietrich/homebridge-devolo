@@ -121,7 +121,7 @@ module.exports = function (homebridge) {
         Characteristic.call(this, 'TotalConsumption', '00000011-0000-0000-0000-199207310822');
         this.setProps({
             format: Characteristic.Formats.FLOAT,
-            unit: 'W',
+            unit: 'kWh',
             perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
         });
         this.value = 0;
