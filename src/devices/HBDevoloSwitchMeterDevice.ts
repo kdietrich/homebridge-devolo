@@ -98,12 +98,18 @@ export class HBDevoloSwitchMeterDevice extends HBDevoloDevice {
         var self = this;
         if(value) {
             this.dDevice.turnOn(function(err) {
+                if(err) {
+                    callback(err); return;
+                }
                 self.heartbeatsSinceLastStateSwitch = 0;
                 callback();
             });
         }
         else {
             this.dDevice.turnOff(function(err) {
+                if(err) {
+                    callback(err); return;
+                }
                 self.heartbeatsSinceLastStateSwitch = 0;
                 callback();
             });
