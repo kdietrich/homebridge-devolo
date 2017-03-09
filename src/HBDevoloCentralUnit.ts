@@ -5,8 +5,9 @@ import {HBDevoloHumidityDevice} from './devices/HBDevoloHumidityDevice';
 import {HBDevoloDoorWindowDevice} from './devices/HBDevoloDoorWindowDevice';
 import {HBDevoloMotionDevice} from './devices/HBDevoloMotionDevice';
 import {HBDevoloFloodDevice} from './devices/HBDevoloFloodDevice';
+import {HBDevoloThermostatValveDevice} from './devices/HBDevoloThermostatValveDevice';
 import {Devolo} from 'node-devolo/dist/Devolo';
-import {Device,SwitchMeterDevice,HumidityDevice,DoorWindowDevice,MotionDevice,FloodDevice} from 'node-devolo/dist/DevoloDevice';
+import {Device,SwitchMeterDevice,HumidityDevice,DoorWindowDevice,MotionDevice,FloodDevice,ThermostatValveDevice} from 'node-devolo/dist/DevoloDevice';
 
 let Homebridge;
 let Service;
@@ -126,6 +127,9 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
                 }
                 else if((devices[i].constructor as any).name == (FloodDevice as any).name) {
                     d = new HBDevoloFloodDevice(self.log, self.dAPI, devices[i]);
+                }
+                else if((devices[i].constructor as any).name == (ThermostatValveDevice as any).name) {
+                    d = new HBDevoloThermostatValveDevice(self.log, self.dAPI, devices[i]);
                 }
                 else {
                     self.log.info("%s > Device \"%s\" is not supported (yet). Open an issue on github and ask for adding it.", (self.constructor as any).name, devices[i].model);

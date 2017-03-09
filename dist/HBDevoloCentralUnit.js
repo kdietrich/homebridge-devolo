@@ -4,6 +4,7 @@ var HBDevoloHumidityDevice_1 = require("./devices/HBDevoloHumidityDevice");
 var HBDevoloDoorWindowDevice_1 = require("./devices/HBDevoloDoorWindowDevice");
 var HBDevoloMotionDevice_1 = require("./devices/HBDevoloMotionDevice");
 var HBDevoloFloodDevice_1 = require("./devices/HBDevoloFloodDevice");
+var HBDevoloThermostatValveDevice_1 = require("./devices/HBDevoloThermostatValveDevice");
 var DevoloDevice_1 = require("node-devolo/dist/DevoloDevice");
 var Homebridge;
 var Service;
@@ -103,6 +104,9 @@ var HBDevoloCentralUnit = (function () {
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.FloodDevice.name) {
                     d = new HBDevoloFloodDevice_1.HBDevoloFloodDevice(self.log, self.dAPI, devices[i]);
+                }
+                else if (devices[i].constructor.name == DevoloDevice_1.ThermostatValveDevice.name) {
+                    d = new HBDevoloThermostatValveDevice_1.HBDevoloThermostatValveDevice(self.log, self.dAPI, devices[i]);
                 }
                 else {
                     self.log.info("%s > Device \"%s\" is not supported (yet). Open an issue on github and ask for adding it.", self.constructor.name, devices[i].model);
