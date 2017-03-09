@@ -32,7 +32,14 @@ var HBDevoloThermostatValveDevice = (function (_super) {
         this.thermostatService.getCharacteristic(this.Characteristic.TargetTemperature)
             .on('get', this.getTargetTemperature.bind(this))
             .on('set', this.setTargetTemperature.bind(this));
-        return [this.informationService, this.thermostatService];
+        this.batteryService = new this.Service.BatteryService(this.name);
+        this.batteryService.getCharacteristic(this.Characteristic.BatteryLevel)
+            .on('get', this.getBatteryLevel.bind(this));
+        this.batteryService.getCharacteristic(this.Characteristic.ChargingState)
+            .on('get', this.getChargingState.bind(this));
+        this.batteryService.getCharacteristic(this.Characteristic.StatusLowBattery)
+            .on('get', this.getStatusLowBattery.bind(this));
+        return [this.informationService, this.thermostatService, this.batteryService];
     };
     /* HEARTBEAT */
     HBDevoloThermostatValveDevice.prototype.heartbeat = function (device) {
@@ -82,6 +89,18 @@ var HBDevoloThermostatValveDevice = (function (_super) {
             self.heartbeatsSinceLastStateSwitch = 0;
             callback();
         }, true);
+    };
+    HBDevoloThermostatValveDevice.prototype.getBatteryLevel = function (callback) {
+        this.log.debug('%s > getBatteryLevel', this.constructor.name);
+        return callback(null, this.dDevice.getBatteryLevel());
+    };
+    HBDevoloThermostatValveDevice.prototype.getStatusLowBattery = function (callback) {
+        this.log.debug('%s > getStatusLowBattery', this.constructor.name);
+        return callback(null, !this.dDevice.getBatteryLow());
+    };
+    HBDevoloThermostatValveDevice.prototype.getChargingState = function (callback) {
+        this.log.debug('%s > getChargingState', this.constructor.name);
+        return callback(null, false);
     };
     return HBDevoloThermostatValveDevice;
 }(HBDevoloDevice_1.HBDevoloDevice));
