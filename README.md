@@ -1,6 +1,6 @@
-#homebridge-devolo
+# homebridge-devolo
 
-##Homebridge plugin for Devolo Home Control
+## Homebridge plugin for Devolo Home Control
 (C) 2017, Kevin Dietrich
 
 This homebridge plugin allows you to control your Devolo Home Control devices via Apple's homekit. The following devices are currently supported:
@@ -17,7 +17,7 @@ This homebridge plugin allows you to control your Devolo Home Control devices vi
 
 Feel free to submit an issue or pull request to add more.
 
-##How-to
+## How-to
 
 1. Install homebridge: `npm install -g homebridge`
 2. Install homebridge-devolo plugin: `npm install -g homebridge-devolo`
@@ -35,41 +35,41 @@ Feel free to submit an issue or pull request to add more.
 ]
 ```
 
-##Optional parameters
+## Optional parameters
 
 | Name of parameter | Default value | Notes |
 |---|---|---|
 | `heartrate`  | `3` | specifies in seconds how often devolo-homebridge polls the central unit. |
 
-##Credits
+## Credits
 
 Powered by [node-devolo](https://github.com/kdietrich/node-devolo).
 Thanks to [@nicoh88](https://github.com/nicoh88).
 
-##Troubleshooting
+## Troubleshooting
 
 If you run into issues related to this plugin, feel free to open an issue. Please start your homebridge installation with the command `homebridge -D > logfile.txt 2>&1` and attach the generated logfile.
 
-##Changes
+## Changes
 
-####v0.1.4-dev
+#### v0.1.4-dev
 - Smoke Detector supported
 - Thermostat Valve supported
 
-####v0.1.3 (2017-03-06)
+#### v0.1.3 (2017-03-06)
 - Switch Meter Device does not switch if disabled in devolo webgui.
 - Switch Meter Device shows current consumption and total consumption.
 - Door Sensor / Window Contact and Motion Device show light level.
 - Heartrate interval can be specified in config.
 - Bugfix: Fast switching of Switch Meter Device.
 
-####v0.1.2 (2017-02-22)
+#### v0.1.2 (2017-02-22)
 - Bugfix: Switching of Switch Meter Device.
 
-####v0.1.1 (2017-02-21)
+#### v0.1.1 (2017-02-21)
 - First version.
 
-##License
+## License
 
 The MIT License (MIT)
 
