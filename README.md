@@ -12,6 +12,7 @@ This homebridge plugin allows you to control your Devolo Home Control devices vi
 - Door Sensor / Window Contact
 - Thermostat Valve
 - Smoke Detector
+- Room Thermostat
 
 ![homekit](homekit.png)
 
@@ -55,6 +56,7 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 #### v0.1.4-dev
 - Smoke Detector supported
 - Thermostat Valve supported
+- Room Thermostat supported
 
 #### v0.1.3 (2017-03-06)
 - Switch Meter Device does not switch if disabled in devolo webgui.
