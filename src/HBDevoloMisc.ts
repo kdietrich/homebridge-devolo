@@ -18,4 +18,6 @@ export class HBDevoloPlatformConfig {
     gateway: string;
     passkey: string;
     heartrate: number;
+    ruleWhitelist?: string[];
+    sceneWhitelist?: string[];
 }

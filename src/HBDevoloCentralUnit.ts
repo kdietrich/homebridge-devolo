@@ -191,10 +191,12 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
                     callback(err); return;
                 }
                 for(var i=0; i<rules.length; i++) {
-                    var d = new HBDevoloRule(self.log, self.dAPI, rules[i]);
-                    d.setHomebridge(Homebridge);
-                    self.accessoryList.push(d);
-                    self.ruleList.push(d);
+                    if(self.config.ruleWhitelist && self._isInWhitelist(rules[i].name, self.config.ruleWhitelist)) {
+                        var d = new HBDevoloRule(self.log, self.dAPI, rules[i]);
+                        d.setHomebridge(Homebridge);
+                        self.accessoryList.push(d);
+                        self.ruleList.push(d);
+                    }
                 }
 
                 self.dAPI.getScenes(function(err: string, scenes?: Scene[]) {
@@ -202,10 +204,12 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
                         callback(err); return;
                     }
                     for(var i=0; i<scenes.length; i++) {
-                        var d = new HBDevoloScene(self.log, self.dAPI, scenes[i]);
-                        d.setHomebridge(Homebridge);
-                        self.accessoryList.push(d);
-                        self.sceneList.push(d);
+                        if(self.config.sceneWhitelist && self._isInWhitelist(scenes[i].name, self.config.sceneWhitelist)) {
+                            var d = new HBDevoloScene(self.log, self.dAPI, scenes[i]);
+                            d.setHomebridge(Homebridge);
+                            self.accessoryList.push(d);
+                            self.sceneList.push(d);
+                        }
                     }
                     callback(null);
                 });
@@ -214,4 +218,13 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
 
         });
     }
+
+    private _isInWhitelist(name: string, whitelist: string[]) : boolean {
+        for(var i=0; i<whitelist.length; i++) {
+            if(name===whitelist[i])
+                return true;
+        }
+        return false;
+    }
+
 }

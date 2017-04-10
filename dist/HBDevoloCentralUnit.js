@@ -161,10 +161,12 @@ var HBDevoloCentralUnit = (function () {
                     return;
                 }
                 for (var i = 0; i < rules.length; i++) {
-                    var d = new HBDevoloRule_1.HBDevoloRule(self.log, self.dAPI, rules[i]);
-                    d.setHomebridge(Homebridge);
-                    self.accessoryList.push(d);
-                    self.ruleList.push(d);
+                    if (self.config.ruleWhitelist && self._isInWhitelist(rules[i].name, self.config.ruleWhitelist)) {
+                        var d = new HBDevoloRule_1.HBDevoloRule(self.log, self.dAPI, rules[i]);
+                        d.setHomebridge(Homebridge);
+                        self.accessoryList.push(d);
+                        self.ruleList.push(d);
+                    }
                 }
                 self.dAPI.getScenes(function (err, scenes) {
                     if (err) {
@@ -172,15 +174,24 @@ var HBDevoloCentralUnit = (function () {
                         return;
                     }
                     for (var i = 0; i < scenes.length; i++) {
-                        var d = new HBDevoloScene_1.HBDevoloScene(self.log, self.dAPI, scenes[i]);
-                        d.setHomebridge(Homebridge);
-                        self.accessoryList.push(d);
-                        self.sceneList.push(d);
+                        if (self.config.sceneWhitelist && self._isInWhitelist(scenes[i].name, self.config.sceneWhitelist)) {
+                            var d = new HBDevoloScene_1.HBDevoloScene(self.log, self.dAPI, scenes[i]);
+                            d.setHomebridge(Homebridge);
+                            self.accessoryList.push(d);
+                            self.sceneList.push(d);
+                        }
                     }
                     callback(null);
                 });
             });
         });
+    };
+    HBDevoloCentralUnit.prototype._isInWhitelist = function (name, whitelist) {
+        for (var i = 0; i < whitelist.length; i++) {
+            if (name === whitelist[i])
+                return true;
+        }
+        return false;
     };
     return HBDevoloCentralUnit;
 }());
