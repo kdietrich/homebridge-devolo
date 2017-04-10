@@ -8,8 +8,11 @@ import {HBDevoloFloodDevice} from './devices/HBDevoloFloodDevice';
 import {HBDevoloThermostatValveDevice} from './devices/HBDevoloThermostatValveDevice';
 import {HBDevoloSmokeDetectorDevice} from './devices/HBDevoloSmokeDetectorDevice';
 import {HBDevoloRoomThermostatDevice} from './devices/HBDevoloRoomThermostatDevice';
+import {HBDevoloRule} from './devices/HBDevoloRule';
+import {HBDevoloScene} from './devices/HBDevoloScene';
 import {Devolo} from 'node-devolo/dist/Devolo';
 import {Device,SwitchMeterDevice,HumidityDevice,DoorWindowDevice,MotionDevice,FloodDevice,ThermostatValveDevice,SmokeDetectorDevice,RoomThermostatDevice} from 'node-devolo/dist/DevoloDevice';
+import {Rule,Scene} from 'node-devolo/dist/DevoloMisc';
 
 let Homebridge;
 let Service;
@@ -22,6 +25,9 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
     name: string;
     informationService;
     accessoryList: HBIDevoloDevice[] = [];
+    deviceList: HBIDevoloDevice[] = [];
+    ruleList: HBIDevoloDevice[] = [];
+    sceneList: HBIDevoloDevice[] = [];
     dAPI: Devolo;
     heartBeating: boolean = false;
 
@@ -68,8 +74,8 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
             self.heartBeating = true;
 
             var deviceIDs = [];
-            for(var i=0; i<this.accessoryList.length; i++) {
-                deviceIDs.push((this.accessoryList[i] as HBDevoloDevice).dDevice.id);
+            for(var i=0; i<this.deviceList.length; i++) {
+                deviceIDs.push((this.deviceList[i] as HBDevoloDevice).dDevice.id);
             }
 
             self.dAPI.getDevices(deviceIDs, function(err, devices) {
@@ -81,9 +87,9 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
                     devices.forEach(function(refreshedDevice: Device) {
 
                         var oldDevice = null;
-                        for(var i=0; i<self.accessoryList.length; i++) {
-                            if(refreshedDevice.id == (self.accessoryList[i] as HBDevoloDevice).dDevice.id) {
-                                oldDevice = self.accessoryList[i];
+                        for(var i=0; i<self.deviceList.length; i++) {
+                            if(refreshedDevice.id == (self.deviceList[i] as HBDevoloDevice).dDevice.id) {
+                                oldDevice = self.deviceList[i];
                             }
                         }
 
@@ -93,15 +99,46 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
 
                         itemsProcessed++;
                         if(itemsProcessed === devices.length) {
-                          self.heartBeating = false;
-                          self.log.debug('%s > Heartbeat: %s done', (self.constructor as any).name, beat);
+                          self._heartbeatRules(beat);
                         }
 
                     });
                 }
-                self.heartBeating = false;
             });
         }
+    }
+
+    _heartbeatRules(beat: number) : void {
+        var self = this;
+
+        self.dAPI.getRules(function(err, rules) {
+            if(err) {
+                self.log.error(err);
+            }
+            else {
+                var itemsProcessed = 0;
+                rules.forEach(function(refreshedRule: Device) {
+
+                    var oldRule = null;
+                    for(var i=0; i<self.ruleList.length; i++) {
+                        if(refreshedRule.id == (self.ruleList[i] as HBDevoloDevice).dDevice.id) {
+                            oldRule = self.ruleList[i];
+                        }
+                    }
+
+                    if(oldRule) {
+                        oldRule.heartbeat(refreshedRule);
+                    }
+
+                    itemsProcessed++;
+                    if(itemsProcessed === rules.length) {
+                      self.heartBeating = false;
+                      self.log.debug('%s > Heartbeat: %s done', (self.constructor as any).name, beat);
+                    }
+
+                });
+            }
+        });
     }
 
     private findAccessories(callback: (err:string) => void) : void {
@@ -145,10 +182,36 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
                 if(d) {
                     d.setHomebridge(Homebridge);
                     self.accessoryList.push(d);
+                    self.deviceList.push(d);
                 }
             }
 
-            callback(null);
+            self.dAPI.getRules(function(err: string, rules?: Rule[]) {
+                if(err) {
+                    callback(err); return;
+                }
+                for(var i=0; i<rules.length; i++) {
+                    var d = new HBDevoloRule(self.log, self.dAPI, rules[i]);
+                    d.setHomebridge(Homebridge);
+                    self.accessoryList.push(d);
+                    self.ruleList.push(d);
+                }
+
+                self.dAPI.getScenes(function(err: string, scenes?: Scene[]) {
+                    if(err) {
+                        callback(err); return;
+                    }
+                    for(var i=0; i<scenes.length; i++) {
+                        var d = new HBDevoloScene(self.log, self.dAPI, scenes[i]);
+                        d.setHomebridge(Homebridge);
+                        self.accessoryList.push(d);
+                        self.sceneList.push(d);
+                    }
+                    callback(null);
+                });
+
+            });
+
         });
     }
 }

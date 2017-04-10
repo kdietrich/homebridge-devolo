@@ -7,6 +7,8 @@ var HBDevoloFloodDevice_1 = require("./devices/HBDevoloFloodDevice");
 var HBDevoloThermostatValveDevice_1 = require("./devices/HBDevoloThermostatValveDevice");
 var HBDevoloSmokeDetectorDevice_1 = require("./devices/HBDevoloSmokeDetectorDevice");
 var HBDevoloRoomThermostatDevice_1 = require("./devices/HBDevoloRoomThermostatDevice");
+var HBDevoloRule_1 = require("./devices/HBDevoloRule");
+var HBDevoloScene_1 = require("./devices/HBDevoloScene");
 var DevoloDevice_1 = require("node-devolo/dist/DevoloDevice");
 var Homebridge;
 var Service;
@@ -14,6 +16,9 @@ var Characteristic;
 var HBDevoloCentralUnit = (function () {
     function HBDevoloCentralUnit(log, config, dAPI) {
         this.accessoryList = [];
+        this.deviceList = [];
+        this.ruleList = [];
+        this.sceneList = [];
         this.heartBeating = false;
         this.log = log;
         this.dAPI = dAPI;
@@ -51,8 +56,8 @@ var HBDevoloCentralUnit = (function () {
             this.log.debug('%s > Heartbeat', this.constructor.name);
             self.heartBeating = true;
             var deviceIDs = [];
-            for (var i = 0; i < this.accessoryList.length; i++) {
-                deviceIDs.push(this.accessoryList[i].dDevice.id);
+            for (var i = 0; i < this.deviceList.length; i++) {
+                deviceIDs.push(this.deviceList[i].dDevice.id);
             }
             self.dAPI.getDevices(deviceIDs, function (err, devices) {
                 if (err) {
@@ -62,9 +67,9 @@ var HBDevoloCentralUnit = (function () {
                     var itemsProcessed = 0;
                     devices.forEach(function (refreshedDevice) {
                         var oldDevice = null;
-                        for (var i = 0; i < self.accessoryList.length; i++) {
-                            if (refreshedDevice.id == self.accessoryList[i].dDevice.id) {
-                                oldDevice = self.accessoryList[i];
+                        for (var i = 0; i < self.deviceList.length; i++) {
+                            if (refreshedDevice.id == self.deviceList[i].dDevice.id) {
+                                oldDevice = self.deviceList[i];
                             }
                         }
                         if (oldDevice) {
@@ -72,14 +77,39 @@ var HBDevoloCentralUnit = (function () {
                         }
                         itemsProcessed++;
                         if (itemsProcessed === devices.length) {
-                            self.heartBeating = false;
-                            self.log.debug('%s > Heartbeat: %s done', self.constructor.name, beat);
+                            self._heartbeatRules(beat);
                         }
                     });
                 }
-                self.heartBeating = false;
             });
         }
+    };
+    HBDevoloCentralUnit.prototype._heartbeatRules = function (beat) {
+        var self = this;
+        self.dAPI.getRules(function (err, rules) {
+            if (err) {
+                self.log.error(err);
+            }
+            else {
+                var itemsProcessed = 0;
+                rules.forEach(function (refreshedRule) {
+                    var oldRule = null;
+                    for (var i = 0; i < self.ruleList.length; i++) {
+                        if (refreshedRule.id == self.ruleList[i].dDevice.id) {
+                            oldRule = self.ruleList[i];
+                        }
+                    }
+                    if (oldRule) {
+                        oldRule.heartbeat(refreshedRule);
+                    }
+                    itemsProcessed++;
+                    if (itemsProcessed === rules.length) {
+                        self.heartBeating = false;
+                        self.log.debug('%s > Heartbeat: %s done', self.constructor.name, beat);
+                    }
+                });
+            }
+        });
     };
     HBDevoloCentralUnit.prototype.findAccessories = function (callback) {
         //this.accessoryList.push(new HBDevoloDevice(this.log));
@@ -122,9 +152,34 @@ var HBDevoloCentralUnit = (function () {
                 if (d) {
                     d.setHomebridge(Homebridge);
                     self.accessoryList.push(d);
+                    self.deviceList.push(d);
                 }
             }
-            callback(null);
+            self.dAPI.getRules(function (err, rules) {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+                for (var i = 0; i < rules.length; i++) {
+                    var d = new HBDevoloRule_1.HBDevoloRule(self.log, self.dAPI, rules[i]);
+                    d.setHomebridge(Homebridge);
+                    self.accessoryList.push(d);
+                    self.ruleList.push(d);
+                }
+                self.dAPI.getScenes(function (err, scenes) {
+                    if (err) {
+                        callback(err);
+                        return;
+                    }
+                    for (var i = 0; i < scenes.length; i++) {
+                        var d = new HBDevoloScene_1.HBDevoloScene(self.log, self.dAPI, scenes[i]);
+                        d.setHomebridge(Homebridge);
+                        self.accessoryList.push(d);
+                        self.sceneList.push(d);
+                    }
+                    callback(null);
+                });
+            });
         });
     };
     return HBDevoloCentralUnit;
