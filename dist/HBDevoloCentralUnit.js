@@ -62,6 +62,7 @@ var HBDevoloCentralUnit = (function () {
             self.dAPI.getDevices(deviceIDs, function (err, devices) {
                 if (err) {
                     self.log.error(err);
+                    self.heartBeating = false;
                 }
                 else {
                     var itemsProcessed = 0;
@@ -89,6 +90,7 @@ var HBDevoloCentralUnit = (function () {
         self.dAPI.getRules(function (err, rules) {
             if (err) {
                 self.log.error(err);
+                self.heartBeating = false;
             }
             else {
                 var itemsProcessed = 0;

@@ -81,6 +81,7 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
             self.dAPI.getDevices(deviceIDs, function(err, devices) {
                 if(err) {
                     self.log.error(err);
+                    self.heartBeating = false;
                 }
                 else {
                     var itemsProcessed = 0;
@@ -114,6 +115,7 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
         self.dAPI.getRules(function(err, rules) {
             if(err) {
                 self.log.error(err);
+                self.heartBeating = false;
             }
             else {
                 var itemsProcessed = 0;
