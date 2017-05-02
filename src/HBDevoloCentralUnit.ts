@@ -80,8 +80,7 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
 
             self.dAPI.getDevices(deviceIDs, function(err, devices) {
                 if(err) {
-                    self.log.error(err);
-                    self.heartBeating = false;
+                    self._processHeartbeatError(err);
                 }
                 else {
                     var itemsProcessed = 0;
@@ -114,8 +113,7 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
 
         self.dAPI.getRules(function(err, rules) {
             if(err) {
-                self.log.error(err);
-                self.heartBeating = false;
+                self._processHeartbeatError(err);
             }
             else {
                 var itemsProcessed = 0;
@@ -219,6 +217,23 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
             });
 
         });
+    }
+
+    private _processHeartbeatError(err: string) {
+        var self = this;
+        self.log.error(err);
+        if(err==='Session is not available') {
+            self.log.info('Fetching new session...');
+            self.dAPI.auth(function(err) {
+                if(err) {
+                    self.log.error(err);
+                    self.heartBeating = false;
+                    return;
+                }
+                self.log.info('Session successfully renewed.');
+                self.heartBeating = false;
+            }, true);
+        }
     }
 
     private _isInWhitelist(name: string, whitelist: string[]) : boolean {

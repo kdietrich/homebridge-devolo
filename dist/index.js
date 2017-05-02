@@ -88,7 +88,7 @@ var HBDevoloPlatform = (function () {
             uuid: self.config.uuid,
             gateway: self.config.gateway,
             passkey: self.config.passkey,
-            sessionid: '' //renew?
+            sessionid: ''
         };
         new Devolo_1.Devolo(options, function (err, d) {
             if (err) {

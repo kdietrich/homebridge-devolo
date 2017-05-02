@@ -61,8 +61,7 @@ var HBDevoloCentralUnit = (function () {
             }
             self.dAPI.getDevices(deviceIDs, function (err, devices) {
                 if (err) {
-                    self.log.error(err);
-                    self.heartBeating = false;
+                    self._processHeartbeatError(err);
                 }
                 else {
                     var itemsProcessed = 0;
@@ -89,8 +88,7 @@ var HBDevoloCentralUnit = (function () {
         var self = this;
         self.dAPI.getRules(function (err, rules) {
             if (err) {
-                self.log.error(err);
-                self.heartBeating = false;
+                self._processHeartbeatError(err);
             }
             else {
                 var itemsProcessed = 0;
@@ -187,6 +185,22 @@ var HBDevoloCentralUnit = (function () {
                 });
             });
         });
+    };
+    HBDevoloCentralUnit.prototype._processHeartbeatError = function (err) {
+        var self = this;
+        self.log.error(err);
+        if (err === 'Session is not available') {
+            self.log.info('Fetching new session...');
+            self.dAPI.auth(function (err) {
+                if (err) {
+                    self.log.error(err);
+                    self.heartBeating = false;
+                    return;
+                }
+                self.log.info('Session successfully renewed.');
+                self.heartBeating = false;
+            }, true);
+        }
     };
     HBDevoloCentralUnit.prototype._isInWhitelist = function (name, whitelist) {
         for (var i = 0; i < whitelist.length; i++) {
