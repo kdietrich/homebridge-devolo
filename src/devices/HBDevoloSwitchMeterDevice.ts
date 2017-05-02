@@ -51,19 +51,19 @@ export class HBDevoloSwitchMeterDevice extends HBDevoloDevice {
         }
         var oldCurrentConsumption = self.dDevice.getCurrentValue('energy');
         if(device.getCurrentValue('energy') != oldCurrentConsumption) {
-            self.log.info('%s > CurrentConsumption %s > %s', (this.constructor as any).name, oldCurrentConsumption, device.getCurrentValue('energy'));
+            self.log.info('%s (%s) > CurrentConsumption %s > %s', (this.constructor as any).name, device.id, oldCurrentConsumption, device.getCurrentValue('energy'));
             self.dDevice.setCurrentValue('energy', device.getCurrentValue('energy'), function(err) { });
             self.switchService.setCharacteristic(self.Characteristic.CurrentConsumption, device.getCurrentValue('energy'));
         }
         var oldTotalConsumption = self.dDevice.getTotalValue('energy');
         if(device.getTotalValue('energy') != oldTotalConsumption) {
-            self.log.info('%s > TotalConsumption %s > %s', (this.constructor as any).name, oldTotalConsumption, device.getTotalValue('energy'));
+            self.log.info('%s (%s) > TotalConsumption %s > %s', (this.constructor as any).name, device.id, oldTotalConsumption, device.getTotalValue('energy'));
             self.dDevice.setTotalValue('energy', device.getTotalValue('energy'), function(err) { });
             self.switchService.setCharacteristic(self.Characteristic.TotalConsumption, device.getTotalValue('energy'));
         }
         var oldTotalConsumptionSince = self.dDevice.getSinceTime('energy');
         if(device.getSinceTime('energy') != oldTotalConsumptionSince) {
-            self.log.info('%s > TotalConsumptionSince %s > %s', (this.constructor as any).name, oldTotalConsumptionSince, device.getSinceTime('energy'));
+            self.log.info('%s (%s) > TotalConsumptionSince %s > %s', (this.constructor as any).name, device.id, oldTotalConsumptionSince, device.getSinceTime('energy'));
             self.dDevice.setSinceTime('energy', device.getSinceTime('energy'), function(err) { });
             self.switchService.setCharacteristic(self.Characteristic.TotalConsumptionSince, new Date(device.getSinceTime('energy')).toISOString().replace(/T/, ' ').replace(/\..+/, ''));
         }
