@@ -234,6 +234,9 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
                 self.heartBeating = false;
             }, true);
         }
+        else {
+            self.heartBeating = false;
+        }
     }
 
     private _isInWhitelist(name: string, whitelist: string[]) : boolean {

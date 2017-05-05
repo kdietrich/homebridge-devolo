@@ -201,6 +201,9 @@ var HBDevoloCentralUnit = (function () {
                 self.heartBeating = false;
             }, true);
         }
+        else {
+            self.heartBeating = false;
+        }
     };
     HBDevoloCentralUnit.prototype._isInWhitelist = function (name, whitelist) {
         for (var i = 0; i < whitelist.length; i++) {
