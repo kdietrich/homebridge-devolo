@@ -58,6 +58,7 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 - Thermostat Valve supported
 - Room Thermostat supported
 - Support of Rules and Scenes via whitelist
+- Performance optimizations
 - Bugfix: Restart heartbeat in case of an error
 - Bugfix: Renew session if it has gone invalid
 
