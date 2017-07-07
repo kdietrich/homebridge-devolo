@@ -5,7 +5,7 @@
 
 This homebridge plugin allows you to control your Devolo Home Control devices via Apple's homekit. The following devices are currently supported:
 
-- Smart Metering Plug
+- Smart Metering Plug (v1/v2)
 - Motion Sensor
 - Humidity Sensor
 - Motion Sensor
@@ -57,6 +57,7 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 - Smoke Detector supported
 - Thermostat Valve supported
 - Room Thermostat supported
+- Smart Metering Plug v2 supported
 - Support of Rules and Scenes via whitelist
 - Performance optimizations
 - Bugfix: Restart heartbeat in case of an error
