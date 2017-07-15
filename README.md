@@ -53,7 +53,7 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 
 ## Changes
 
-#### v0.1.4-dev
+#### v0.1.4 (2017-07-15)
 - Smoke Detector supported
 - Thermostat Valve supported
 - Room Thermostat supported
