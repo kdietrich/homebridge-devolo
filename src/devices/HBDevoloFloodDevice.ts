@@ -1,9 +1,30 @@
 import {HBDevoloDevice} from '../HBDevoloDevice';
+import { Devolo } from 'node-devolo/dist/Devolo';
+import { Device } from 'node-devolo/dist/DevoloDevice';
 
 export class HBDevoloFloodDevice extends HBDevoloDevice {
 
     leakSensorService;
     batteryService;
+
+    constructor(log, dAPI: Devolo, dDevice: Device) {
+        super(log, dAPI, dDevice);
+
+        var self = this;
+        self.dDevice.events.on('onStateChanged', function(state: number) {
+            self.log.info('%s (%s) > State > %s', (self.constructor as any).name, self.dDevice.id, state);
+            self.leakSensorService.getCharacteristic(self.Characteristic.LeakDetected).updateValue(state, null);
+        });
+        self.dDevice.events.on('onBatteryLevelChanged', function(value: number) {
+            self.log.info('%s (%s) > Battery level > %s', (self.constructor as any).name, self.dDevice.id, value);
+            self.batteryService.getCharacteristic(self.Characteristic.BatteryLevel).updateValue(value, null);
+        });
+        self.dDevice.events.on('onBatteryLowChanged', function(value: boolean) {
+            self.log.info('%s (%s) > Battery low > %s', (self.constructor as any).name, self.dDevice.id, value);
+            self.batteryService.getCharacteristic(self.Characteristic.StatusLowBattery).updateValue(!value, null);
+        });
+
+    }
 
     getServices() {
         this.informationService = new this.Service.AccessoryInformation();
@@ -30,34 +51,9 @@ export class HBDevoloFloodDevice extends HBDevoloDevice {
         //switchService.addCharacteristic(Consumption);
         //switchService.addCharacteristic(Characteristic.TargetTemperature);
 
+        this.dDevice.listen();
+
         return [this.informationService, this.leakSensorService, this.batteryService];
-    }
-
-    /* HEARTBEAT */
-    heartbeat(device) {
-        this.log.debug('%s > Hearbeat', (this.constructor as any).name);
-        var self = this;
-        /* Service.LeakSensor */
-        var oldState = self.dDevice.getState();
-        if(device.getState() != oldState) {
-            self.log.info('%s > State %s > %s', (this.constructor as any).name, oldState, device.getState());
-            self.dDevice.setState(device.getState(), function(err) { });
-            self.leakSensorService.setCharacteristic(self.Characteristic.LeakDetected, device.getState());
-        }
-
-        /* Service.BatteryService */
-        var oldBatteryLevel = self.dDevice.getBatteryLevel();
-        if(device.getBatteryLevel() != oldBatteryLevel) {
-            self.log.info('%s > Battery level %s > %s', (this.constructor as any).name, oldBatteryLevel, device.getBatteryLevel());
-            self.dDevice.setBatteryLevel(device.getBatteryLevel());
-            self.batteryService.setCharacteristic(self.Characteristic.BatteryLevel, device.getBatteryLevel());
-        }
-        var oldBatteryLow = self.dDevice.getBatteryLow();
-        if(device.getBatteryLow() != oldBatteryLow) {
-            self.log.info('%s > Battery low %s > %s', (this.constructor as any).name, oldBatteryLow, device.getBatteryLow());
-            self.dDevice.setBatteryLow(device.getBatteryLow());
-            self.batteryService.setCharacteristic(self.Characteristic.StatusLowBattery, !device.getBatteryLow());
-        }
     }
 
     getLeakDetected(callback) {

@@ -8,9 +8,7 @@ var HBDevoloDevice_1 = require("../HBDevoloDevice");
 var HBDevoloScene = (function (_super) {
     __extends(HBDevoloScene, _super);
     function HBDevoloScene() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.heartbeatsSinceLastStateSwitch = 1;
-        return _this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     HBDevoloScene.prototype.getServices = function () {
         this.informationService = new this.Service.AccessoryInformation();
@@ -28,8 +26,6 @@ var HBDevoloScene = (function (_super) {
         //switchService.addCharacteristic(Characteristic.TargetTemperature);
         return [this.informationService, this.switchService];
     };
-    /* HEARTBEAT */
-    HBDevoloScene.prototype.heartbeat = function (device) { };
     HBDevoloScene.prototype.getSwitchState = function (callback) {
         this.log.debug('%s (%s) > getSwitchState', this.constructor.name, this.dDevice.id);
         return callback(null, false);

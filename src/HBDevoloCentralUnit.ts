@@ -29,7 +29,6 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
     ruleList: HBIDevoloDevice[] = [];
     sceneList: HBIDevoloDevice[] = [];
     dAPI: Devolo;
-    heartBeating: boolean = false;
 
     constructor(log, config: HBDevoloPlatformConfig, dAPI: Devolo) {
         this.log = log;
@@ -63,82 +62,6 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
             //.setCharacteristic(Characteristic.SerialNumber, 'ABCDEFGHI')
 
         return [this.informationService];
-    }
-
-    /* HEARTBEAT */
-    heartbeat(beat: number) : void {
-        var self = this;
-        if((beat % this.config.heartrate)===0 && !self.heartBeating) {
-
-            this.log.debug('%s > Heartbeat', (this.constructor as any).name);
-            self.heartBeating = true;
-
-            var deviceIDs = [];
-            for(var i=0; i<this.deviceList.length; i++) {
-                deviceIDs.push((this.deviceList[i] as HBDevoloDevice).dDevice.id);
-            }
-
-            self.dAPI.getDevices(deviceIDs, function(err, devices) {
-                if(err) {
-                    self._processHeartbeatError(err);
-                }
-                else {
-                    var itemsProcessed = 0;
-                    devices.forEach(function(refreshedDevice: Device) {
-
-                        var oldDevice = null;
-                        for(var i=0; i<self.deviceList.length; i++) {
-                            if(refreshedDevice.id == (self.deviceList[i] as HBDevoloDevice).dDevice.id) {
-                                oldDevice = self.deviceList[i];
-                            }
-                        }
-
-                        if(oldDevice) {
-                            oldDevice.heartbeat(refreshedDevice);
-                        }
-
-                        itemsProcessed++;
-                        if(itemsProcessed === devices.length) {
-                          self._heartbeatRules(beat);
-                        }
-
-                    });
-                }
-            });
-        }
-    }
-
-    _heartbeatRules(beat: number) : void {
-        var self = this;
-
-        self.dAPI.getRules(function(err, rules) {
-            if(err) {
-                self._processHeartbeatError(err);
-            }
-            else {
-                var itemsProcessed = 0;
-                rules.forEach(function(refreshedRule: Device) {
-
-                    var oldRule = null;
-                    for(var i=0; i<self.ruleList.length; i++) {
-                        if(refreshedRule.id == (self.ruleList[i] as HBDevoloDevice).dDevice.id) {
-                            oldRule = self.ruleList[i];
-                        }
-                    }
-
-                    if(oldRule) {
-                        oldRule.heartbeat(refreshedRule);
-                    }
-
-                    itemsProcessed++;
-                    if(itemsProcessed === rules.length) {
-                      self.heartBeating = false;
-                      self.log.debug('%s > Heartbeat: %s done', (self.constructor as any).name, beat);
-                    }
-
-                });
-            }
-        });
     }
 
     private findAccessories(callback: (err:string) => void) : void {
@@ -219,24 +142,25 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
         });
     }
 
-    private _processHeartbeatError(err: string) {
+    public startHeartbeatHandler() : void {
         var self = this;
-        self.log.error(err);
-        if(err==='Session is not available') {
-            self.log.info('Fetching new session...');
-            self.dAPI.auth(function(err) {
+        var interval = setInterval(function ping() {
+            self.dAPI.getZones(function(err, zones) {
                 if(err) {
-                    self.log.error(err);
-                    self.heartBeating = false;
-                    return;
+                    self.log.info('Fetching new session...');
+                    clearInterval(interval);
+                    self.dAPI.auth(function(err) {
+                        if(err) {
+                            self.log.error(err);
+                            self.startHeartbeatHandler();
+                            return;
+                        }
+                        self.startHeartbeatHandler();
+                        self.log.info('Session successfully renewed.');
+                    }, true);
                 }
-                self.log.info('Session successfully renewed.');
-                self.heartBeating = false;
-            }, true);
-        }
-        else {
-            self.heartBeating = false;
-        }
+            });
+        }, 30000);
     }
 
     private _isInWhitelist(name: string, whitelist: string[]) : boolean {

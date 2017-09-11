@@ -67,14 +67,7 @@ var HBDevoloPlatform = (function () {
                 for (var i = 0; i < accessories.length; i++) {
                     accessoryList.push(accessories[i]);
                 }
-                /* HEARTBEAT */
-                var beat = -1;
-                setInterval(function () {
-                    beat += 1;
-                    beat %= 7 * 24 * 3600;
-                    self.log.debug('%s > Beat: %s', self.constructor.name, beat);
-                    self.centralUnit.heartbeat(beat);
-                }.bind(this), 1000);
+                self.centralUnit.startHeartbeatHandler();
                 callback(accessoryList);
             });
         });

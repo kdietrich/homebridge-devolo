@@ -1,10 +1,38 @@
 import {HBDevoloDevice} from '../HBDevoloDevice';
+import { Devolo } from 'node-devolo/dist/Devolo';
+import { Device } from 'node-devolo/dist/DevoloDevice';
 
 export class HBDevoloRoomThermostatDevice extends HBDevoloDevice {
 
     thermostatService;
-    heartbeatsSinceLastStateSwitch: number = 1;
     batteryService;
+
+    constructor(log, dAPI: Devolo, dDevice: Device) {
+        super(log, dAPI, dDevice);
+
+        var self = this;
+        self.dDevice.events.on('onValueChanged', function(type: string, value: number) {
+            if(type==='temperature') {
+                self.log.info('%s (%s) > Temperature > %s', (self.constructor as any).name, self.dDevice.id, value);
+                self.thermostatService.getCharacteristic(self.Characteristic.CurrentTemperature).updateValue(value, null);
+            }
+        });
+        self.dDevice.events.on('onTargetValueChanged', function(type: string, value: number) {
+            if(type==='temperature') {
+                self.log.info('%s (%s) > TargetTemperature > %s', (self.constructor as any).name, self.dDevice.id, value);
+                self.thermostatService.getCharacteristic(self.Characteristic.TargetTemperature).updateValue(value, null);
+            }
+        });
+        self.dDevice.events.on('onBatteryLevelChanged', function(value: number) {
+            self.log.info('%s (%s) > Battery level > %s', (self.constructor as any).name, self.dDevice.id, value);
+            self.batteryService.getCharacteristic(self.Characteristic.BatteryLevel).updateValue(value, null);
+        });
+        self.dDevice.events.on('onBatteryLowChanged', function(value: boolean) {
+            self.log.info('%s (%s) > Battery low > %s', (self.constructor as any).name, self.dDevice.id, value);
+            self.batteryService.getCharacteristic(self.Characteristic.StatusLowBattery).updateValue(!value, null);
+        });
+
+    }
 
     getServices() {
         this.informationService = new this.Service.AccessoryInformation();
@@ -36,34 +64,9 @@ export class HBDevoloRoomThermostatDevice extends HBDevoloDevice {
         this.batteryService.getCharacteristic(this.Characteristic.StatusLowBattery)
                      .on('get', this.getStatusLowBattery.bind(this));
 
+        this.dDevice.listen();
+
         return [this.informationService, this.thermostatService, this.batteryService];
-    }
-
-    /* HEARTBEAT */
-    heartbeat(device) {
-        this.log.debug('%s (%s) > Hearbeat', (this.constructor as any).name, device.id);
-        this.heartbeatsSinceLastStateSwitch++;
-        if(this.heartbeatsSinceLastStateSwitch <= 1) {
-            this.log.debug('%s (%s) > Skip this heartbeat because of fast switching.', (this.constructor as any).name, device.id);
-            return;
-        }
-        var self = this;
-
-        /* Service.Thermostat */
-        var oldCurrentTemperature = self.dDevice.getValue('temperature');
-        if(device.getValue('temperature') != oldCurrentTemperature) {
-            self.log.info('%s (%s) > CurrentTemperature %s > %s', (this.constructor as any).name, device.id, oldCurrentTemperature, device.getValue('temperature'));
-            self.dDevice.setValue('temperature', device.getValue('temperature'), function(err) {
-                self.thermostatService.setCharacteristic(self.Characteristic.CurrentTemperature, device.getValue('temperature'));
-            });
-        }
-        var oldTargetTemperature = self.dDevice.getTargetValue('temperature');
-        if(device.getTargetValue('temperature') != oldTargetTemperature) {
-            self.log.info('%s (%s) > TargetTemperature %s > %s', (this.constructor as any).name, device.id, oldTargetTemperature, device.getTargetValue('temperature'));
-            self.dDevice.setTargetValue('temperature', device.getTargetValue('temperature'), function(err) {
-                self.thermostatService.setCharacteristic(self.Characteristic.TargetTemperature, device.getTargetValue('temperature'));
-            }, false);
-        }
     }
 
     getCurrentTemperature(callback) {
@@ -88,7 +91,6 @@ export class HBDevoloRoomThermostatDevice extends HBDevoloDevice {
             if(err) {
                 callback(err); return;
             }
-            self.heartbeatsSinceLastStateSwitch = 0;
             callback();
         }, true);
     }

@@ -1,9 +1,39 @@
-import {HBDevoloDevice} from '../HBDevoloDevice';
+import { HBDevoloDevice } from '../HBDevoloDevice';
+import { Devolo } from 'node-devolo/dist/Devolo';
+import { Device } from 'node-devolo/dist/DevoloDevice';
 
 export class HBDevoloSwitchMeterDevice extends HBDevoloDevice {
 
     switchService;
-    heartbeatsSinceLastStateSwitch: number = 1;
+
+    constructor(log, dAPI: Devolo, dDevice: Device) {
+        super(log, dAPI, dDevice);
+
+        var self = this;
+        self.dDevice.events.on('onStateChanged', function(state: number) {
+            self.log.info('%s (%s) > State > %s', (self.constructor as any).name, self.dDevice.id, state);
+            self.switchService.getCharacteristic(self.Characteristic.On).updateValue(state, null);
+        });
+        self.dDevice.events.on('onCurrentValueChanged', function(type: string, value: number) {
+            if(type==='energy') {
+                self.log.info('%s (%s) > CurrentConsumption > %s', (self.constructor as any).name, self.dDevice.id, value);
+                self.switchService.getCharacteristic(self.Characteristic.CurrentConsumption).updateValue(value, null);
+            }
+        });
+        self.dDevice.events.on('onTotalValueChanged', function(type: string, value: number) {
+            if(type==='energy') {
+                self.log.info('%s (%s) > TotalConsumption > %s', (self.constructor as any).name, self.dDevice.id, value);
+                self.switchService.getCharacteristic(self.Characteristic.TotalConsumption).updateValue(value, null);
+            }
+        });
+        self.dDevice.events.on('onSinceTimeChanged', function(type: string, value: number) {
+            if(type==='energy') {
+                self.log.info('%s (%s) > TotalConsumptionSince > %s', (self.constructor as any).name, self.dDevice.id, value);
+                self.switchService.getCharacteristic(self.Characteristic.TotalConsumptionSince).updateValue(new Date(value).toISOString().replace(/T/, ' ').replace(/\..+/, ''), null);
+            }
+        });
+
+    }
 
     getServices() {
         this.informationService = new this.Service.AccessoryInformation();
@@ -28,45 +58,9 @@ export class HBDevoloSwitchMeterDevice extends HBDevoloDevice {
         //switchService.addCharacteristic(Consumption);
         //switchService.addCharacteristic(Characteristic.TargetTemperature);
 
+        this.dDevice.listen();
+
         return [this.informationService, this.switchService];
-    }
-
-    /* HEARTBEAT */
-    heartbeat(device) {
-        this.log.debug('%s (%s) > Hearbeat', (this.constructor as any).name, device.id);
-        this.heartbeatsSinceLastStateSwitch++;
-        if(this.heartbeatsSinceLastStateSwitch <= 1) {
-            this.log.debug('%s (%s) > Skip this heartbeat because of fast switching.', (this.constructor as any).name, device.id);
-            return;
-        }
-        var self = this;
-
-        /* Service.Outlet */
-        var oldState = self.dDevice.getState();
-        if(device.getState() != oldState) {
-            self.log.info('%s (%s) > State %s > %s', (this.constructor as any).name, device.id, oldState, device.getState());
-            self.dDevice.setState(device.getState(), function(err) {
-                self.switchService.setCharacteristic(self.Characteristic.On, (device.getState()==1));
-            });
-        }
-        var oldCurrentConsumption = self.dDevice.getCurrentValue('energy');
-        if(device.getCurrentValue('energy') != oldCurrentConsumption) {
-            self.log.info('%s (%s) > CurrentConsumption %s > %s', (this.constructor as any).name, device.id, oldCurrentConsumption, device.getCurrentValue('energy'));
-            self.dDevice.setCurrentValue('energy', device.getCurrentValue('energy'), function(err) { });
-            self.switchService.setCharacteristic(self.Characteristic.CurrentConsumption, device.getCurrentValue('energy'));
-        }
-        var oldTotalConsumption = self.dDevice.getTotalValue('energy');
-        if(device.getTotalValue('energy') != oldTotalConsumption) {
-            self.log.info('%s (%s) > TotalConsumption %s > %s', (this.constructor as any).name, device.id, oldTotalConsumption, device.getTotalValue('energy'));
-            self.dDevice.setTotalValue('energy', device.getTotalValue('energy'), function(err) { });
-            self.switchService.setCharacteristic(self.Characteristic.TotalConsumption, device.getTotalValue('energy'));
-        }
-        var oldTotalConsumptionSince = self.dDevice.getSinceTime('energy');
-        if(device.getSinceTime('energy') != oldTotalConsumptionSince) {
-            self.log.info('%s (%s) > TotalConsumptionSince %s > %s', (this.constructor as any).name, device.id, oldTotalConsumptionSince, device.getSinceTime('energy'));
-            self.dDevice.setSinceTime('energy', device.getSinceTime('energy'), function(err) { });
-            self.switchService.setCharacteristic(self.Characteristic.TotalConsumptionSince, new Date(device.getSinceTime('energy')).toISOString().replace(/T/, ' ').replace(/\..+/, ''));
-        }
     }
 
     getSwitchState(callback) {
@@ -101,7 +95,6 @@ export class HBDevoloSwitchMeterDevice extends HBDevoloDevice {
                 if(err) {
                     callback(err); return;
                 }
-                self.heartbeatsSinceLastStateSwitch = 0;
                 callback();
             });
         }
@@ -110,7 +103,6 @@ export class HBDevoloSwitchMeterDevice extends HBDevoloDevice {
                 if(err) {
                     callback(err); return;
                 }
-                self.heartbeatsSinceLastStateSwitch = 0;
                 callback();
             });
         }

@@ -37,8 +37,4 @@ export abstract class HBDevoloDevice implements HBIDevoloDevice {
         return [];
     };
 
-    heartbeat(device){
-
-    };
-
 }

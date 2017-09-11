@@ -3,7 +3,6 @@ import {HBDevoloDevice} from '../HBDevoloDevice';
 export class HBDevoloScene extends HBDevoloDevice {
 
     switchService;
-    heartbeatsSinceLastStateSwitch: number = 1;
 
     getServices() {
         this.informationService = new this.Service.AccessoryInformation();
@@ -24,9 +23,6 @@ export class HBDevoloScene extends HBDevoloDevice {
 
         return [this.informationService, this.switchService];
     }
-
-    /* HEARTBEAT */
-    heartbeat(device) { }
 
     getSwitchState(callback) {
         this.log.debug('%s (%s) > getSwitchState', (this.constructor as any).name, this.dDevice.id);

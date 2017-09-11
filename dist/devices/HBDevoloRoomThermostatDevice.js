@@ -7,9 +7,29 @@ var __extends = (this && this.__extends) || function (d, b) {
 var HBDevoloDevice_1 = require("../HBDevoloDevice");
 var HBDevoloRoomThermostatDevice = (function (_super) {
     __extends(HBDevoloRoomThermostatDevice, _super);
-    function HBDevoloRoomThermostatDevice() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.heartbeatsSinceLastStateSwitch = 1;
+    function HBDevoloRoomThermostatDevice(log, dAPI, dDevice) {
+        var _this = _super.call(this, log, dAPI, dDevice) || this;
+        var self = _this;
+        self.dDevice.events.on('onValueChanged', function (type, value) {
+            if (type === 'temperature') {
+                self.log.info('%s (%s) > Temperature > %s', self.constructor.name, self.dDevice.id, value);
+                self.thermostatService.getCharacteristic(self.Characteristic.CurrentTemperature).updateValue(value, null);
+            }
+        });
+        self.dDevice.events.on('onTargetValueChanged', function (type, value) {
+            if (type === 'temperature') {
+                self.log.info('%s (%s) > TargetTemperature > %s', self.constructor.name, self.dDevice.id, value);
+                self.thermostatService.getCharacteristic(self.Characteristic.TargetTemperature).updateValue(value, null);
+            }
+        });
+        self.dDevice.events.on('onBatteryLevelChanged', function (value) {
+            self.log.info('%s (%s) > Battery level > %s', self.constructor.name, self.dDevice.id, value);
+            self.batteryService.getCharacteristic(self.Characteristic.BatteryLevel).updateValue(value, null);
+        });
+        self.dDevice.events.on('onBatteryLowChanged', function (value) {
+            self.log.info('%s (%s) > Battery low > %s', self.constructor.name, self.dDevice.id, value);
+            self.batteryService.getCharacteristic(self.Characteristic.StatusLowBattery).updateValue(!value, null);
+        });
         return _this;
     }
     HBDevoloRoomThermostatDevice.prototype.getServices = function () {
@@ -39,32 +59,8 @@ var HBDevoloRoomThermostatDevice = (function (_super) {
             .on('get', this.getChargingState.bind(this));
         this.batteryService.getCharacteristic(this.Characteristic.StatusLowBattery)
             .on('get', this.getStatusLowBattery.bind(this));
+        this.dDevice.listen();
         return [this.informationService, this.thermostatService, this.batteryService];
-    };
-    /* HEARTBEAT */
-    HBDevoloRoomThermostatDevice.prototype.heartbeat = function (device) {
-        this.log.debug('%s (%s) > Hearbeat', this.constructor.name, device.id);
-        this.heartbeatsSinceLastStateSwitch++;
-        if (this.heartbeatsSinceLastStateSwitch <= 1) {
-            this.log.debug('%s (%s) > Skip this heartbeat because of fast switching.', this.constructor.name, device.id);
-            return;
-        }
-        var self = this;
-        /* Service.Thermostat */
-        var oldCurrentTemperature = self.dDevice.getValue('temperature');
-        if (device.getValue('temperature') != oldCurrentTemperature) {
-            self.log.info('%s (%s) > CurrentTemperature %s > %s', this.constructor.name, device.id, oldCurrentTemperature, device.getValue('temperature'));
-            self.dDevice.setValue('temperature', device.getValue('temperature'), function (err) {
-                self.thermostatService.setCharacteristic(self.Characteristic.CurrentTemperature, device.getValue('temperature'));
-            });
-        }
-        var oldTargetTemperature = self.dDevice.getTargetValue('temperature');
-        if (device.getTargetValue('temperature') != oldTargetTemperature) {
-            self.log.info('%s (%s) > TargetTemperature %s > %s', this.constructor.name, device.id, oldTargetTemperature, device.getTargetValue('temperature'));
-            self.dDevice.setTargetValue('temperature', device.getTargetValue('temperature'), function (err) {
-                self.thermostatService.setCharacteristic(self.Characteristic.TargetTemperature, device.getTargetValue('temperature'));
-            }, false);
-        }
     };
     HBDevoloRoomThermostatDevice.prototype.getCurrentTemperature = function (callback) {
         this.log.debug('%s (%s) > getCurrentTemperature', this.constructor.name, this.dDevice.id);
@@ -86,7 +82,6 @@ var HBDevoloRoomThermostatDevice = (function (_super) {
                 callback(err);
                 return;
             }
-            self.heartbeatsSinceLastStateSwitch = 0;
             callback();
         }, true);
     };

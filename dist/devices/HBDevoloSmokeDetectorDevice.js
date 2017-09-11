@@ -7,8 +7,22 @@ var __extends = (this && this.__extends) || function (d, b) {
 var HBDevoloDevice_1 = require("../HBDevoloDevice");
 var HBDevoloSmokeDetectorDevice = (function (_super) {
     __extends(HBDevoloSmokeDetectorDevice, _super);
-    function HBDevoloSmokeDetectorDevice() {
-        return _super !== null && _super.apply(this, arguments) || this;
+    function HBDevoloSmokeDetectorDevice(log, dAPI, dDevice) {
+        var _this = _super.call(this, log, dAPI, dDevice) || this;
+        var self = _this;
+        self.dDevice.events.on('onStateChanged', function (state) {
+            self.log.info('%s (%s) > State > %s', self.constructor.name, self.dDevice.id, state);
+            self.smokeSensorService.getCharacteristic(self.Characteristic.SmokeDetected).updateValue(state, null);
+        });
+        self.dDevice.events.on('onBatteryLevelChanged', function (value) {
+            self.log.info('%s (%s) > Battery level > %s', self.constructor.name, self.dDevice.id, value);
+            self.batteryService.getCharacteristic(self.Characteristic.BatteryLevel).updateValue(value, null);
+        });
+        self.dDevice.events.on('onBatteryLowChanged', function (value) {
+            self.log.info('%s (%s) > Battery low > %s', self.constructor.name, self.dDevice.id, value);
+            self.batteryService.getCharacteristic(self.Characteristic.StatusLowBattery).updateValue(!value, null);
+        });
+        return _this;
     }
     HBDevoloSmokeDetectorDevice.prototype.getServices = function () {
         this.informationService = new this.Service.AccessoryInformation();
@@ -26,32 +40,8 @@ var HBDevoloSmokeDetectorDevice = (function (_super) {
             .on('get', this.getChargingState.bind(this));
         this.batteryService.getCharacteristic(this.Characteristic.StatusLowBattery)
             .on('get', this.getStatusLowBattery.bind(this));
+        this.dDevice.listen();
         return [this.informationService, this.smokeSensorService, this.batteryService];
-    };
-    /* HEARTBEAT */
-    HBDevoloSmokeDetectorDevice.prototype.heartbeat = function (device) {
-        this.log.debug('%s > Hearbeat', this.constructor.name);
-        var self = this;
-        /* Service.SmokeSensor */
-        var oldState = self.dDevice.getState();
-        if (device.getState() != oldState) {
-            self.log.info('%s > State %s > %s', this.constructor.name, oldState, device.getState());
-            self.dDevice.setState(device.getState(), function (err) { });
-            self.smokeSensorService.setCharacteristic(self.Characteristic.SmokeDetected, device.getState());
-        }
-        /* Service.BatteryService */
-        var oldBatteryLevel = self.dDevice.getBatteryLevel();
-        if (device.getBatteryLevel() != oldBatteryLevel) {
-            self.log.info('%s > Battery level %s > %s', this.constructor.name, oldBatteryLevel, device.getBatteryLevel());
-            self.dDevice.setBatteryLevel(device.getBatteryLevel());
-            self.batteryService.setCharacteristic(self.Characteristic.BatteryLevel, device.getBatteryLevel());
-        }
-        var oldBatteryLow = self.dDevice.getBatteryLow();
-        if (device.getBatteryLow() != oldBatteryLow) {
-            self.log.info('%s > Battery low %s > %s', this.constructor.name, oldBatteryLow, device.getBatteryLow());
-            self.dDevice.setBatteryLow(device.getBatteryLow());
-            self.batteryService.setCharacteristic(self.Characteristic.StatusLowBattery, !device.getBatteryLow());
-        }
     };
     HBDevoloSmokeDetectorDevice.prototype.getSmokeDetected = function (callback) {
         this.log.debug('%s > getSmokeDetected', this.constructor.name);

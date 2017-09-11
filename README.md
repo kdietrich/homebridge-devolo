@@ -54,6 +54,9 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 ## Changes
 
 #### v0.1.5-dev
+- Sockets instead of slow polling
+- Various bugfixes
+- Performance improvements
 
 #### v0.1.4 (2017-07-15)
 - Smoke Detector supported

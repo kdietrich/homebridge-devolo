@@ -79,14 +79,7 @@ class HBDevoloPlatform {
                     accessoryList.push(accessories[i]);
                 }
 
-                /* HEARTBEAT */
-                let beat = -1;
-                setInterval(function() {
-                    beat += 1;
-                    beat %= 7 * 24 * 3600;
-                    self.log.debug('%s > Beat: %s', (self.constructor as any).name, beat);
-                    self.centralUnit.heartbeat(beat);
-                }.bind(this), 1000);
+                self.centralUnit.startHeartbeatHandler();
 
                 callback(accessoryList);
             });

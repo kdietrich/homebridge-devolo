@@ -7,9 +7,13 @@ var __extends = (this && this.__extends) || function (d, b) {
 var HBDevoloDevice_1 = require("../HBDevoloDevice");
 var HBDevoloRule = (function (_super) {
     __extends(HBDevoloRule, _super);
-    function HBDevoloRule() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.heartbeatsSinceLastStateSwitch = 1;
+    function HBDevoloRule(log, dAPI, dDevice) {
+        var _this = _super.call(this, log, dAPI, dDevice) || this;
+        var self = _this;
+        self.dDevice.events.on('onEnabledChanged', function (value) {
+            self.log.info('%s (%s) > Enabled > %s', self.constructor.name, self.dDevice.id, value);
+            self.switchService.getCharacteristic(self.Characteristic.On).updateValue(value, null);
+        });
         return _this;
     }
     HBDevoloRule.prototype.getServices = function () {
@@ -22,29 +26,12 @@ var HBDevoloRule = (function (_super) {
         this.switchService.getCharacteristic(this.Characteristic.On)
             .on('get', this.getSwitchState.bind(this))
             .on('set', this.setSwitchState.bind(this));
+        this.dDevice.listen();
         //this.updateReachability(false);
         //this.switchService.addCharacteristic(Characteristic.StatusActive, false);
         //switchService.addCharacteristic(Consumption);
         //switchService.addCharacteristic(Characteristic.TargetTemperature);
         return [this.informationService, this.switchService];
-    };
-    /* HEARTBEAT */
-    HBDevoloRule.prototype.heartbeat = function (device) {
-        this.log.debug('%s (%s) > Hearbeat', this.constructor.name, device.id);
-        this.heartbeatsSinceLastStateSwitch++;
-        if (this.heartbeatsSinceLastStateSwitch <= 1) {
-            this.log.debug('%s (%s) > Skip this heartbeat because of fast switching.', this.constructor.name, device.id);
-            return;
-        }
-        var self = this;
-        /* Service.Switch */
-        var oldEnabled = self.dDevice.getEnabled();
-        if (device.getEnabled() != oldEnabled) {
-            self.log.info('%s (%s) > Enabled %s > %s', this.constructor.name, device.id, oldEnabled, device.getEnabled());
-            self.dDevice.setEnabled(device.getEnabled(), function (err) {
-                self.switchService.setCharacteristic(self.Characteristic.On, device.getEnabled());
-            });
-        }
     };
     HBDevoloRule.prototype.getSwitchState = function (callback) {
         this.log.debug('%s (%s) > getSwitchState', this.constructor.name, this.dDevice.id);

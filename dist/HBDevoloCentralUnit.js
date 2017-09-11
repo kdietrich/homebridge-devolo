@@ -19,7 +19,6 @@ var HBDevoloCentralUnit = (function () {
         this.deviceList = [];
         this.ruleList = [];
         this.sceneList = [];
-        this.heartBeating = false;
         this.log = log;
         this.dAPI = dAPI;
         this.config = config;
@@ -48,68 +47,6 @@ var HBDevoloCentralUnit = (function () {
             .setCharacteristic(Characteristic.Model, 'Central Unit');
         //.setCharacteristic(Characteristic.SerialNumber, 'ABCDEFGHI')
         return [this.informationService];
-    };
-    /* HEARTBEAT */
-    HBDevoloCentralUnit.prototype.heartbeat = function (beat) {
-        var self = this;
-        if ((beat % this.config.heartrate) === 0 && !self.heartBeating) {
-            this.log.debug('%s > Heartbeat', this.constructor.name);
-            self.heartBeating = true;
-            var deviceIDs = [];
-            for (var i = 0; i < this.deviceList.length; i++) {
-                deviceIDs.push(this.deviceList[i].dDevice.id);
-            }
-            self.dAPI.getDevices(deviceIDs, function (err, devices) {
-                if (err) {
-                    self._processHeartbeatError(err);
-                }
-                else {
-                    var itemsProcessed = 0;
-                    devices.forEach(function (refreshedDevice) {
-                        var oldDevice = null;
-                        for (var i = 0; i < self.deviceList.length; i++) {
-                            if (refreshedDevice.id == self.deviceList[i].dDevice.id) {
-                                oldDevice = self.deviceList[i];
-                            }
-                        }
-                        if (oldDevice) {
-                            oldDevice.heartbeat(refreshedDevice);
-                        }
-                        itemsProcessed++;
-                        if (itemsProcessed === devices.length) {
-                            self._heartbeatRules(beat);
-                        }
-                    });
-                }
-            });
-        }
-    };
-    HBDevoloCentralUnit.prototype._heartbeatRules = function (beat) {
-        var self = this;
-        self.dAPI.getRules(function (err, rules) {
-            if (err) {
-                self._processHeartbeatError(err);
-            }
-            else {
-                var itemsProcessed = 0;
-                rules.forEach(function (refreshedRule) {
-                    var oldRule = null;
-                    for (var i = 0; i < self.ruleList.length; i++) {
-                        if (refreshedRule.id == self.ruleList[i].dDevice.id) {
-                            oldRule = self.ruleList[i];
-                        }
-                    }
-                    if (oldRule) {
-                        oldRule.heartbeat(refreshedRule);
-                    }
-                    itemsProcessed++;
-                    if (itemsProcessed === rules.length) {
-                        self.heartBeating = false;
-                        self.log.debug('%s > Heartbeat: %s done', self.constructor.name, beat);
-                    }
-                });
-            }
-        });
     };
     HBDevoloCentralUnit.prototype.findAccessories = function (callback) {
         //this.accessoryList.push(new HBDevoloDevice(this.log));
@@ -186,24 +123,25 @@ var HBDevoloCentralUnit = (function () {
             });
         });
     };
-    HBDevoloCentralUnit.prototype._processHeartbeatError = function (err) {
+    HBDevoloCentralUnit.prototype.startHeartbeatHandler = function () {
         var self = this;
-        self.log.error(err);
-        if (err === 'Session is not available') {
-            self.log.info('Fetching new session...');
-            self.dAPI.auth(function (err) {
+        var interval = setInterval(function ping() {
+            self.dAPI.getZones(function (err, zones) {
                 if (err) {
-                    self.log.error(err);
-                    self.heartBeating = false;
-                    return;
+                    self.log.info('Fetching new session...');
+                    clearInterval(interval);
+                    self.dAPI.auth(function (err) {
+                        if (err) {
+                            self.log.error(err);
+                            self.startHeartbeatHandler();
+                            return;
+                        }
+                        self.startHeartbeatHandler();
+                        self.log.info('Session successfully renewed.');
+                    }, true);
                 }
-                self.log.info('Session successfully renewed.');
-                self.heartBeating = false;
-            }, true);
-        }
-        else {
-            self.heartBeating = false;
-        }
+            });
+        }, 30000);
     };
     HBDevoloCentralUnit.prototype._isInWhitelist = function (name, whitelist) {
         for (var i = 0; i < whitelist.length; i++) {

@@ -20,9 +20,6 @@ var HBDevoloDevice = (function () {
         return [];
     };
     ;
-    HBDevoloDevice.prototype.heartbeat = function (device) {
-    };
-    ;
     return HBDevoloDevice;
 }());
 exports.HBDevoloDevice = HBDevoloDevice;

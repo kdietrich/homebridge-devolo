@@ -7,8 +7,32 @@ var __extends = (this && this.__extends) || function (d, b) {
 var HBDevoloDevice_1 = require("../HBDevoloDevice");
 var HBDevoloMotionDevice = (function (_super) {
     __extends(HBDevoloMotionDevice, _super);
-    function HBDevoloMotionDevice() {
-        return _super !== null && _super.apply(this, arguments) || this;
+    function HBDevoloMotionDevice(log, dAPI, dDevice) {
+        var _this = _super.call(this, log, dAPI, dDevice) || this;
+        var self = _this;
+        self.dDevice.events.on('onStateChanged', function (state) {
+            self.log.info('%s (%s) > State > %s', self.constructor.name, self.dDevice.id, state);
+            self.motionSensorService.getCharacteristic(self.Characteristic.MotionDetected).updateValue(state, null);
+        });
+        self.dDevice.events.on('onValueChanged', function (type, value) {
+            if (type === 'temperature') {
+                self.log.info('%s (%s) > Temperature > %s', self.constructor.name, self.dDevice.id, value);
+                self.temperatureService.getCharacteristic(self.Characteristic.CurrentTemperature).updateValue(value, null);
+            }
+            else if (type === 'light') {
+                self.log.info('%s (%s) > Light > %s', self.constructor.name, self.dDevice.id, value);
+                self.lightSensorService.getCharacteristic(self.Characteristic.CurrentAmbientLightLevel).updateValue(value / 100 * 500, null); //convert percentage to lux
+            }
+        });
+        self.dDevice.events.on('onBatteryLevelChanged', function (value) {
+            self.log.info('%s (%s) > Battery level > %s', self.constructor.name, self.dDevice.id, value);
+            self.batteryService.getCharacteristic(self.Characteristic.BatteryLevel).updateValue(value, null);
+        });
+        self.dDevice.events.on('onBatteryLowChanged', function (value) {
+            self.log.info('%s (%s) > Battery low > %s', self.constructor.name, self.dDevice.id, value);
+            self.batteryService.getCharacteristic(self.Characteristic.StatusLowBattery).updateValue(!value, null);
+        });
+        return _this;
     }
     HBDevoloMotionDevice.prototype.getServices = function () {
         this.informationService = new this.Service.AccessoryInformation();
@@ -36,46 +60,8 @@ var HBDevoloMotionDevice = (function (_super) {
         //this.switchService.addCharacteristic(Characteristic.StatusActive, false);
         //switchService.addCharacteristic(Consumption);
         //switchService.addCharacteristic(Characteristic.TargetTemperature);
+        this.dDevice.listen();
         return [this.informationService, this.motionSensorService, this.temperatureService, this.batteryService, this.lightSensorService];
-    };
-    /* HEARTBEAT */
-    HBDevoloMotionDevice.prototype.heartbeat = function (device) {
-        this.log.debug('%s > Hearbeat', this.constructor.name);
-        var self = this;
-        /* Service.MotionSensor */
-        var oldState = self.dDevice.getState();
-        if (device.getState() != oldState) {
-            self.log.info('%s > State %s > %s', this.constructor.name, oldState, device.getState());
-            self.dDevice.setState(device.getState(), function (err) { });
-            self.motionSensorService.setCharacteristic(self.Characteristic.MotionDetected, device.getState());
-        }
-        /* Service.TemperatureSensor */
-        var oldTemperature = self.dDevice.getValue('temperature');
-        if (device.getValue('temperature') != oldTemperature) {
-            self.log.info('%s > Temperature %s > %s', this.constructor.name, oldTemperature, device.getValue('temperature'));
-            self.dDevice.setValue('temperature', device.getValue('temperature'));
-            self.temperatureService.setCharacteristic(self.Characteristic.CurrentTemperature, device.getValue('temperature'));
-        }
-        /* Service.LightSensor */
-        var oldLight = self.dDevice.getValue('light');
-        if (device.getValue('light') != oldLight) {
-            self.log.info('%s > Light %s > %s', this.constructor.name, oldLight, device.getValue('light'));
-            self.dDevice.setValue('light', device.getValue('light'));
-            self.lightSensorService.setCharacteristic(self.Characteristic.CurrentAmbientLightLevel, device.getValue('light') / 100 * 500); //convert percentage to lux
-        }
-        /* Service.BatteryService */
-        var oldBatteryLevel = self.dDevice.getBatteryLevel();
-        if (device.getBatteryLevel() != oldBatteryLevel) {
-            self.log.info('%s > Battery level %s > %s', this.constructor.name, oldBatteryLevel, device.getBatteryLevel());
-            self.dDevice.setBatteryLevel(device.getBatteryLevel());
-            self.batteryService.setCharacteristic(self.Characteristic.BatteryLevel, device.getBatteryLevel());
-        }
-        var oldBatteryLow = self.dDevice.getBatteryLow();
-        if (device.getBatteryLow() != oldBatteryLow) {
-            self.log.info('%s > Battery low %s > %s', this.constructor.name, oldBatteryLow, device.getBatteryLow());
-            self.dDevice.setBatteryLow(device.getBatteryLow());
-            self.batteryService.setCharacteristic(self.Characteristic.StatusLowBattery, !device.getBatteryLow());
-        }
     };
     HBDevoloMotionDevice.prototype.getMotionDetected = function (callback) {
         this.log.debug('%s > getMotionDetected', this.constructor.name);
