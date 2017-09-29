@@ -54,6 +54,8 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 
 ## Changes
 
+#### v0.1.6-dev
+
 #### v0.1.5 (2017-09-29)
 - Qubino Flush Shutter supported
 - Sockets instead of slow polling
