@@ -11,11 +11,11 @@ export class HBQubinoShutterDevice extends HBDevoloDevice {
 
         var self = this;
         self.dDevice.events.on('onValueChanged', function(type: string, value: number) {
-            self.log.info('%s (%s) > Position value > %s', (self.constructor as any).name, self.dDevice.id, value);
+            self.log.info('%s (%s / %s) > Position value > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
             self.windowCoveringService.getCharacteristic(self.Characteristic.CurrentPosition).updateValue(value, null);
         });
         self.dDevice.events.on('onTargetValueChanged', function(type: string, value: number) {
-            self.log.info('%s (%s) > Target position value > %s', (self.constructor as any).name, self.dDevice.id, value);
+            self.log.info('%s (%s / %s) > Target position value > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
             self.windowCoveringService.getCharacteristic(self.Characteristic.TargetPosition).updateValue(value, null);
         });
 

@@ -25,12 +25,12 @@ export class HBDevoloScene extends HBDevoloDevice {
     }
 
     getSwitchState(callback) {
-        this.log.debug('%s (%s) > getSwitchState', (this.constructor as any).name, this.dDevice.id);
+        this.log.debug('%s (%s / %s) > getSwitchState', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
         return callback(null, false);
     }
 
     setSwitchState(value, callback) {
-        this.log.debug('%s (%s) > setSwitchState to %s', (this.constructor as any).name, this.dDevice.id, value);
+        this.log.debug('%s (%s / %s) > setSwitchState to %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, value);
         var self = this;
         if(value) {
             this.dDevice.invoke(function(err) {

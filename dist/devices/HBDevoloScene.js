@@ -27,11 +27,11 @@ var HBDevoloScene = (function (_super) {
         return [this.informationService, this.switchService];
     };
     HBDevoloScene.prototype.getSwitchState = function (callback) {
-        this.log.debug('%s (%s) > getSwitchState', this.constructor.name, this.dDevice.id);
+        this.log.debug('%s (%s / %s) > getSwitchState', this.constructor.name, this.dDevice.id, this.dDevice.name);
         return callback(null, false);
     };
     HBDevoloScene.prototype.setSwitchState = function (value, callback) {
-        this.log.debug('%s (%s) > setSwitchState to %s', this.constructor.name, this.dDevice.id, value);
+        this.log.debug('%s (%s / %s) > setSwitchState to %s', this.constructor.name, this.dDevice.id, this.dDevice.name, value);
         var self = this;
         if (value) {
             this.dDevice.invoke(function (err) {

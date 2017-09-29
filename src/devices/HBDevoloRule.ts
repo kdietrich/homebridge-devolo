@@ -11,7 +11,7 @@ export class HBDevoloRule extends HBDevoloDevice {
 
         var self = this;
         self.dDevice.events.on('onEnabledChanged', function(value: boolean) {
-            self.log.info('%s (%s) > Enabled > %s', (self.constructor as any).name, self.dDevice.id, value);
+            self.log.info('%s (%s / %s) > Enabled > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
             self.switchService.getCharacteristic(self.Characteristic.On).updateValue(value, null);
         });
 

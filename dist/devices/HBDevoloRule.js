@@ -11,7 +11,7 @@ var HBDevoloRule = (function (_super) {
         var _this = _super.call(this, log, dAPI, dDevice) || this;
         var self = _this;
         self.dDevice.events.on('onEnabledChanged', function (value) {
-            self.log.info('%s (%s) > Enabled > %s', self.constructor.name, self.dDevice.id, value);
+            self.log.info('%s (%s / %s) > Enabled > %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
             self.switchService.getCharacteristic(self.Characteristic.On).updateValue(value, null);
         });
         return _this;

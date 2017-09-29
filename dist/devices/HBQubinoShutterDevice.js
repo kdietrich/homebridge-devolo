@@ -11,11 +11,11 @@ var HBQubinoShutterDevice = (function (_super) {
         var _this = _super.call(this, log, dAPI, dDevice) || this;
         var self = _this;
         self.dDevice.events.on('onValueChanged', function (type, value) {
-            self.log.info('%s (%s) > Position value > %s', self.constructor.name, self.dDevice.id, value);
+            self.log.info('%s (%s / %s) > Position value > %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
             self.windowCoveringService.getCharacteristic(self.Characteristic.CurrentPosition).updateValue(value, null);
         });
         self.dDevice.events.on('onTargetValueChanged', function (type, value) {
-            self.log.info('%s (%s) > Target position value > %s', self.constructor.name, self.dDevice.id, value);
+            self.log.info('%s (%s / %s) > Target position value > %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
             self.windowCoveringService.getCharacteristic(self.Characteristic.TargetPosition).updateValue(value, null);
         });
         return _this;

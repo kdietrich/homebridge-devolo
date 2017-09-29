@@ -11,25 +11,25 @@ var HBDevoloDoorWindowDevice = (function (_super) {
         var _this = _super.call(this, log, dAPI, dDevice) || this;
         var self = _this;
         self.dDevice.events.on('onStateChanged', function (state) {
-            self.log.info('%s (%s) > State > %s', self.constructor.name, self.dDevice.id, state);
+            self.log.info('%s (%s / %s) > State > %s', self.constructor.name, self.dDevice.id, self.dDevice.name, state);
             self.contactSensorService.getCharacteristic(self.Characteristic.ContactSensorState).updateValue(state, null);
         });
         self.dDevice.events.on('onValueChanged', function (type, value) {
             if (type === 'temperature') {
-                self.log.info('%s (%s) > Temperature > %s', self.constructor.name, self.dDevice.id, value);
+                self.log.info('%s (%s / %s) > Temperature > %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
                 self.temperatureService.getCharacteristic(self.Characteristic.CurrentTemperature).updateValue(value, null);
             }
             else if (type === 'light') {
-                self.log.info('%s (%s) > Light > %s', self.constructor.name, self.dDevice.id, value);
+                self.log.info('%s (%s / %s) > Light > %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
                 self.lightSensorService.getCharacteristic(self.Characteristic.CurrentAmbientLightLevel).updateValue(value / 100 * 500, null); //convert percentage to lux
             }
         });
         self.dDevice.events.on('onBatteryLevelChanged', function (value) {
-            self.log.info('%s (%s) > Battery level > %s', self.constructor.name, self.dDevice.id, value);
+            self.log.info('%s (%s / %s) > Battery level > %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
             self.batteryService.getCharacteristic(self.Characteristic.BatteryLevel).updateValue(value, null);
         });
         self.dDevice.events.on('onBatteryLowChanged', function (value) {
-            self.log.info('%s (%s) > Battery low > %s', self.constructor.name, self.dDevice.id, value);
+            self.log.info('%s (%s / %s) > Battery low > %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
             self.batteryService.getCharacteristic(self.Characteristic.StatusLowBattery).updateValue(!value, null);
         });
         return _this;
