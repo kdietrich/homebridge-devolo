@@ -23,7 +23,7 @@
     "homebridge": ">=0.2.0"
   },
   "dependencies": {
-    "node-devolo": "git+https://github.com/kdietrich/node-devolo.git#7d2c149b55caacbb6e2efcbd03bb58b1f9d4b293"
+    "node-devolo": "git+https://github.com/kdietrich/node-devolo.git#5fc8d9cd7db0144408c467f3ab59083f6584b73e"
   },
   "devDependencies": {
     "@types/node": "^7.0.5",

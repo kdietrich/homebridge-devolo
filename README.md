@@ -13,6 +13,7 @@ This homebridge plugin allows you to control your Devolo Home Control devices vi
 - Thermostat Valve
 - Smoke Detector
 - Room Thermostat
+- Qubino Flush Shutter
 
 ![homekit](homekit.png)
 
@@ -54,6 +55,7 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 ## Changes
 
 #### v0.1.5-dev
+- Qubino Flush Shutter supported
 - Sockets instead of slow polling
 - Various bugfixes
 - Performance improvements

@@ -8,10 +8,11 @@ import {HBDevoloFloodDevice} from './devices/HBDevoloFloodDevice';
 import {HBDevoloThermostatValveDevice} from './devices/HBDevoloThermostatValveDevice';
 import {HBDevoloSmokeDetectorDevice} from './devices/HBDevoloSmokeDetectorDevice';
 import {HBDevoloRoomThermostatDevice} from './devices/HBDevoloRoomThermostatDevice';
+import {HBQubinoShutterDevice} from './devices/HBQubinoShutterDevice';
 import {HBDevoloRule} from './devices/HBDevoloRule';
 import {HBDevoloScene} from './devices/HBDevoloScene';
 import {Devolo} from 'node-devolo/dist/Devolo';
-import {Device,SwitchMeterDevice,HumidityDevice,DoorWindowDevice,MotionDevice,FloodDevice,ThermostatValveDevice,SmokeDetectorDevice,RoomThermostatDevice} from 'node-devolo/dist/DevoloDevice';
+import {Device,SwitchMeterDevice,HumidityDevice,DoorWindowDevice,MotionDevice,FloodDevice,ThermostatValveDevice,SmokeDetectorDevice,RoomThermostatDevice,ShutterDevice} from 'node-devolo/dist/DevoloDevice';
 import {Rule,Scene} from 'node-devolo/dist/DevoloMisc';
 
 let Homebridge;
@@ -98,6 +99,9 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
                 }
                 else if((devices[i].constructor as any).name == (RoomThermostatDevice as any).name) {
                     d = new HBDevoloRoomThermostatDevice(self.log, self.dAPI, devices[i]);
+                }
+                else if((devices[i].constructor as any).name == (ShutterDevice as any).name) {
+                    d = new HBQubinoShutterDevice(self.log, self.dAPI, devices[i]);
                 }
                 else {
                     self.log.info("%s > Device \"%s\" is not supported (yet). Open an issue on github and ask for adding it.", (self.constructor as any).name, devices[i].model);
