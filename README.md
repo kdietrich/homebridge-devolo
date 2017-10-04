@@ -58,6 +58,7 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 
 #### v0.1.6-dev
 - Filter devices with deviceBlacklist
+- Bugfix: Increased max listeners
 
 #### v0.1.5 (2017-09-29)
 - Qubino Flush Shutter supported
