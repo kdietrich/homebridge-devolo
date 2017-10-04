@@ -41,7 +41,9 @@ Feel free to submit an issue or pull request to add more.
 
 | Name of parameter | Default value | Notes |
 |---|---|---|
-| `heartrate`  | `3` | specifies in seconds how often devolo-homebridge polls the central unit. |
+| `ruleWhitelist`  | `['MyRule1', 'MyRule2']` | specify the rules which you want to use in Apple Home by their exact names. By default no rule is exported. |
+| `sceneWhitelist`  | `['MyScene1', 'MyScene2']` | specify the scenes which you want to use in Apple Home by their exact names. By default no scene is exported. |
+| `deviceBlacklist`  | `['BlockedDevice1', 'BlockedDevice2']` | specify the devices which you DON'T want to use in Apple Home by their exact names. By default all devices are exported. |
 
 ## Credits
 
@@ -55,6 +57,7 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 ## Changes
 
 #### v0.1.6-dev
+- Filter devices with deviceBlacklist
 
 #### v0.1.5 (2017-09-29)
 - Qubino Flush Shutter supported

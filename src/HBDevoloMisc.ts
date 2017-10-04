@@ -20,4 +20,5 @@ export class HBDevoloPlatformConfig {
     heartrate: number;
     ruleWhitelist?: string[];
     sceneWhitelist?: string[];
+    deviceBlacklist?: string[];
 }

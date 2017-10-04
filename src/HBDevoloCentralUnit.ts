@@ -76,6 +76,9 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
 
             for(var i=0; i<devices.length; i++) {
                 var d = null;
+                if(self.config.deviceBlacklist && self._isInList(devices[i].name, self.config.deviceBlacklist))
+                    continue;
+
                 if((devices[i].constructor as any).name == (SwitchMeterDevice as any).name) {
                     d = new HBDevoloSwitchMeterDevice(self.log, self.dAPI, devices[i]);
                 }
@@ -118,7 +121,7 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
                     callback(err); return;
                 }
                 for(var i=0; i<rules.length; i++) {
-                    if(self.config.ruleWhitelist && self._isInWhitelist(rules[i].name, self.config.ruleWhitelist)) {
+                    if(self.config.ruleWhitelist && self._isInList(rules[i].name, self.config.ruleWhitelist)) {
                         var d = new HBDevoloRule(self.log, self.dAPI, rules[i]);
                         d.setHomebridge(Homebridge);
                         self.accessoryList.push(d);
@@ -131,7 +134,7 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
                         callback(err); return;
                     }
                     for(var i=0; i<scenes.length; i++) {
-                        if(self.config.sceneWhitelist && self._isInWhitelist(scenes[i].name, self.config.sceneWhitelist)) {
+                        if(self.config.sceneWhitelist && self._isInList(scenes[i].name, self.config.sceneWhitelist)) {
                             var d = new HBDevoloScene(self.log, self.dAPI, scenes[i]);
                             d.setHomebridge(Homebridge);
                             self.accessoryList.push(d);
@@ -167,9 +170,9 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
         }, 30000);
     }
 
-    private _isInWhitelist(name: string, whitelist: string[]) : boolean {
-        for(var i=0; i<whitelist.length; i++) {
-            if(name===whitelist[i])
+    private _isInList(name: string, list: string[]) : boolean {
+        for(var i=0; i<list.length; i++) {
+            if(name===list[i])
                 return true;
         }
         return false;

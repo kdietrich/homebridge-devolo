@@ -60,6 +60,8 @@ var HBDevoloCentralUnit = (function () {
             //console.log(JSON.stringify(devices, null, 4));
             for (var i = 0; i < devices.length; i++) {
                 var d = null;
+                if (self.config.deviceBlacklist && self._isInList(devices[i].name, self.config.deviceBlacklist))
+                    continue;
                 if (devices[i].constructor.name == DevoloDevice_1.SwitchMeterDevice.name) {
                     d = new HBDevoloSwitchMeterDevice_1.HBDevoloSwitchMeterDevice(self.log, self.dAPI, devices[i]);
                 }
@@ -102,7 +104,7 @@ var HBDevoloCentralUnit = (function () {
                     return;
                 }
                 for (var i = 0; i < rules.length; i++) {
-                    if (self.config.ruleWhitelist && self._isInWhitelist(rules[i].name, self.config.ruleWhitelist)) {
+                    if (self.config.ruleWhitelist && self._isInList(rules[i].name, self.config.ruleWhitelist)) {
                         var d = new HBDevoloRule_1.HBDevoloRule(self.log, self.dAPI, rules[i]);
                         d.setHomebridge(Homebridge);
                         self.accessoryList.push(d);
@@ -115,7 +117,7 @@ var HBDevoloCentralUnit = (function () {
                         return;
                     }
                     for (var i = 0; i < scenes.length; i++) {
-                        if (self.config.sceneWhitelist && self._isInWhitelist(scenes[i].name, self.config.sceneWhitelist)) {
+                        if (self.config.sceneWhitelist && self._isInList(scenes[i].name, self.config.sceneWhitelist)) {
                             var d = new HBDevoloScene_1.HBDevoloScene(self.log, self.dAPI, scenes[i]);
                             d.setHomebridge(Homebridge);
                             self.accessoryList.push(d);
@@ -147,9 +149,9 @@ var HBDevoloCentralUnit = (function () {
             });
         }, 30000);
     };
-    HBDevoloCentralUnit.prototype._isInWhitelist = function (name, whitelist) {
-        for (var i = 0; i < whitelist.length; i++) {
-            if (name === whitelist[i])
+    HBDevoloCentralUnit.prototype._isInList = function (name, list) {
+        for (var i = 0; i < list.length; i++) {
+            if (name === list[i])
                 return true;
         }
         return false;
