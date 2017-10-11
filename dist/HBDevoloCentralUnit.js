@@ -7,6 +7,7 @@ var HBDevoloFloodDevice_1 = require("./devices/HBDevoloFloodDevice");
 var HBDevoloThermostatValveDevice_1 = require("./devices/HBDevoloThermostatValveDevice");
 var HBDevoloSmokeDetectorDevice_1 = require("./devices/HBDevoloSmokeDetectorDevice");
 var HBDevoloRoomThermostatDevice_1 = require("./devices/HBDevoloRoomThermostatDevice");
+var HBDevoloWallSwitchDevice_1 = require("./devices/HBDevoloWallSwitchDevice");
 var HBQubinoShutterDevice_1 = require("./devices/HBQubinoShutterDevice");
 var HBDevoloRule_1 = require("./devices/HBDevoloRule");
 var HBDevoloScene_1 = require("./devices/HBDevoloScene");
@@ -85,6 +86,9 @@ var HBDevoloCentralUnit = (function () {
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.RoomThermostatDevice.name) {
                     d = new HBDevoloRoomThermostatDevice_1.HBDevoloRoomThermostatDevice(self.log, self.dAPI, devices[i]);
+                }
+                else if (devices[i].constructor.name == DevoloDevice_1.WallSwitchDevice.name) {
+                    d = new HBDevoloWallSwitchDevice_1.HBDevoloWallSwitchDevice(self.log, self.dAPI, devices[i]);
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.ShutterDevice.name) {
                     d = new HBQubinoShutterDevice_1.HBQubinoShutterDevice(self.log, self.dAPI, devices[i]);
