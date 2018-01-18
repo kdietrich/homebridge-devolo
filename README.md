@@ -57,7 +57,7 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 
 ## Changes
 
-#### v0.1.6-dev
+#### v0.1.6 (2018-01-18)
 - Wall Switch supported
 - Filter devices with deviceBlacklist
 - Bugfix: Increased max listeners
