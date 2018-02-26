@@ -45,11 +45,16 @@ Feel free to submit an issue or pull request to add more.
 | `ruleWhitelist`  | `['MyRule1', 'MyRule2']` | specify the rules which you want to use in Apple Home by their exact names. By default no rule is exported. |
 | `sceneWhitelist`  | `['MyScene1', 'MyScene2']` | specify the scenes which you want to use in Apple Home by their exact names. By default no scene is exported. |
 | `deviceBlacklist`  | `['BlockedDevice1', 'BlockedDevice2']` | specify the devices which you DON'T want to use in Apple Home by their exact names. By default all devices are exported. |
+| `deviceDebugging`  | `false` | when set to true homebridge-devolo will output some debugging information and terminate afterwards. This is helpful to get information for new device integrations. |
 
 ## Credits
 
 Powered by [node-devolo](https://github.com/kdietrich/node-devolo).
 Thanks to [@nicoh88](https://github.com/nicoh88).
+
+## Support of new devices
+
+I'm happy to provide support for new devices. If you own an unsupported device you can provide me a debug log making the device integration easier for me. In order to do so set the config parameter `deviceDebugging` to `true` and run the following command: `homebridge -D | tee debugoutput.log`. The command will auto-finish after a while and create a textfile named `debugoutput.log`. Please attach this log file to your github issue.
 
 ## Troubleshooting
 
@@ -58,6 +63,8 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 ## Changes
 
 #### v0.1.7-dev
+- Remote control supported
+- Device debugging for faster support of new devices
 
 #### v0.1.6 (2018-01-18)
 - Wall Switch supported

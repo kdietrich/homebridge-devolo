@@ -21,4 +21,5 @@ export class HBDevoloPlatformConfig {
     ruleWhitelist?: string[];
     sceneWhitelist?: string[];
     deviceBlacklist?: string[];
+    deviceDebugging?: boolean = false;
 }

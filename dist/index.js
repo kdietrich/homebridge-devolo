@@ -89,9 +89,17 @@ var HBDevoloPlatform = (function () {
                 return;
             }
             self.log.debug('%s > Devolo API Version: %s', self.constructor.name, d.version);
-            self.centralUnit = new HBDevoloCentralUnit_1.HBDevoloCentralUnit(self.log, self.config, d);
-            self.centralUnit.setHomebridge(Homebridge);
-            callback(null, d._options);
+            if (self.config.deviceDebugging) {
+                d.outputDebugLog(function (err) {
+                    callback('Debug output finshed. Aborting.');
+                    process.exit();
+                });
+            }
+            else {
+                self.centralUnit = new HBDevoloCentralUnit_1.HBDevoloCentralUnit(self.log, self.config, d);
+                self.centralUnit.setHomebridge(Homebridge);
+                callback(null, d._options);
+            }
         });
     };
     return HBDevoloPlatform;
