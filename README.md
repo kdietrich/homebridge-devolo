@@ -14,6 +14,7 @@ This homebridge plugin allows you to control your Devolo Home Control devices vi
 - Smoke Detector
 - Room Thermostat
 - Wall Switch
+- Remote Control
 - Qubino Flush Shutter
 
 ![homekit](homekit.png)
