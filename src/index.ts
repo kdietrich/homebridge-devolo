@@ -107,6 +107,9 @@ class HBDevoloPlatform {
 
             if(self.config.deviceDebugging) {
                 d.outputDebugLog(function(err) {
+                   if(err) {
+                       self.log.error(err);
+                   }
                    callback('Debug output finshed. Aborting.');
                    process.exit();
                 });

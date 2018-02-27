@@ -91,6 +91,9 @@ var HBDevoloPlatform = (function () {
             self.log.debug('%s > Devolo API Version: %s', self.constructor.name, d.version);
             if (self.config.deviceDebugging) {
                 d.outputDebugLog(function (err) {
+                    if (err) {
+                        self.log.error(err);
+                    }
                     callback('Debug output finshed. Aborting.');
                     process.exit();
                 });
