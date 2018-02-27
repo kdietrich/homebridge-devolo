@@ -63,6 +63,8 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 
 ## Changes
 
+#### v0.1.8-dev
+
 #### v0.1.7 (2018-02-27)
 - Remote control supported
 - Bugfix: Status of rules is displayed correctly
