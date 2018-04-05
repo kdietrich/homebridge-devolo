@@ -117,6 +117,7 @@ class HBDevoloPlatform {
             else {
                 self.centralUnit = new HBDevoloCentralUnit(self.log, self.config, d);
                 self.centralUnit.setHomebridge(Homebridge);
+                self.centralUnit.initStorage();
                 callback(null, d._options);
             }
         });

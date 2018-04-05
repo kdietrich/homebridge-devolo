@@ -7,8 +7,8 @@ var __extends = (this && this.__extends) || function (d, b) {
 var HBDevoloDevice_1 = require("../HBDevoloDevice");
 var HBDevoloHumidityDevice = (function (_super) {
     __extends(HBDevoloHumidityDevice, _super);
-    function HBDevoloHumidityDevice(log, dAPI, dDevice) {
-        var _this = _super.call(this, log, dAPI, dDevice) || this;
+    function HBDevoloHumidityDevice(log, dAPI, dDevice, storage) {
+        var _this = _super.call(this, log, dAPI, dDevice, storage) || this;
         var self = _this;
         self.dDevice.events.on('onValueChanged', function (type, value) {
             if (type === 'temperature') {

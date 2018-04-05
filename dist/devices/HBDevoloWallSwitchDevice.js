@@ -7,8 +7,8 @@ var __extends = (this && this.__extends) || function (d, b) {
 var HBDevoloDevice_1 = require("../HBDevoloDevice");
 var HBDevoloWallSwitchDevice = (function (_super) {
     __extends(HBDevoloWallSwitchDevice, _super);
-    function HBDevoloWallSwitchDevice(log, dAPI, dDevice) {
-        var _this = _super.call(this, log, dAPI, dDevice) || this;
+    function HBDevoloWallSwitchDevice(log, dAPI, dDevice, storage) {
+        var _this = _super.call(this, log, dAPI, dDevice, storage) || this;
         _this.statelessProgrammableSwitchList = [];
         var self = _this;
         self.dDevice.events.on('onKeyPressedChanged', function (value) {

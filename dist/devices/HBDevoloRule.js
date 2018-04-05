@@ -7,8 +7,8 @@ var __extends = (this && this.__extends) || function (d, b) {
 var HBDevoloDevice_1 = require("../HBDevoloDevice");
 var HBDevoloRule = (function (_super) {
     __extends(HBDevoloRule, _super);
-    function HBDevoloRule(log, dAPI, dDevice) {
-        var _this = _super.call(this, log, dAPI, dDevice) || this;
+    function HBDevoloRule(log, dAPI, dDevice, storage) {
+        var _this = _super.call(this, log, dAPI, dDevice, storage) || this;
         var self = _this;
         self.dDevice.events.on('onEnabledChanged', function (value) {
             self.log.info('%s (%s / %s) > Enabled > %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);

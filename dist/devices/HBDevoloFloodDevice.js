@@ -7,8 +7,8 @@ var __extends = (this && this.__extends) || function (d, b) {
 var HBDevoloDevice_1 = require("../HBDevoloDevice");
 var HBDevoloFloodDevice = (function (_super) {
     __extends(HBDevoloFloodDevice, _super);
-    function HBDevoloFloodDevice(log, dAPI, dDevice) {
-        var _this = _super.call(this, log, dAPI, dDevice) || this;
+    function HBDevoloFloodDevice(log, dAPI, dDevice, storage) {
+        var _this = _super.call(this, log, dAPI, dDevice, storage) || this;
         var self = _this;
         self.dDevice.events.on('onStateChanged', function (state) {
             self.log.info('%s (%s / %s) > State > %s', self.constructor.name, self.dDevice.id, self.dDevice.name, state);

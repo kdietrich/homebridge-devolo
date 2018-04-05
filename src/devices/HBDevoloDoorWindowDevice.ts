@@ -10,8 +10,8 @@ export class HBDevoloDoorWindowDevice extends HBDevoloDevice {
     lightSensorService;
 
 
-    constructor(log, dAPI: Devolo, dDevice: Device) {
-        super(log, dAPI, dDevice);
+    constructor(log, dAPI: Devolo, dDevice: Device, storage) {
+        super(log, dAPI, dDevice, storage);
 
         var self = this;
         self.dDevice.events.on('onStateChanged', function(state: number) {
