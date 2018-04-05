@@ -15,6 +15,7 @@ This homebridge plugin allows you to control your Devolo Home Control devices vi
 - Room Thermostat
 - Wall Switch
 - Remote Control
+- Alarm Siren (has no function until Apple improves their alarm system implementation)
 - Qubino Flush Shutter
 
 ![homekit](homekit.png)
@@ -64,6 +65,8 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 ## Changes
 
 #### v0.1.8-dev
+- Alarm siren supported
+- Bugfix: Device debugging
 
 #### v0.1.7 (2018-02-27)
 - Remote control supported
