@@ -1,7 +1,7 @@
 # homebridge-devolo
 
 ## Homebridge plugin for Devolo Home Control
-(C) 2017, Kevin Dietrich
+(C) 2017-2018, Kevin Dietrich
 
 This homebridge plugin allows you to control your Devolo Home Control devices via Apple's homekit. The following devices are currently supported:
 
@@ -64,7 +64,7 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 
 ## Changes
 
-#### v0.1.8-dev
+#### v0.1.8 (2018-04-20)
 - Alarm siren supported
 - Bugfix: Device debugging
 
@@ -111,7 +111,7 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 
 The MIT License (MIT)
 
-Copyright (c) 2017 Kevin Dietrich
+Copyright (c) 2017-2018 Kevin Dietrich
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
