@@ -12,10 +12,12 @@ import {HBDevoloWallSwitchDevice} from './devices/HBDevoloWallSwitchDevice';
 import {HBDevoloRemoteControlDevice} from './devices/HBDevoloRemoteControlDevice';
 import {HBDevoloSirenDevice} from './devices/HBDevoloSirenDevice';
 import {HBQubinoShutterDevice} from './devices/HBQubinoShutterDevice';
+import {HBDevoloRelayDevice} from './devices/HBDevoloRelayDevice';
+import {HBDevoloDimmerDevice} from './devices/HBDevoloDimmerDevice';
 import {HBDevoloRule} from './devices/HBDevoloRule';
 import {HBDevoloScene} from './devices/HBDevoloScene';
 import {Devolo} from 'node-devolo/dist/Devolo';
-import {Device,SwitchMeterDevice,HumidityDevice,DoorWindowDevice,MotionDevice,FloodDevice,ThermostatValveDevice,SmokeDetectorDevice,RoomThermostatDevice,ShutterDevice,WallSwitchDevice,RemoteControlDevice,SirenDevice} from 'node-devolo/dist/DevoloDevice';
+import {Device,SwitchMeterDevice,HumidityDevice,DoorWindowDevice,MotionDevice,FloodDevice,ThermostatValveDevice,SmokeDetectorDevice,RoomThermostatDevice,ShutterDevice,WallSwitchDevice,RemoteControlDevice,SirenDevice,RelayDevice,DimmerDevice} from 'node-devolo/dist/DevoloDevice';
 import {Rule,Scene} from 'node-devolo/dist/DevoloMisc';
 
 const storage = require('node-persist');
@@ -123,6 +125,12 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
                 }
                 else if((devices[i].constructor as any).name == (ShutterDevice as any).name) {
                     d = new HBQubinoShutterDevice(self.log, self.dAPI, devices[i], storage);
+                }
+                else if((devices[i].constructor as any).name == (RelayDevice as any).name) {
+                    d = new HBDevoloRelayDevice(self.log, self.dAPI, devices[i], storage);
+                }
+                else if((devices[i].constructor as any).name == (DimmerDevice as any).name) {
+                    d = new HBDevoloDimmerDevice(self.log, self.dAPI, devices[i], storage);
                 }
                 else {
                     self.log.info("%s > Device \"%s\" is not supported (yet). Open an issue on github and ask for adding it.", (self.constructor as any).name, devices[i].model);

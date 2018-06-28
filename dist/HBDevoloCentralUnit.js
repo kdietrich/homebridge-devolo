@@ -11,6 +11,8 @@ var HBDevoloWallSwitchDevice_1 = require("./devices/HBDevoloWallSwitchDevice");
 var HBDevoloRemoteControlDevice_1 = require("./devices/HBDevoloRemoteControlDevice");
 var HBDevoloSirenDevice_1 = require("./devices/HBDevoloSirenDevice");
 var HBQubinoShutterDevice_1 = require("./devices/HBQubinoShutterDevice");
+var HBDevoloRelayDevice_1 = require("./devices/HBDevoloRelayDevice");
+var HBDevoloDimmerDevice_1 = require("./devices/HBDevoloDimmerDevice");
 var HBDevoloRule_1 = require("./devices/HBDevoloRule");
 var HBDevoloScene_1 = require("./devices/HBDevoloScene");
 var DevoloDevice_1 = require("node-devolo/dist/DevoloDevice");
@@ -104,6 +106,12 @@ var HBDevoloCentralUnit = (function () {
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.ShutterDevice.name) {
                     d = new HBQubinoShutterDevice_1.HBQubinoShutterDevice(self.log, self.dAPI, devices[i], storage);
+                }
+                else if (devices[i].constructor.name == DevoloDevice_1.RelayDevice.name) {
+                    d = new HBDevoloRelayDevice_1.HBDevoloRelayDevice(self.log, self.dAPI, devices[i], storage);
+                }
+                else if (devices[i].constructor.name == DevoloDevice_1.DimmerDevice.name) {
+                    d = new HBDevoloDimmerDevice_1.HBDevoloDimmerDevice(self.log, self.dAPI, devices[i], storage);
                 }
                 else {
                     self.log.info("%s > Device \"%s\" is not supported (yet). Open an issue on github and ask for adding it.", self.constructor.name, devices[i].model);
