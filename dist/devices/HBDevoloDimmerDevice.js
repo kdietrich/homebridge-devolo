@@ -122,8 +122,9 @@ var HBDevoloDimmerDevice = (function (_super) {
             return;
         }
         var self = this;
-        this.dDevice.setValue('dimmer', value);
-        callback();
+        this.dDevice.setTargetValue('dimmer', value, function (err) {
+            callback();
+        }, true);
     };
     return HBDevoloDimmerDevice;
 }(HBDevoloDevice_1.HBDevoloDevice));

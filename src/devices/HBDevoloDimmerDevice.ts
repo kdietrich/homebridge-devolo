@@ -132,8 +132,9 @@ export class HBDevoloDimmerDevice extends HBDevoloDevice {
             return;
         }
         var self = this;
-        this.dDevice.setValue('dimmer', value);
-        callback();
+        this.dDevice.setTargetValue('dimmer', value, function(err) {
+            callback();
+        }, true);
     }
 
 }
