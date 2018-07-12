@@ -13,6 +13,7 @@ This homebridge plugin allows you to control your Devolo Home Control devices vi
 - Thermostat Valve
 - Smoke Detector
 - Room Thermostat
+- Leak Sensor
 - Wall Switch
 - Remote Control
 - Alarm Siren (has no function until Apple improves their alarm system implementation)
