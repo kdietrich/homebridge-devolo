@@ -19,6 +19,7 @@ This homebridge plugin allows you to control your Devolo Home Control devices vi
 - Devolo Alarm Siren (has no function until Apple improves their alarm system implementation)
 - Devolo Flush Relay
 - Devolo Flush Dimmer
+- Danfoss Thermostat Valve (LC-13)
 - Qubino Flush 1
 - Qubino Flush 1D
 - Qubino Flush 2
@@ -74,6 +75,7 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 #### v0.1.9-dev
 - Devolo flush relay & dimmer supported
 - Qubino flush X relay & dimmer supported
+- Danfoss thermostat valve (LC-13) supported
 - Bugfix for 2 websocket reconnect issues
 
 #### v0.1.8 (2018-04-20)
