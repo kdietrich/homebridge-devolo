@@ -5,18 +5,24 @@
 
 This homebridge plugin allows you to control your Devolo Home Control devices via Apple's homekit. The following devices are currently supported:
 
-- Smart Metering Plug (v1/v2)
-- Motion Sensor
-- Humidity Sensor
-- Motion Sensor
-- Door Sensor / Window Contact
-- Thermostat Valve
-- Smoke Detector
-- Room Thermostat
-- Leak Sensor
-- Wall Switch
-- Remote Control
-- Alarm Siren (has no function until Apple improves their alarm system implementation)
+- Devolo Smart Metering Plug (v1/v2)
+- Devolo Motion Sensor
+- Devolo Humidity Sensor
+- Devolo Motion Sensor
+- Devolo Door Sensor / Window Contact
+- Devolo Thermostat Valve
+- Devolo Smoke Detector
+- Devolo Room Thermostat
+- Devolo Leak Sensor
+- Devolo Wall Switch
+- Devolo Remote Control
+- Devolo Alarm Siren (has no function until Apple improves their alarm system implementation)
+- Devolo Flush Relay 
+- Devolo Flush Dimmer
+- Qubino Flush 1
+- Qubino Flush 1D
+- Qubino Flush 2
+- Qubino Flush Dimmer
 - Qubino Flush Shutter
 
 ![homekit](homekit.png)
@@ -66,7 +72,9 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 ## Changes
 
 #### v0.1.9-dev
-
+- Devolo flush relay & dimmer supported
+- Qubino flush X relay & dimmer supported
+- Bugfix for 2 websocket reconnect issues
 
 #### v0.1.8 (2018-04-20)
 - Alarm siren supported
