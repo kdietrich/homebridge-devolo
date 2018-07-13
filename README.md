@@ -17,7 +17,7 @@ This homebridge plugin allows you to control your Devolo Home Control devices vi
 - Devolo Wall Switch
 - Devolo Remote Control
 - Devolo Alarm Siren (has no function until Apple improves their alarm system implementation)
-- Devolo Flush Relay 
+- Devolo Flush Relay
 - Devolo Flush Dimmer
 - Qubino Flush 1
 - Qubino Flush 1D
@@ -25,7 +25,7 @@ This homebridge plugin allows you to control your Devolo Home Control devices vi
 - Qubino Flush Dimmer
 - Qubino Flush Shutter
 
-![homekit](homekit.png)
+![homekit-macos_180713](homekit-macos_180713.png)
 
 Feel free to submit an issue or pull request to add more.
 
