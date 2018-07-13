@@ -8,7 +8,6 @@ export class HBQubinoRelay2Device extends HBDevoloDevice {
 
     constructor(log, dAPI: Devolo, dDevice: Device, storage) {
         super(log, dAPI, dDevice, storage);
-
         var self = this;
         self.dDevice.events.on('onStateChanged', function(state: number, num:number) {
             self.log.info('%s (%s [%s] / %s) > State > %s', (self.constructor as any).name, self.dDevice.id, num, self.dDevice.name, state);
@@ -39,31 +38,27 @@ export class HBQubinoRelay2Device extends HBDevoloDevice {
         this.informationService = new this.Service.AccessoryInformation();
         this.informationService
             .setCharacteristic(this.Characteristic.Manufacturer, 'Qubino')
-            .setCharacteristic(this.Characteristic.Model, 'Relay 2')
+            .setCharacteristic(this.Characteristic.Model, 'Flush x')
            // .setCharacteristic(Characteristic.SerialNumber, 'ABfCDEFGHI')
 
-        this.switchServices.push(new this.Service.Outlet(this.name + ' 1', this.name + ' 1'));
-        this.switchServices[0].getCharacteristic(this.Characteristic.On)
-                     .on('get', this.getSwitchState.bind([this, 1]))
-                     .on('set', this.setSwitchState.bind([this, 1]));
-        this.switchServices[0].addCharacteristic(this.Characteristic.CurrentConsumption)
-                    .on('get', this.getCurrentConsumption.bind([this, 1]))
-        this.switchServices[0].addCharacteristic(this.Characteristic.TotalConsumption)
-                    .on('get', this.getTotalConsumption.bind([this, 1]))
-        this.switchServices[0].addCharacteristic(this.Characteristic.TotalConsumptionSince)
-                    .on('get', this.getTotalConsumptionSince.bind([this, 1]))
+        let sensorCount = 0;
+        for(let i=0; i<this.dDevice.sensors.length; i++) {
+            let sensor = this.dDevice.sensors[i];
+            if(sensor.id.indexOf('BinarySwitch') > -1) {
+                this.switchServices.push(new this.Service.Outlet(this.name + ' ' + (sensorCount+1), this.name + ' ' + (sensorCount+1)));
+                this.switchServices[sensorCount].getCharacteristic(this.Characteristic.On)
+                             .on('get', this.getSwitchState.bind([this, (sensorCount+1)]))
+                             .on('set', this.setSwitchState.bind([this, (sensorCount+1)]));
+                this.switchServices[sensorCount].addCharacteristic(this.Characteristic.CurrentConsumption)
+                            .on('get', this.getCurrentConsumption.bind([this, (sensorCount+1)]))
+                this.switchServices[sensorCount].addCharacteristic(this.Characteristic.TotalConsumption)
+                            .on('get', this.getTotalConsumption.bind([this, (sensorCount+1)]))
+                this.switchServices[sensorCount].addCharacteristic(this.Characteristic.TotalConsumptionSince)
+                            .on('get', this.getTotalConsumptionSince.bind([this, (sensorCount+1)]))
 
-
-        this.switchServices.push(new this.Service.Outlet(this.name + ' 2', this.name + ' 2'));
-        this.switchServices[1].getCharacteristic(this.Characteristic.On)
-                     .on('get', this.getSwitchState.bind([this, 2]))
-                     .on('set', this.setSwitchState.bind([this, 2]));
-        this.switchServices[1].addCharacteristic(this.Characteristic.CurrentConsumption)
-                    .on('get', this.getCurrentConsumption.bind([this, 2]))
-        this.switchServices[1].addCharacteristic(this.Characteristic.TotalConsumption)
-                    .on('get', this.getTotalConsumption.bind([this, 2]))
-        this.switchServices[1].addCharacteristic(this.Characteristic.TotalConsumptionSince)
-                    .on('get', this.getTotalConsumptionSince.bind([this, 2]))
+                sensorCount++;
+            }
+        }
 
         //this.updateReachability(false);
         //this.switchService.addCharacteristic(Characteristic.StatusActive, false);
@@ -72,7 +67,7 @@ export class HBQubinoRelay2Device extends HBDevoloDevice {
 
         this.dDevice.listen();
 
-        return [this.informationService, this.switchServices[0], this.switchServices[1]];
+        return [this.informationService].concat(this.switchServices);
     }
 
     getSwitchState(callback) {
