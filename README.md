@@ -72,6 +72,8 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 
 ## Changes
 
+#### v0.1.10-dev
+
 #### v0.1.9 (2018-07-16)
 - Devolo flush relay & dimmer supported
 - Qubino flush X relay & dimmer supported
