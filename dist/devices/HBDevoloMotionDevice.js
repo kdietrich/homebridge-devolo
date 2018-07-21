@@ -65,9 +65,6 @@ var HBDevoloMotionDevice = /** @class */ (function (_super) {
         this.motionSensorService = new this.Service.MotionSensor();
         this.motionSensorService.getCharacteristic(this.Characteristic.MotionDetected)
             .on('get', this.getMotionDetected.bind(this));
-        this.temperatureService = new this.Service.TemperatureSensor(this.name);
-        this.temperatureService.getCharacteristic(this.Characteristic.CurrentTemperature)
-            .on('get', this.getCurrentTemperature.bind(this));
         this.batteryService = new this.Service.BatteryService(this.name);
         this.batteryService.getCharacteristic(this.Characteristic.BatteryLevel)
             .on('get', this.getBatteryLevel.bind(this));
@@ -78,7 +75,16 @@ var HBDevoloMotionDevice = /** @class */ (function (_super) {
         this.lightSensorService = new this.Service.LightSensor(this.name);
         this.lightSensorService.getCharacteristic(this.Characteristic.CurrentAmbientLightLevel)
             .on('get', this.getCurrentAmbientLightLevel.bind(this));
-        var services = [this.informationService, this.motionSensorService, this.batteryService, this.lightSensorService, this.temperatureService];
+        this.temperatureService = new this.Service.TemperatureSensor(this.name);
+        this.temperatureService.getCharacteristic(this.Characteristic.CurrentTemperature)
+            .on('get', this.getCurrentTemperature.bind(this));
+        var services = [this.informationService, this.motionSensorService, this.batteryService];
+        if (!this.config.lightBlacklist || !this._isInList(this.dDevice.name, this.config.lightBlacklist)) {
+            services = services.concat([this.lightSensorService]);
+        }
+        if (!this.config.tempBlacklist || !this._isInList(this.dDevice.name, this.config.tempBlacklist)) {
+            services = services.concat([this.temperatureService]);
+        }
         // START FakeGato (eve app)
         if (this.config.fakeGato) {
             this.AddFakeGatoHistory('motion', false);

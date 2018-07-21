@@ -23,4 +23,6 @@ export class HBDevoloPlatformConfig {
     deviceBlacklist?: string[];
     deviceDebugging?: boolean = false;
     fakeGato?: boolean = false;
+    lightBlacklist?: string[];
+    tempBlacklist?: string[];
 }

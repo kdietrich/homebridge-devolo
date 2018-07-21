@@ -83,7 +83,13 @@ var HBDevoloDoorWindowDevice = /** @class */ (function (_super) {
         this.temperatureService = new this.Service.TemperatureSensor(this.name);
         this.temperatureService.getCharacteristic(this.Characteristic.CurrentTemperature)
             .on('get', this.getCurrentTemperature.bind(this));
-        var services = [this.informationService, this.contactSensorService, this.batteryService, this.lightSensorService, this.temperatureService];
+        var services = [this.informationService, this.contactSensorService, this.batteryService];
+        if (!this.config.lightBlacklist || !this._isInList(this.dDevice.name, this.config.lightBlacklist)) {
+            services = services.concat([this.lightSensorService]);
+        }
+        if (!this.config.tempBlacklist || !this._isInList(this.dDevice.name, this.config.tempBlacklist)) {
+            services = services.concat([this.temperatureService]);
+        }
         // START FakeGato (eve app)
         if (this.config.fakeGato) {
             this.AddFakeGatoHistory('door', false);

@@ -51,6 +51,14 @@ export abstract class HBDevoloDevice implements HBIDevoloDevice {
         return [];
     };
 
+    protected _isInList(name: string, list: string[]) : boolean {
+        for(var i=0; i<list.length; i++) {
+            if(name===list[i])
+                return true;
+        }
+        return false;
+    }
+
     // START FakeGato (eve app)
     protected AddFakeGatoHistory(type: String, disTimer: boolean) {
         var folder = this.Homebridge.user.storagePath() + '/.homebridge-devolo/fakegato-history';

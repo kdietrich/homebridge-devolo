@@ -27,6 +27,13 @@ var HBDevoloDevice = /** @class */ (function () {
         return [];
     };
     ;
+    HBDevoloDevice.prototype._isInList = function (name, list) {
+        for (var i = 0; i < list.length; i++) {
+            if (name === list[i])
+                return true;
+        }
+        return false;
+    };
     // START FakeGato (eve app)
     HBDevoloDevice.prototype.AddFakeGatoHistory = function (type, disTimer) {
         var folder = this.Homebridge.user.storagePath() + '/.homebridge-devolo/fakegato-history';
