@@ -156,8 +156,8 @@ export class HBDevoloDoorWindowDevice extends HBDevoloDevice {
         return callback(null, this.timesOpened);
     }
 
-    getlastActivation(callback) {
-        this.log.debug('%s (%s / %s) > getlastActivation will report %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.lastActivation);
+    getLastActivation(callback) {
+        this.log.debug('%s (%s / %s) > getLastActivation will report %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.lastActivation);
         this.contactSensorService.getCharacteristic(this.Characteristic.LastActivation).updateValue(this.lastActivation, null);
         return callback(null, this.lastActivation);
     }
@@ -197,7 +197,7 @@ export class HBDevoloDoorWindowDevice extends HBDevoloDevice {
               setTimeout(this.CheckFakeGatoHistoryLoaded.bind(this), 100);
         } else {
             this.contactSensorService.addCharacteristic(this.Characteristic.LastActivation)
-                .on('get', this.getlastActivation.bind(this));
+                .on('get', this.getLastActivation.bind(this));
             this.contactSensorService.addCharacteristic(this.Characteristic.TimesOpened)
                 .on('get', this.gettimesOpened.bind(this));
             this.contactSensorService.addCharacteristic(this.Characteristic.OpenDuration)

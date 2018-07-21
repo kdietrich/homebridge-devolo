@@ -130,8 +130,8 @@ var HBDevoloDoorWindowDevice = /** @class */ (function (_super) {
         this.contactSensorService.getCharacteristic(this.Characteristic.TimesOpened).updateValue(this.timesOpened, null);
         return callback(null, this.timesOpened);
     };
-    HBDevoloDoorWindowDevice.prototype.getlastActivation = function (callback) {
-        this.log.debug('%s (%s / %s) > getlastActivation will report %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.lastActivation);
+    HBDevoloDoorWindowDevice.prototype.getLastActivation = function (callback) {
+        this.log.debug('%s (%s / %s) > getLastActivation will report %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.lastActivation);
         this.contactSensorService.getCharacteristic(this.Characteristic.LastActivation).updateValue(this.lastActivation, null);
         return callback(null, this.lastActivation);
     };
@@ -167,7 +167,7 @@ var HBDevoloDoorWindowDevice = /** @class */ (function (_super) {
         }
         else {
             this.contactSensorService.addCharacteristic(this.Characteristic.LastActivation)
-                .on('get', this.getlastActivation.bind(this));
+                .on('get', this.getLastActivation.bind(this));
             this.contactSensorService.addCharacteristic(this.Characteristic.TimesOpened)
                 .on('get', this.gettimesOpened.bind(this));
             this.contactSensorService.addCharacteristic(this.Characteristic.OpenDuration)

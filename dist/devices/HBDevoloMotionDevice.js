@@ -119,8 +119,8 @@ var HBDevoloMotionDevice = /** @class */ (function (_super) {
         this.log.debug('%s (%s / %s) > getChargingState', this.constructor.name, this.dDevice.id, this.dDevice.name);
         return callback(null, false);
     };
-    HBDevoloMotionDevice.prototype.getlastActivation = function (callback) {
-        this.log.debug('%s (%s / %s) > getlastActivation will report %s', this.constructor.name, this.lastActivation);
+    HBDevoloMotionDevice.prototype.getLastActivation = function (callback) {
+        this.log.debug('%s (%s / %s) > getLastActivation will report %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.lastActivation);
         this.motionSensorService.getCharacteristic(this.Characteristic.LastActivation).updateValue(this.lastActivation, null);
         return callback(null, this.lastActivation);
     };
@@ -130,7 +130,7 @@ var HBDevoloMotionDevice = /** @class */ (function (_super) {
         }
         else {
             this.motionSensorService.addCharacteristic(this.Characteristic.LastActivation)
-                .on('get', this.getlastActivation.bind(this));
+                .on('get', this.getLastActivation.bind(this));
             if (this.loggingService.getExtraPersistedData() == undefined) {
                 this.lastActivation = 0;
                 this.loggingService.setExtraPersistedData([{ "lastActivation": this.lastActivation }]);

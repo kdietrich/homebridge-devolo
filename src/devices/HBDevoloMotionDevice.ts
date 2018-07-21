@@ -138,8 +138,8 @@ export class HBDevoloMotionDevice extends HBDevoloDevice {
         return callback(null, false)
     }
 
-    getlastActivation(callback) {
-        this.log.debug('%s (%s / %s) > getlastActivation will report %s', (this.constructor as any).name, this.lastActivation);
+    getLastActivation(callback) {
+        this.log.debug('%s (%s / %s) > getLastActivation will report %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.lastActivation);
         this.motionSensorService.getCharacteristic(this.Characteristic.LastActivation).updateValue(this.lastActivation, null);
         return callback(null, this.lastActivation);
     }
@@ -149,7 +149,7 @@ export class HBDevoloMotionDevice extends HBDevoloDevice {
               setTimeout(this.CheckFakeGatoHistoryLoaded.bind(this), 100);
         } else {
             this.motionSensorService.addCharacteristic(this.Characteristic.LastActivation)
-                .on('get', this.getlastActivation.bind(this));
+                .on('get', this.getLastActivation.bind(this));
 
             if (this.loggingService.getExtraPersistedData() == undefined) {
                 this.lastActivation = 0;
