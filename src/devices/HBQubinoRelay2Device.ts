@@ -6,8 +6,8 @@ export class HBQubinoRelay2Device extends HBDevoloDevice {
 
     switchServices = [];
 
-    constructor(log, dAPI: Devolo, dDevice: Device, storage) {
-        super(log, dAPI, dDevice, storage);
+    constructor(log, dAPI: Devolo, dDevice: Device, storage, config) {
+        super(log, dAPI, dDevice, storage, config);
         var self = this;
         self.dDevice.events.on('onStateChanged', function(state: number, num:number) {
             self.log.info('%s (%s [%s] / %s) > State > %s', (self.constructor as any).name, self.dDevice.id, num, self.dDevice.name, state);
@@ -31,7 +31,6 @@ export class HBQubinoRelay2Device extends HBDevoloDevice {
                 self.switchServices[num-1].getCharacteristic(self.Characteristic.TotalConsumptionSince).updateValue(new Date(value).toISOString().replace(/T/, ' ').replace(/\..+/, ''), null);
             }
         });
-
     }
 
     getServices() {
@@ -39,7 +38,7 @@ export class HBQubinoRelay2Device extends HBDevoloDevice {
         this.informationService
             .setCharacteristic(this.Characteristic.Manufacturer, 'Qubino')
             .setCharacteristic(this.Characteristic.Model, 'Flush x')
-           // .setCharacteristic(Characteristic.SerialNumber, 'ABfCDEFGHI')
+            .setCharacteristic(this.Characteristic.SerialNumber, this.dDevice.id.replace('/','-'))
 
         let sensorCount = 0;
         for(let i=0; i<this.dDevice.sensors.length; i++) {
@@ -49,59 +48,53 @@ export class HBQubinoRelay2Device extends HBDevoloDevice {
                 this.switchServices[sensorCount].getCharacteristic(this.Characteristic.On)
                              .on('get', this.getSwitchState.bind([this, (sensorCount+1)]))
                              .on('set', this.setSwitchState.bind([this, (sensorCount+1)]));
-                this.switchServices[sensorCount].addCharacteristic(this.Characteristic.CurrentConsumption)
-                            .on('get', this.getCurrentConsumption.bind([this, (sensorCount+1)]))
-                this.switchServices[sensorCount].addCharacteristic(this.Characteristic.TotalConsumption)
-                            .on('get', this.getTotalConsumption.bind([this, (sensorCount+1)]))
-                this.switchServices[sensorCount].addCharacteristic(this.Characteristic.TotalConsumptionSince)
-                            .on('get', this.getTotalConsumptionSince.bind([this, (sensorCount+1)]))
+                this.switchServices[sensorCount].addCharacteristic(this.Characteristic.DevoloCurrentConsumption)
+                            .on('get', this.getDevoloCurrentConsumption.bind([this, (sensorCount+1)]))
+                this.switchServices[sensorCount].addCharacteristic(this.Characteristic.DevoloTotalConsumption)
+                            .on('get', this.getDevoloTotalConsumption.bind([this, (sensorCount+1)]))
+                this.switchServices[sensorCount].addCharacteristic(this.Characteristic.DevoloTotalConsumptionSince)
+                            .on('get', this.getDevoloTotalConsumptionSince.bind([this, (sensorCount+1)]))
 
                 sensorCount++;
             }
         }
 
-        //this.updateReachability(false);
-        //this.switchService.addCharacteristic(Characteristic.StatusActive, false);
-        //switchService.addCharacteristic(Consumption);
-        //switchService.addCharacteristic(Characteristic.TargetTemperature);
-
         this.dDevice.listen();
-
         return [this.informationService].concat(this.switchServices);
     }
 
     getSwitchState(callback) {
         var self = this[0];
         var num = this[1];
-        self.log.debug('%s (%s [%s]) > getSwitchState', (self.constructor as any).name, self.dDevice.id, num);
+        self.log.debug('%s (%s [%s] / %s) > getSwitchState', (self.constructor as any).name, self.dDevice.id, num, self.dDevice.name);
         return callback(null, self.dDevice.getState(num)!=0);
     }
 
-    getCurrentConsumption(callback) {
+    getDevoloCurrentConsumption(callback) {
         var self = this[0];
         var num = this[1];
-        self.log.debug('%s (%s [%s]) > getCurrentConsumption', (self.constructor as any).name, self.dDevice.id, num);
+        self.log.debug('%s (%s [%s] / %s) > getDevoloCurrentConsumption', (self.constructor as any).name, self.dDevice.id, num, self.dDevice.name);
         return callback(null, self.dDevice.getCurrentValue('energy', num));
     }
 
-    getTotalConsumption(callback) {
+    getDevoloTotalConsumption(callback) {
         var self = this[0];
         var num = this[1];
-        self.log.debug('%s (%s [%s]) > getTotalConsumption', (self.constructor as any).name, self.dDevice.id, num);
+        self.log.debug('%s (%s [%s] / %s) > getDevoloTotalConsumption', (self.constructor as any).name, self.dDevice.id, num, self.dDevice.name);
         return callback(null, self.dDevice.getTotalValue('energy', num));
     }
 
-    getTotalConsumptionSince(callback) {
+    getDevoloTotalConsumptionSince(callback) {
         var self = this[0];
         var num = this[1];
-        self.log.debug('%s (%s [%s]) > getTotalConsumptionSince', (self.constructor as any).name, self.dDevice.id, num);
+        self.log.debug('%s (%s [%s] / %s) > getDevoloTotalConsumptionSince', (self.constructor as any).name, self.dDevice.id, num, self.dDevice.name);
         return callback(null, new Date(self.dDevice.getSinceTime('energy', num)).toISOString().replace(/T/, ' ').replace(/\..+/, ''));
     }
 
     setSwitchState(value, callback) {
         var self = this[0];
         var num = this[1];
-        self.log.debug('%s (%s [%s]) > setSwitchState to %s', (self.constructor as any).name, self.dDevice.id, num, value);
+        self.log.debug('%s (%s [%s] / %s) > setSwitchState to %s', (self.constructor as any).name, self.dDevice.id, num, self.dDevice.name, value);
         if(value==self.dDevice.getState(num)) {
             callback();
             return;
@@ -123,5 +116,4 @@ export class HBQubinoRelay2Device extends HBDevoloDevice {
             }, num);
         }
     }
-
 }

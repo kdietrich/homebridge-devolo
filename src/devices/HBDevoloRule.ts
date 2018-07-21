@@ -6,15 +6,14 @@ export class HBDevoloRule extends HBDevoloDevice {
 
     switchService;
 
-    constructor(log, dAPI: Devolo, dDevice: Device, storage) {
-        super(log, dAPI, dDevice, storage);
+    constructor(log, dAPI: Devolo, dDevice: Device, storage, config) {
+        super(log, dAPI, dDevice, storage, config);
 
         var self = this;
         self.dDevice.events.on('onEnabledChanged', function(value: boolean) {
             self.log.info('%s (%s / %s) > Enabled > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
             self.switchService.getCharacteristic(self.Characteristic.On).updateValue(value, null);
         });
-
     }
 
     getServices() {
@@ -22,7 +21,7 @@ export class HBDevoloRule extends HBDevoloDevice {
         this.informationService
             .setCharacteristic(this.Characteristic.Manufacturer, 'Devolo')
             .setCharacteristic(this.Characteristic.Model, 'Rule')
-           // .setCharacteristic(Characteristic.SerialNumber, 'ABfCDEFGHI')
+            .setCharacteristic(this.Characteristic.SerialNumber, this.dDevice.id.replace('/','-'))
 
         this.switchService = new this.Service.Switch(this.name);
         this.switchService.getCharacteristic(this.Characteristic.On)
@@ -30,27 +29,20 @@ export class HBDevoloRule extends HBDevoloDevice {
                      .on('set', this.setSwitchState.bind(this));
 
         this.dDevice.listen();
-
-        //this.updateReachability(false);
-        //this.switchService.addCharacteristic(Characteristic.StatusActive, false);
-        //switchService.addCharacteristic(Consumption);
-        //switchService.addCharacteristic(Characteristic.TargetTemperature);
-
         return [this.informationService, this.switchService];
     }
 
     getSwitchState(callback) {
-        this.log.debug('%s (%s) > getSwitchState', (this.constructor as any).name, this.dDevice.id);
+        this.log.debug('%s (%s / %s) > getSwitchState', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.dDevice.getEnabled());
     }
 
     setSwitchState(value, callback) {
-        this.log.debug('%s (%s) > setSwitchState to %s', (this.constructor as any).name, this.dDevice.id, value);
+        this.log.debug('%s (%s / %s) > setSwitchState to %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, value);
         if(value==this.dDevice.getEnabled()) {
             callback();
             return;
         }
         callback('Rules cannot be switched right now.'); return;
     }
-
 }

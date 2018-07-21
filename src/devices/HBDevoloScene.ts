@@ -9,17 +9,12 @@ export class HBDevoloScene extends HBDevoloDevice {
         this.informationService
             .setCharacteristic(this.Characteristic.Manufacturer, 'Devolo')
             .setCharacteristic(this.Characteristic.Model, 'Scene')
-           // .setCharacteristic(Characteristic.SerialNumber, 'ABfCDEFGHI')
+            .setCharacteristic(this.Characteristic.SerialNumber, this.dDevice.id.replace('/','-'))
 
         this.switchService = new this.Service.Switch(this.name);
         this.switchService.getCharacteristic(this.Characteristic.On)
                      .on('get', this.getSwitchState.bind(this))
                      .on('set', this.setSwitchState.bind(this));
-
-        //this.updateReachability(false);
-        //this.switchService.addCharacteristic(Characteristic.StatusActive, false);
-        //switchService.addCharacteristic(Consumption);
-        //switchService.addCharacteristic(Characteristic.TargetTemperature);
 
         return [this.informationService, this.switchService];
     }
@@ -46,5 +41,4 @@ export class HBDevoloScene extends HBDevoloDevice {
         else
             callback();
     }
-
 }

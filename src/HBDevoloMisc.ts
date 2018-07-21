@@ -22,4 +22,5 @@ export class HBDevoloPlatformConfig {
     sceneWhitelist?: string[];
     deviceBlacklist?: string[];
     deviceDebugging?: boolean = false;
+    fakeGato?: boolean = false;
 }

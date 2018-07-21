@@ -3,3 +3,4 @@ npm-debug.log
 crashreports/
 package-lock.json
 debug/
+.DS_Store

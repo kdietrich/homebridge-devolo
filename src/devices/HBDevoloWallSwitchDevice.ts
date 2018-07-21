@@ -6,8 +6,8 @@ export class HBDevoloWallSwitchDevice extends HBDevoloDevice {
 
     statelessProgrammableSwitchList = [];
 
-    constructor(log, dAPI: Devolo, dDevice: Device, storage) {
-        super(log, dAPI, dDevice, storage);
+    constructor(log, dAPI: Devolo, dDevice: Device, storage, config) {
+        super(log, dAPI, dDevice, storage, config);
 
         var self = this;
         self.dDevice.events.on('onKeyPressedChanged', function(value: number) {
@@ -20,7 +20,6 @@ export class HBDevoloWallSwitchDevice extends HBDevoloDevice {
                 self.statelessProgrammableSwitchList[value-1].getCharacteristic(self.Characteristic.ProgrammableSwitchEvent).emit('change', {newValue: 0});
             }
         });
-
     }
 
     getServices() {
@@ -28,7 +27,7 @@ export class HBDevoloWallSwitchDevice extends HBDevoloDevice {
         this.informationService
             .setCharacteristic(this.Characteristic.Manufacturer, 'Devolo')
             .setCharacteristic(this.Characteristic.Model, 'Wall Switch')
-           // .setCharacteristic(Characteristic.SerialNumber, 'ABfCDEFGHI')
+            .setCharacteristic(this.Characteristic.SerialNumber, this.dDevice.id.replace('/','-'))
 
         for(var i=0; i<this.dDevice.getKeyCount(); i++) {
             var statelessProgrammableSwitch = new this.Service.StatelessProgrammableSwitch(this.name);
@@ -40,8 +39,6 @@ export class HBDevoloWallSwitchDevice extends HBDevoloDevice {
         }
 
         this.dDevice.listen();
-
         return [this.informationService].concat(this.statelessProgrammableSwitchList);
     }
-
 }

@@ -1,14 +1,20 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
 var HBDevoloDevice_1 = require("../HBDevoloDevice");
-var HBDevoloRule = (function (_super) {
+var HBDevoloRule = /** @class */ (function (_super) {
     __extends(HBDevoloRule, _super);
-    function HBDevoloRule(log, dAPI, dDevice, storage) {
-        var _this = _super.call(this, log, dAPI, dDevice, storage) || this;
+    function HBDevoloRule(log, dAPI, dDevice, storage, config) {
+        var _this = _super.call(this, log, dAPI, dDevice, storage, config) || this;
         var self = _this;
         self.dDevice.events.on('onEnabledChanged', function (value) {
             self.log.info('%s (%s / %s) > Enabled > %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
@@ -20,25 +26,21 @@ var HBDevoloRule = (function (_super) {
         this.informationService = new this.Service.AccessoryInformation();
         this.informationService
             .setCharacteristic(this.Characteristic.Manufacturer, 'Devolo')
-            .setCharacteristic(this.Characteristic.Model, 'Rule');
-        // .setCharacteristic(Characteristic.SerialNumber, 'ABfCDEFGHI')
+            .setCharacteristic(this.Characteristic.Model, 'Rule')
+            .setCharacteristic(this.Characteristic.SerialNumber, this.dDevice.id.replace('/', '-'));
         this.switchService = new this.Service.Switch(this.name);
         this.switchService.getCharacteristic(this.Characteristic.On)
             .on('get', this.getSwitchState.bind(this))
             .on('set', this.setSwitchState.bind(this));
         this.dDevice.listen();
-        //this.updateReachability(false);
-        //this.switchService.addCharacteristic(Characteristic.StatusActive, false);
-        //switchService.addCharacteristic(Consumption);
-        //switchService.addCharacteristic(Characteristic.TargetTemperature);
         return [this.informationService, this.switchService];
     };
     HBDevoloRule.prototype.getSwitchState = function (callback) {
-        this.log.debug('%s (%s) > getSwitchState', this.constructor.name, this.dDevice.id);
+        this.log.debug('%s (%s / %s) > getSwitchState', this.constructor.name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.dDevice.getEnabled());
     };
     HBDevoloRule.prototype.setSwitchState = function (value, callback) {
-        this.log.debug('%s (%s) > setSwitchState to %s', this.constructor.name, this.dDevice.id, value);
+        this.log.debug('%s (%s / %s) > setSwitchState to %s', this.constructor.name, this.dDevice.id, this.dDevice.name, value);
         if (value == this.dDevice.getEnabled()) {
             callback();
             return;

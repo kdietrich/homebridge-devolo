@@ -23,8 +23,10 @@
     "homebridge": ">=0.2.0"
   },
   "dependencies": {
+    "fakegato-history": "^0.5.2",
     "node-devolo": "git+https://github.com/kdietrich/node-devolo.git#6a34d653296036bc4fb8f54b3ec72dacf1cf8df1",
-    "node-persist": "^2.1.0"
+    "node-persist": "^2.1.0",
+    "shelljs": "^0.8.2"
   },
   "devDependencies": {
     "@types/node": "^7.0.5",

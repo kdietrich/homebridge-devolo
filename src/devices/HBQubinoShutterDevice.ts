@@ -6,8 +6,8 @@ export class HBQubinoShutterDevice extends HBDevoloDevice {
 
     windowCoveringService;
 
-    constructor(log, dAPI: Devolo, dDevice: Device, storage) {
-        super(log, dAPI, dDevice, storage);
+    constructor(log, dAPI: Devolo, dDevice: Device, storage, config) {
+        super(log, dAPI, dDevice, storage, config);
 
         var self = this;
         self.dDevice.events.on('onValueChanged', function(type: string, value: number) {
@@ -18,7 +18,6 @@ export class HBQubinoShutterDevice extends HBDevoloDevice {
             self.log.info('%s (%s / %s) > Target position value > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
             self.windowCoveringService.getCharacteristic(self.Characteristic.TargetPosition).updateValue(value, null);
         });
-
     }
 
     getServices() {
@@ -26,7 +25,7 @@ export class HBQubinoShutterDevice extends HBDevoloDevice {
         this.informationService
             .setCharacteristic(this.Characteristic.Manufacturer, 'Qubino')
             .setCharacteristic(this.Characteristic.Model, 'Flush Shutter')
-           // .setCharacteristic(Characteristic.SerialNumber, 'ABfCDEFGHI')
+            .setCharacteristic(this.Characteristic.SerialNumber, this.dDevice.id.replace('/','-'))
 
         this.windowCoveringService = new this.Service.WindowCovering();
         this.windowCoveringService.getCharacteristic(this.Characteristic.CurrentPosition)
@@ -41,27 +40,21 @@ export class HBQubinoShutterDevice extends HBDevoloDevice {
         });
 
         this.dDevice.listen();
-
-        //this.updateReachability(false);
-        //this.switchService.addCharacteristic(Characteristic.StatusActive, false);
-        //switchService.addCharacteristic(Consumption);
-        //switchService.addCharacteristic(Characteristic.TargetTemperature);
-
         return [this.informationService, this.windowCoveringService];
     }
 
     getValue(callback) {
-        this.log.debug('%s (%s) > getValue', (this.constructor as any).name, this.dDevice.id);
+        this.log.debug('%s (%s / %s) > getValue', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.dDevice.getValue('blinds'));
     }
 
     getTargetValue(callback) {
-        this.log.debug('%s (%s) > getTargetValue', (this.constructor as any).name, this.dDevice.id);
+        this.log.debug('%s (%s / %s) > getTargetValue', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.dDevice.getTargetValue('blinds'));
     }
 
     setTargetValue(value, callback) {
-        this.log.debug('%s (%s) > setTargetValue to %s', (this.constructor as any).name, this.dDevice.id, value);
+        this.log.debug('%s (%s / %s) > setTargetValue to %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, value);
         if(value==this.dDevice.getTargetValue('blinds')) {
             callback();
             return;
@@ -74,5 +67,4 @@ export class HBQubinoShutterDevice extends HBDevoloDevice {
             callback();
         }, true);
     }
-
 }

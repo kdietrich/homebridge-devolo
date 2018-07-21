@@ -1,14 +1,20 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
 var HBDevoloDevice_1 = require("../HBDevoloDevice");
-var HBDevoloThermostatValveDevice = (function (_super) {
+var HBDevoloThermostatValveDevice = /** @class */ (function (_super) {
     __extends(HBDevoloThermostatValveDevice, _super);
-    function HBDevoloThermostatValveDevice(log, dAPI, dDevice, storage) {
-        var _this = _super.call(this, log, dAPI, dDevice, storage) || this;
+    function HBDevoloThermostatValveDevice(log, dAPI, dDevice, storage, config) {
+        var _this = _super.call(this, log, dAPI, dDevice, storage, config) || this;
         var self = _this;
         self.dDevice.events.on('onValueChanged', function (type, value) {
             if (type === 'temperature') {
@@ -36,8 +42,8 @@ var HBDevoloThermostatValveDevice = (function (_super) {
         this.informationService = new this.Service.AccessoryInformation();
         this.informationService
             .setCharacteristic(this.Characteristic.Manufacturer, 'Devolo')
-            .setCharacteristic(this.Characteristic.Model, 'Thermostat Valve');
-        // .setCharacteristic(Characteristic.SerialNumber, 'ABfCDEFGHI')
+            .setCharacteristic(this.Characteristic.Model, 'Thermostat Valve')
+            .setCharacteristic(this.Characteristic.SerialNumber, this.dDevice.id.replace('/', '-'));
         this.thermostatService = new this.Service.Thermostat(this.name);
         this.thermostatService.setCharacteristic(this.Characteristic.CurrentHeatingCoolingState, 1); //heating
         this.thermostatService.setCharacteristic(this.Characteristic.TargetHeatingCoolingState, 1); //heating
@@ -63,15 +69,15 @@ var HBDevoloThermostatValveDevice = (function (_super) {
         return [this.informationService, this.thermostatService, this.batteryService];
     };
     HBDevoloThermostatValveDevice.prototype.getCurrentTemperature = function (callback) {
-        this.log.debug('%s (%s) > getCurrentTemperature', this.constructor.name, this.dDevice.id);
+        this.log.debug('%s (%s / %s) > getCurrentTemperature', this.constructor.name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.dDevice.getValue('temperature'));
     };
     HBDevoloThermostatValveDevice.prototype.getTargetTemperature = function (callback) {
-        this.log.debug('%s (%s) > getTargetTemperature', this.constructor.name, this.dDevice.id);
+        this.log.debug('%s (%s / %s) > getTargetTemperature', this.constructor.name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.dDevice.getTargetValue('temperature'));
     };
     HBDevoloThermostatValveDevice.prototype.setTargetTemperature = function (value, callback) {
-        this.log.debug('%s (%s) > setTargetTemperature to %s', this.constructor.name, this.dDevice.id, value);
+        this.log.debug('%s (%s / %s) > setTargetTemperature to %s', this.constructor.name, this.dDevice.id, this.dDevice.name, value);
         if (value == this.dDevice.getTargetValue('temperature')) {
             callback();
             return;
@@ -86,15 +92,15 @@ var HBDevoloThermostatValveDevice = (function (_super) {
         }, true);
     };
     HBDevoloThermostatValveDevice.prototype.getBatteryLevel = function (callback) {
-        this.log.debug('%s > getBatteryLevel', this.constructor.name);
+        this.log.debug('%s (%s / %s) > getBatteryLevel', this.constructor.name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.dDevice.getBatteryLevel());
     };
     HBDevoloThermostatValveDevice.prototype.getStatusLowBattery = function (callback) {
-        this.log.debug('%s > getStatusLowBattery', this.constructor.name);
+        this.log.debug('%s (%s / %s) > getStatusLowBattery', this.constructor.name, this.dDevice.id, this.dDevice.name);
         return callback(null, !this.dDevice.getBatteryLow());
     };
     HBDevoloThermostatValveDevice.prototype.getChargingState = function (callback) {
-        this.log.debug('%s > getChargingState', this.constructor.name);
+        this.log.debug('%s (%s / %s) > getChargingState', this.constructor.name, this.dDevice.id, this.dDevice.name);
         return callback(null, false);
     };
     return HBDevoloThermostatValveDevice;

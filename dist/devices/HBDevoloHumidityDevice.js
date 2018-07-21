@@ -1,14 +1,20 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
 var HBDevoloDevice_1 = require("../HBDevoloDevice");
-var HBDevoloHumidityDevice = (function (_super) {
+var HBDevoloHumidityDevice = /** @class */ (function (_super) {
     __extends(HBDevoloHumidityDevice, _super);
-    function HBDevoloHumidityDevice(log, dAPI, dDevice, storage) {
-        var _this = _super.call(this, log, dAPI, dDevice, storage) || this;
+    function HBDevoloHumidityDevice(log, dAPI, dDevice, storage, config) {
+        var _this = _super.call(this, log, dAPI, dDevice, storage, config) || this;
         var self = _this;
         self.dDevice.events.on('onValueChanged', function (type, value) {
             if (type === 'temperature') {
@@ -34,8 +40,8 @@ var HBDevoloHumidityDevice = (function (_super) {
         this.informationService = new this.Service.AccessoryInformation();
         this.informationService
             .setCharacteristic(this.Characteristic.Manufacturer, 'Devolo')
-            .setCharacteristic(this.Characteristic.Model, 'Humidity Sensor');
-        // .setCharacteristic(Characteristic.SerialNumber, 'ABfCDEFGHI')
+            .setCharacteristic(this.Characteristic.Model, 'Humidity Sensor')
+            .setCharacteristic(this.Characteristic.SerialNumber, this.dDevice.id.replace('/', '-'));
         this.humidityService = new this.Service.HumiditySensor();
         this.humidityService.getCharacteristic(this.Characteristic.CurrentRelativeHumidity)
             .on('get', this.getCurrentRelativeHumidity.bind(this));
@@ -49,31 +55,27 @@ var HBDevoloHumidityDevice = (function (_super) {
             .on('get', this.getChargingState.bind(this));
         this.batteryService.getCharacteristic(this.Characteristic.StatusLowBattery)
             .on('get', this.getStatusLowBattery.bind(this));
-        //this.updateReachability(false);
-        //this.switchService.addCharacteristic(Characteristic.StatusActive, false);
-        //switchService.addCharacteristic(Consumption);
-        //switchService.addCharacteristic(Characteristic.TargetTemperature);
         this.dDevice.listen();
         return [this.informationService, this.humidityService, this.temperatureService, this.batteryService];
     };
     HBDevoloHumidityDevice.prototype.getCurrentRelativeHumidity = function (callback) {
-        this.log.debug('%s > getCurrentRelativeHumidity', this.constructor.name);
+        this.log.debug('%s (%s / %s) > getCurrentRelativeHumidity', this.constructor.name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.dDevice.getValue('humidity'));
     };
     HBDevoloHumidityDevice.prototype.getCurrentTemperature = function (callback) {
-        this.log.debug('%s > getCurrentTemperature', this.constructor.name);
+        this.log.debug('%s (%s / %s) > getCurrentTemperature', this.constructor.name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.dDevice.getValue('temperature'));
     };
     HBDevoloHumidityDevice.prototype.getBatteryLevel = function (callback) {
-        this.log.debug('%s > getBatteryLevel', this.constructor.name);
+        this.log.debug('%s (%s / %s) > getBatteryLevel', this.constructor.name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.dDevice.getBatteryLevel());
     };
     HBDevoloHumidityDevice.prototype.getStatusLowBattery = function (callback) {
-        this.log.debug('%s > getStatusLowBattery', this.constructor.name);
+        this.log.debug('%s (%s / %s) > getStatusLowBattery', this.constructor.name, this.dDevice.id, this.dDevice.name);
         return callback(null, !this.dDevice.getBatteryLow());
     };
     HBDevoloHumidityDevice.prototype.getChargingState = function (callback) {
-        this.log.debug('%s > getChargingState', this.constructor.name);
+        this.log.debug('%s (%s / %s) > getChargingState', this.constructor.name, this.dDevice.id, this.dDevice.name);
         return callback(null, false);
     };
     return HBDevoloHumidityDevice;

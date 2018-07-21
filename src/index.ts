@@ -131,34 +131,43 @@ export = function(homebridge) {
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
 
-    Characteristic.CurrentConsumption = function() {
-        Characteristic.call(this, 'CurrentConsumption', '00000010-0000-0000-0000-199207310822');
+    // Devolo Switch Meter
+    Characteristic.DevoloCurrentConsumption = function() {
+        Characteristic.call(this, 'Devolo Current Consumption', '00000010-0000-0000-0000-199207310822');
 
         this.setProps({
             format: Characteristic.Formats.FLOAT,
             unit: 'W',
+            maxValue: 100000,
+            minValue: 0,
+            minStep: 1,
             perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
         });
 
         this.value = 0;
     };
-    util.inherits(Characteristic.CurrentConsumption, Characteristic);
+    util.inherits(Characteristic.DevoloCurrentConsumption, Characteristic);
+    Characteristic.DevoloCurrentConsumption.UUID = '00000010-0000-0000-0000-199207310822';
 
-    Characteristic.TotalConsumption = function() {
-        Characteristic.call(this, 'TotalConsumption', '00000011-0000-0000-0000-199207310822');
+    Characteristic.DevoloTotalConsumption = function() {
+        Characteristic.call(this, 'Devolo Total Consumption', '00000011-0000-0000-0000-199207310822');
 
         this.setProps({
             format: Characteristic.Formats.FLOAT,
             unit: 'kWh',
+            maxValue: 100000000000,
+            minValue: 0,
+            minStep: 0.001,
             perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
         });
 
         this.value = 0;
     };
-    util.inherits(Characteristic.TotalConsumption, Characteristic);
+    util.inherits(Characteristic.DevoloTotalConsumption, Characteristic);
+    Characteristic.DevoloTotalConsumption.UUID = '00000011-0000-0000-0000-199207310822';
 
-    Characteristic.TotalConsumptionSince = function() {
-        Characteristic.call(this, 'TotalConsumptionSince', '00000012-0000-0000-0000-199207310822');
+    Characteristic.DevoloTotalConsumptionSince = function() {
+        Characteristic.call(this, 'Devolo Total Consumption Since', '00000012-0000-0000-0000-199207310822');
 
         this.setProps({
             format: Characteristic.Formats.STRING,
@@ -167,7 +176,130 @@ export = function(homebridge) {
 
         this.value = '';
     };
-    util.inherits(Characteristic.TotalConsumptionSince, Characteristic);
+    util.inherits(Characteristic.DevoloTotalConsumptionSince, Characteristic);
+    Characteristic.DevoloTotalConsumptionSince.UUID = '00000012-0000-0000-0000-199207310822';
+
+    // START FakeGato (eve app)
+    /// Eve Door + Eve Energy
+    Characteristic.ResetTotal = function() {
+        Characteristic.call(this, 'Reset Total', 'E863F112-079E-48FF-8F27-9C2605A29F52');
+
+        this.setProps({
+            format: Characteristic.Formats.UINT32,
+            unit: Characteristic.Units.SECONDS,
+            perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY, Characteristic.Perms.WRITE]
+        });
+
+        this.value = this.getDefaultValue();
+    };
+    util.inherits(Characteristic.ResetTotal, Characteristic);
+    Characteristic.ResetTotal.UUID = 'E863F112-079E-48FF-8F27-9C2605A29F52';
+
+    /// Eve Door + Eve Motion
+    Characteristic.LastActivation = function() {
+        Characteristic.call(this, 'Last Activation', 'E863F11A-079E-48FF-8F27-9C2605A29F52');
+        this.setProps({
+            format: Characteristic.Formats.UINT32,
+            unit: Characteristic.Units.SECONDS,
+            perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+        });
+
+        this.value = this.getDefaultValue();
+    };
+    util.inherits(Characteristic.LastActivation, Characteristic);
+    Characteristic.LastActivation.UUID = 'E863F11A-079E-48FF-8F27-9C2605A29F52';
+
+    /// Eve Door
+    Characteristic.OpenDuration = function() {
+        Characteristic.call(this, 'Open Duration', 'E863F118-079E-48FF-8F27-9C2605A29F52');
+
+        this.setProps({
+            format: Characteristic.Formats.UINT32,
+            unit: Characteristic.Units.SECONDS,
+            perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY, Characteristic.Perms.WRITE]
+        });
+
+        this.value = this.getDefaultValue();
+    };
+    util.inherits(Characteristic.OpenDuration, Characteristic);
+    Characteristic.OpenDuration.UUID = 'E863F118-079E-48FF-8F27-9C2605A29F52';
+
+    Characteristic.ClosedDuration = function() {
+        Characteristic.call(this, 'Closed Duration', 'E863F119-079E-48FF-8F27-9C2605A29F52');
+
+        this.setProps({
+            format: Characteristic.Formats.UINT32,
+            unit: Characteristic.Units.SECONDS,
+            perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY, Characteristic.Perms.WRITE]
+        });
+
+        this.value = this.getDefaultValue();
+    };
+    util.inherits(Characteristic.ClosedDuration, Characteristic);
+    Characteristic.ClosedDuration.UUID = 'E863F119-079E-48FF-8F27-9C2605A29F52';
+
+    Characteristic.TimesOpened = function() {
+        Characteristic.call(this, 'Times Opened', 'E863F129-079E-48FF-8F27-9C2605A29F52');
+
+        this.setProps({
+            format: Characteristic.Formats.UINT32,
+            unit: Characteristic.Units.SECONDS,
+            perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+        });
+
+        this.value = this.getDefaultValue();
+    };
+    util.inherits(Characteristic.TimesOpened, Characteristic);
+    Characteristic.TimesOpened.UUID = 'E863F129-079E-48FF-8F27-9C2605A29F52';
+
+    /// Eve Energy
+    Characteristic.CurrentConsumption = function() {
+        Characteristic.call(this, 'Current Consumption', 'E863F10D-079E-48FF-8F27-9C2605A29F52');
+
+        this.setProps({
+            format: Characteristic.Formats.FLOAT,
+            unit: 'W',
+            maxValue: 100000,
+            minValue: 0,
+            minStep: 1,
+            perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+        });
+
+        this.value = 0;
+    };
+    util.inherits(Characteristic.CurrentConsumption, Characteristic);
+    Characteristic.CurrentConsumption.UUID = 'E863F10D-079E-48FF-8F27-9C2605A29F52';
+
+    Characteristic.TotalConsumption = function() {
+        Characteristic.call(this, 'Total Consumption', 'E863F10C-079E-48FF-8F27-9C2605A29F52');
+
+        this.setProps({
+            format: Characteristic.Formats.UInt16,
+            unit: "kWh",
+            maxValue: 100000000000,
+            minValue: 0,
+            minStep: 0.001,
+            perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+        });
+
+        this.value = 0;
+    };
+    util.inherits(Characteristic.TotalConsumption, Characteristic);
+    Characteristic.TotalConsumption.UUID = 'E863F10C-079E-48FF-8F27-9C2605A29F52';
+
+    Characteristic.Voltage = function() {
+        Characteristic.call(this, 'Voltage', 'E863F10A-079E-48FF-8F27-9C2605A29F52');
+        this.setProps({
+            format: Characteristic.Formats.UInt16,
+            unit: "V",
+            perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+        });
+
+        this.value = this.getDefaultValue();
+    };
+    util.inherits(Characteristic.Voltage, Characteristic);
+    Characteristic.Voltage.UUID = 'E863F10A-079E-48FF-8F27-9C2605A29F52';
+    // END FakeGato (eve app)
 
     homebridge.registerPlatform("homebridge-devolo", "Devolo", HBDevoloPlatform, false);
 };

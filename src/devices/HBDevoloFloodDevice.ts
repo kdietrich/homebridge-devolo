@@ -7,8 +7,8 @@ export class HBDevoloFloodDevice extends HBDevoloDevice {
     leakSensorService;
     batteryService;
 
-    constructor(log, dAPI: Devolo, dDevice: Device, storage) {
-        super(log, dAPI, dDevice, storage);
+    constructor(log, dAPI: Devolo, dDevice: Device, storage, config) {
+        super(log, dAPI, dDevice, storage, config);
 
         var self = this;
         self.dDevice.events.on('onStateChanged', function(state: number) {
@@ -23,7 +23,6 @@ export class HBDevoloFloodDevice extends HBDevoloDevice {
             self.log.info('%s (%s / %s) > Battery low > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
             self.batteryService.getCharacteristic(self.Characteristic.StatusLowBattery).updateValue(!value, null);
         });
-
     }
 
     getServices() {
@@ -31,7 +30,7 @@ export class HBDevoloFloodDevice extends HBDevoloDevice {
         this.informationService
             .setCharacteristic(this.Characteristic.Manufacturer, 'Devolo')
             .setCharacteristic(this.Characteristic.Model, 'Motion Sensor')
-           // .setCharacteristic(Characteristic.SerialNumber, 'ABfCDEFGHI')
+            .setCharacteristic(this.Characteristic.SerialNumber, this.dDevice.id.replace('/','-'))
 
         this.leakSensorService = new this.Service.LeakSensor();
         this.leakSensorService.getCharacteristic(this.Characteristic.LeakDetected)
@@ -46,34 +45,27 @@ export class HBDevoloFloodDevice extends HBDevoloDevice {
         this.batteryService.getCharacteristic(this.Characteristic.StatusLowBattery)
                      .on('get', this.getStatusLowBattery.bind(this));
 
-        //this.updateReachability(false);
-        //this.switchService.addCharacteristic(Characteristic.StatusActive, false);
-        //switchService.addCharacteristic(Consumption);
-        //switchService.addCharacteristic(Characteristic.TargetTemperature);
-
         this.dDevice.listen();
-
         return [this.informationService, this.leakSensorService, this.batteryService];
     }
 
     getLeakDetected(callback) {
-        this.log.debug('%s > getLeakDetected', (this.constructor as any).name);
+        this.log.debug('%s (%s / %s) > getLeakDetected', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.dDevice.getState());
     }
 
     getBatteryLevel(callback) {
-        this.log.debug('%s > getBatteryLevel', (this.constructor as any).name);
+        this.log.debug('%s (%s / %s) > getBatteryLevel', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.dDevice.getBatteryLevel())
     }
 
     getStatusLowBattery(callback) {
-        this.log.debug('%s > getStatusLowBattery', (this.constructor as any).name);
+        this.log.debug('%s (%s / %s) > getStatusLowBattery', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
         return callback(null, !this.dDevice.getBatteryLow())
     }
 
     getChargingState(callback) {
-        this.log.debug('%s > getChargingState', (this.constructor as any).name);
+        this.log.debug('%s (%s / %s) > getChargingState', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
         return callback(null, false)
     }
-
 }

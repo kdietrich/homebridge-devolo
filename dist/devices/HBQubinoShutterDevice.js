@@ -1,14 +1,20 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
 var HBDevoloDevice_1 = require("../HBDevoloDevice");
-var HBQubinoShutterDevice = (function (_super) {
+var HBQubinoShutterDevice = /** @class */ (function (_super) {
     __extends(HBQubinoShutterDevice, _super);
-    function HBQubinoShutterDevice(log, dAPI, dDevice, storage) {
-        var _this = _super.call(this, log, dAPI, dDevice, storage) || this;
+    function HBQubinoShutterDevice(log, dAPI, dDevice, storage, config) {
+        var _this = _super.call(this, log, dAPI, dDevice, storage, config) || this;
         var self = _this;
         self.dDevice.events.on('onValueChanged', function (type, value) {
             self.log.info('%s (%s / %s) > Position value > %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
@@ -24,8 +30,8 @@ var HBQubinoShutterDevice = (function (_super) {
         this.informationService = new this.Service.AccessoryInformation();
         this.informationService
             .setCharacteristic(this.Characteristic.Manufacturer, 'Qubino')
-            .setCharacteristic(this.Characteristic.Model, 'Flush Shutter');
-        // .setCharacteristic(Characteristic.SerialNumber, 'ABfCDEFGHI')
+            .setCharacteristic(this.Characteristic.Model, 'Flush Shutter')
+            .setCharacteristic(this.Characteristic.SerialNumber, this.dDevice.id.replace('/', '-'));
         this.windowCoveringService = new this.Service.WindowCovering();
         this.windowCoveringService.getCharacteristic(this.Characteristic.CurrentPosition)
             .on('get', this.getValue.bind(this));
@@ -38,22 +44,18 @@ var HBQubinoShutterDevice = (function (_super) {
             minStep: 5
         });
         this.dDevice.listen();
-        //this.updateReachability(false);
-        //this.switchService.addCharacteristic(Characteristic.StatusActive, false);
-        //switchService.addCharacteristic(Consumption);
-        //switchService.addCharacteristic(Characteristic.TargetTemperature);
         return [this.informationService, this.windowCoveringService];
     };
     HBQubinoShutterDevice.prototype.getValue = function (callback) {
-        this.log.debug('%s (%s) > getValue', this.constructor.name, this.dDevice.id);
+        this.log.debug('%s (%s / %s) > getValue', this.constructor.name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.dDevice.getValue('blinds'));
     };
     HBQubinoShutterDevice.prototype.getTargetValue = function (callback) {
-        this.log.debug('%s (%s) > getTargetValue', this.constructor.name, this.dDevice.id);
+        this.log.debug('%s (%s / %s) > getTargetValue', this.constructor.name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.dDevice.getTargetValue('blinds'));
     };
     HBQubinoShutterDevice.prototype.setTargetValue = function (value, callback) {
-        this.log.debug('%s (%s) > setTargetValue to %s', this.constructor.name, this.dDevice.id, value);
+        this.log.debug('%s (%s / %s) > setTargetValue to %s', this.constructor.name, this.dDevice.id, this.dDevice.name, value);
         if (value == this.dDevice.getTargetValue('blinds')) {
             callback();
             return;

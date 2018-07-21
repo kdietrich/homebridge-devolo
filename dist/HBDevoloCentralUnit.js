@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var HBDevoloSwitchMeterDevice_1 = require("./devices/HBDevoloSwitchMeterDevice");
 var HBDevoloHumidityDevice_1 = require("./devices/HBDevoloHumidityDevice");
 var HBDevoloDoorWindowDevice_1 = require("./devices/HBDevoloDoorWindowDevice");
@@ -21,7 +22,7 @@ var storage = require('node-persist');
 var Homebridge;
 var Service;
 var Characteristic;
-var HBDevoloCentralUnit = (function () {
+var HBDevoloCentralUnit = /** @class */ (function () {
     function HBDevoloCentralUnit(log, config, dAPI) {
         this.accessoryList = [];
         this.deviceList = [];
@@ -39,7 +40,7 @@ var HBDevoloCentralUnit = (function () {
         Characteristic = homebridge.hap.Characteristic;
     };
     HBDevoloCentralUnit.prototype.initStorage = function () {
-        storage.initSync({ dir: Homebridge.user.storagePath() + '/.homebridge-devolo/' });
+        storage.initSync({ dir: Homebridge.user.storagePath() + '/.homebridge-devolo/node-persist' });
     };
     HBDevoloCentralUnit.prototype.accessories = function (callback) {
         var self = this;
@@ -73,49 +74,49 @@ var HBDevoloCentralUnit = (function () {
                 if (self.config.deviceBlacklist && self._isInList(devices[i].name, self.config.deviceBlacklist))
                     continue;
                 if (devices[i].constructor.name == DevoloDevice_1.SwitchMeterDevice.name) {
-                    d = new HBDevoloSwitchMeterDevice_1.HBDevoloSwitchMeterDevice(self.log, self.dAPI, devices[i], storage);
+                    d = new HBDevoloSwitchMeterDevice_1.HBDevoloSwitchMeterDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.HumidityDevice.name) {
-                    d = new HBDevoloHumidityDevice_1.HBDevoloHumidityDevice(self.log, self.dAPI, devices[i], storage);
+                    d = new HBDevoloHumidityDevice_1.HBDevoloHumidityDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.DoorWindowDevice.name) {
-                    d = new HBDevoloDoorWindowDevice_1.HBDevoloDoorWindowDevice(self.log, self.dAPI, devices[i], storage);
+                    d = new HBDevoloDoorWindowDevice_1.HBDevoloDoorWindowDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.MotionDevice.name) {
-                    d = new HBDevoloMotionDevice_1.HBDevoloMotionDevice(self.log, self.dAPI, devices[i], storage);
+                    d = new HBDevoloMotionDevice_1.HBDevoloMotionDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.FloodDevice.name) {
-                    d = new HBDevoloFloodDevice_1.HBDevoloFloodDevice(self.log, self.dAPI, devices[i], storage);
+                    d = new HBDevoloFloodDevice_1.HBDevoloFloodDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.ThermostatValveDevice.name) {
-                    d = new HBDevoloThermostatValveDevice_1.HBDevoloThermostatValveDevice(self.log, self.dAPI, devices[i], storage);
+                    d = new HBDevoloThermostatValveDevice_1.HBDevoloThermostatValveDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.SmokeDetectorDevice.name) {
-                    d = new HBDevoloSmokeDetectorDevice_1.HBDevoloSmokeDetectorDevice(self.log, self.dAPI, devices[i], storage);
+                    d = new HBDevoloSmokeDetectorDevice_1.HBDevoloSmokeDetectorDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.RoomThermostatDevice.name) {
-                    d = new HBDevoloRoomThermostatDevice_1.HBDevoloRoomThermostatDevice(self.log, self.dAPI, devices[i], storage);
+                    d = new HBDevoloRoomThermostatDevice_1.HBDevoloRoomThermostatDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.WallSwitchDevice.name) {
-                    d = new HBDevoloWallSwitchDevice_1.HBDevoloWallSwitchDevice(self.log, self.dAPI, devices[i], storage);
+                    d = new HBDevoloWallSwitchDevice_1.HBDevoloWallSwitchDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.RemoteControlDevice.name) {
-                    d = new HBDevoloRemoteControlDevice_1.HBDevoloRemoteControlDevice(self.log, self.dAPI, devices[i], storage);
+                    d = new HBDevoloRemoteControlDevice_1.HBDevoloRemoteControlDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.SirenDevice.name) {
-                    d = new HBDevoloSirenDevice_1.HBDevoloSirenDevice(self.log, self.dAPI, devices[i], storage);
+                    d = new HBDevoloSirenDevice_1.HBDevoloSirenDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.ShutterDevice.name) {
-                    d = new HBQubinoShutterDevice_1.HBQubinoShutterDevice(self.log, self.dAPI, devices[i], storage);
+                    d = new HBQubinoShutterDevice_1.HBQubinoShutterDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.RelayDevice.name) {
-                    d = new HBDevoloRelayDevice_1.HBDevoloRelayDevice(self.log, self.dAPI, devices[i], storage);
+                    d = new HBDevoloRelayDevice_1.HBDevoloRelayDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.DimmerDevice.name) {
-                    d = new HBDevoloDimmerDevice_1.HBDevoloDimmerDevice(self.log, self.dAPI, devices[i], storage);
+                    d = new HBDevoloDimmerDevice_1.HBDevoloDimmerDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.Relay2Device.name) {
-                    d = new HBQubinoRelay2Device_1.HBQubinoRelay2Device(self.log, self.dAPI, devices[i], storage);
+                    d = new HBQubinoRelay2Device_1.HBQubinoRelay2Device(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else {
                     self.log.info("%s > Device \"%s\" is not supported (yet). Open an issue on github and ask for adding it.", self.constructor.name, devices[i].model);
@@ -133,7 +134,7 @@ var HBDevoloCentralUnit = (function () {
                 }
                 for (var i = 0; i < rules.length; i++) {
                     if (self.config.ruleWhitelist && self._isInList(rules[i].name, self.config.ruleWhitelist)) {
-                        var d = new HBDevoloRule_1.HBDevoloRule(self.log, self.dAPI, rules[i], storage);
+                        var d = new HBDevoloRule_1.HBDevoloRule(self.log, self.dAPI, rules[i], storage, self.config);
                         d.setHomebridge(Homebridge);
                         self.accessoryList.push(d);
                         self.ruleList.push(d);
@@ -146,7 +147,7 @@ var HBDevoloCentralUnit = (function () {
                     }
                     for (var i = 0; i < scenes.length; i++) {
                         if (self.config.sceneWhitelist && self._isInList(scenes[i].name, self.config.sceneWhitelist)) {
-                            var d = new HBDevoloScene_1.HBDevoloScene(self.log, self.dAPI, scenes[i], storage);
+                            var d = new HBDevoloScene_1.HBDevoloScene(self.log, self.dAPI, scenes[i], storage, self.config);
                             d.setHomebridge(Homebridge);
                             self.accessoryList.push(d);
                             self.sceneList.push(d);

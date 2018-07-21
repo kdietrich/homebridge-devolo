@@ -8,8 +8,8 @@ export class HBDevoloSirenDevice extends HBDevoloDevice {
     currentState: number;
 
 
-    constructor(log, dAPI: Devolo, dDevice: Device, storage) {
-        super(log, dAPI, dDevice, storage);
+    constructor(log, dAPI: Devolo, dDevice: Device, storage, config) {
+        super(log, dAPI, dDevice, storage, config);
 
         var self = this;
 
@@ -18,7 +18,6 @@ export class HBDevoloSirenDevice extends HBDevoloDevice {
             self.currentState = 3;
             storage.setItem('hbd-siren-state', self.currentState);
         }
-
     }
 
     getServices() {
@@ -26,7 +25,7 @@ export class HBDevoloSirenDevice extends HBDevoloDevice {
         this.informationService
             .setCharacteristic(this.Characteristic.Manufacturer, 'Devolo')
             .setCharacteristic(this.Characteristic.Model, 'Siren')
-           // .setCharacteristic(Characteristic.SerialNumber, 'ABfCDEFGHI')
+            .setCharacteristic(this.Characteristic.SerialNumber, this.dDevice.id.replace('/','-'))
 
 
         this.securitySystemService = new this.Service.SecuritySystem();
@@ -38,22 +37,16 @@ export class HBDevoloSirenDevice extends HBDevoloDevice {
                      .on('set', this.setSecuritySystemTargetState.bind(this));
 
         this.dDevice.listen();
-
-        //this.updateReachability(false);
-        //this.switchService.addCharacteristic(Characteristic.StatusActive, false);
-        //switchService.addCharacteristic(Consumption);
-        //switchService.addCharacteristic(Characteristic.TargetTemperature);
-
         return [this.informationService, this.securitySystemService];
     }
 
     getSecuritySystemCurrentState(callback) {
-        this.log.debug('%s > getSecuritySystemCurrentState', (this.constructor as any).name);
+        this.log.debug('%s (%s / %s) > getSecuritySystemCurrentState', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.currentState);
     }
 
     setSecuritySystemCurrentState(value, callback) {
-        this.log.debug('%s (%s) > setSecuritySystemCurrentState to %s', (this.constructor as any).name, this.dDevice.id, value);
+        this.log.debug('%s (%s / %s) > setSecuritySystemCurrentState to %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, value);
         this.currentState = value;
         this.storage.setItem('hbd-siren-state', value);
         this.securitySystemService.getCharacteristic(this.Characteristic.SecuritySystemCurrentState).updateValue(value, null);
@@ -62,18 +55,16 @@ export class HBDevoloSirenDevice extends HBDevoloDevice {
     }
 
     getSecuritySystemTargetState(callback) {
-        this.log.debug('%s > getSecuritySystemTargetState', (this.constructor as any).name);
+        this.log.debug('%s (%s / %s) > getSecuritySystemTargetState', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.currentState);
     }
 
     setSecuritySystemTargetState(value, callback) {
-        this.log.debug('%s (%s) > setSecuritySystemTargetState to %s', (this.constructor as any).name, this.dDevice.id, value);
+        this.log.debug('%s (%s / %s) > setSecuritySystemTargetState to %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, value);
         this.currentState = value;
         this.storage.setItem('hbd-siren-state', value);
         this.securitySystemService.getCharacteristic(this.Characteristic.SecuritySystemCurrentState).updateValue(value, null);
         this.securitySystemService.getCharacteristic(this.Characteristic.SecuritySystemTargetState).updateValue(value, null);
         return callback();
     }
-
-
 }

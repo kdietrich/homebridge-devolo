@@ -7,8 +7,8 @@ export class HBDevoloThermostatValveDevice extends HBDevoloDevice {
     thermostatService;
     batteryService;
 
-    constructor(log, dAPI: Devolo, dDevice: Device, storage) {
-        super(log, dAPI, dDevice, storage);
+    constructor(log, dAPI: Devolo, dDevice: Device, storage, config) {
+        super(log, dAPI, dDevice, storage, config);
 
         var self = this;
         self.dDevice.events.on('onValueChanged', function(type: string, value: number) {
@@ -31,7 +31,6 @@ export class HBDevoloThermostatValveDevice extends HBDevoloDevice {
             self.log.info('%s (%s / %s) > Battery low > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
             self.batteryService.getCharacteristic(self.Characteristic.StatusLowBattery).updateValue(!value, null);
         });
-
     }
 
     getServices() {
@@ -39,7 +38,7 @@ export class HBDevoloThermostatValveDevice extends HBDevoloDevice {
         this.informationService
             .setCharacteristic(this.Characteristic.Manufacturer, 'Devolo')
             .setCharacteristic(this.Characteristic.Model, 'Thermostat Valve')
-           // .setCharacteristic(Characteristic.SerialNumber, 'ABfCDEFGHI')
+            .setCharacteristic(this.Characteristic.SerialNumber, this.dDevice.id.replace('/','-'))
 
         this.thermostatService = new this.Service.Thermostat(this.name);
         this.thermostatService.setCharacteristic(this.Characteristic.CurrentHeatingCoolingState, 1); //heating
@@ -65,23 +64,22 @@ export class HBDevoloThermostatValveDevice extends HBDevoloDevice {
                      .on('get', this.getStatusLowBattery.bind(this));
 
         this.dDevice.listen();
-
         return [this.informationService, this.thermostatService, this.batteryService];
     }
 
     getCurrentTemperature(callback) {
-        this.log.debug('%s (%s) > getCurrentTemperature', (this.constructor as any).name, this.dDevice.id);
+        this.log.debug('%s (%s / %s) > getCurrentTemperature', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.dDevice.getValue('temperature'));
     }
 
     getTargetTemperature(callback) {
-        this.log.debug('%s (%s) > getTargetTemperature', (this.constructor as any).name, this.dDevice.id);
+        this.log.debug('%s (%s / %s) > getTargetTemperature', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.dDevice.getTargetValue('temperature'));
     }
 
 
     setTargetTemperature(value, callback) {
-        this.log.debug('%s (%s) > setTargetTemperature to %s', (this.constructor as any).name, this.dDevice.id, value);
+        this.log.debug('%s (%s / %s) > setTargetTemperature to %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, value);
         if(value==this.dDevice.getTargetValue('temperature')) {
             callback();
             return;
@@ -96,18 +94,17 @@ export class HBDevoloThermostatValveDevice extends HBDevoloDevice {
     }
 
     getBatteryLevel(callback) {
-        this.log.debug('%s > getBatteryLevel', (this.constructor as any).name);
+        this.log.debug('%s (%s / %s) > getBatteryLevel', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.dDevice.getBatteryLevel())
     }
 
     getStatusLowBattery(callback) {
-        this.log.debug('%s > getStatusLowBattery', (this.constructor as any).name);
+        this.log.debug('%s (%s / %s) > getStatusLowBattery', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
         return callback(null, !this.dDevice.getBatteryLow())
     }
 
     getChargingState(callback) {
-        this.log.debug('%s > getChargingState', (this.constructor as any).name);
+        this.log.debug('%s (%s / %s) > getChargingState', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
         return callback(null, false)
     }
-
 }

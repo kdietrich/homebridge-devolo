@@ -56,6 +56,7 @@ Feel free to submit an issue or pull request to add more.
 | `sceneWhitelist`  | `['MyScene1', 'MyScene2']` | specify the scenes which you want to use in Apple Home by their exact names. By default no scene is exported. |
 | `deviceBlacklist`  | `['BlockedDevice1', 'BlockedDevice2']` | specify the devices which you DON'T want to use in Apple Home by their exact names. By default all devices are exported. |
 | `deviceDebugging`  | `false` | when set to true homebridge-devolo will output some debugging information and terminate afterwards. This is helpful to get information for new device integrations. |
+| `fakeGato`  | `false` | when set to true homebridge-devolo will save history data for some devices, these will reported in the eve app ([screenshot here - coming soon](https://www.google.de)) |
 
 ## Credits
 
@@ -73,6 +74,9 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 ## Changes
 
 #### v0.1.10-dev
+- add FakeGato History (Eve App) DOOR for Devolo Door Sensor / Window Contact 
+- add FakeGato History (Eve App) MOTION for Devolo Motion Sensor
+- add FakeGato History (Eve App) ENERGY for Devolo Smart Metering (v1/v2), Devolo Flush Relay, Devolo Flush Dimmer, Qubino Flush 1 and Qubino Flush Dimmer
 
 #### v0.1.9 (2018-07-16)
 - Devolo flush relay & dimmer supported

@@ -7,8 +7,8 @@ export class HBDevoloSmokeDetectorDevice extends HBDevoloDevice {
     smokeSensorService;
     batteryService;
 
-    constructor(log, dAPI: Devolo, dDevice: Device, storage) {
-        super(log, dAPI, dDevice, storage);
+    constructor(log, dAPI: Devolo, dDevice: Device, storage, config) {
+        super(log, dAPI, dDevice, storage, config);
 
         var self = this;
         self.dDevice.events.on('onStateChanged', function(state: number) {
@@ -23,7 +23,6 @@ export class HBDevoloSmokeDetectorDevice extends HBDevoloDevice {
             self.log.info('%s (%s / %s) > Battery low > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
             self.batteryService.getCharacteristic(self.Characteristic.StatusLowBattery).updateValue(!value, null);
         });
-
     }
 
     getServices() {
@@ -31,7 +30,7 @@ export class HBDevoloSmokeDetectorDevice extends HBDevoloDevice {
         this.informationService
             .setCharacteristic(this.Characteristic.Manufacturer, 'Devolo')
             .setCharacteristic(this.Characteristic.Model, 'Smoke Detector')
-           // .setCharacteristic(Characteristic.SerialNumber, 'ABfCDEFGHI')
+            .setCharacteristic(this.Characteristic.SerialNumber, this.dDevice.id.replace('/','-'))
 
         this.smokeSensorService = new this.Service.SmokeSensor();
         this.smokeSensorService.getCharacteristic(this.Characteristic.SmokeDetected)
@@ -47,28 +46,26 @@ export class HBDevoloSmokeDetectorDevice extends HBDevoloDevice {
                      .on('get', this.getStatusLowBattery.bind(this));
 
         this.dDevice.listen();
-
         return [this.informationService, this.smokeSensorService, this.batteryService];
     }
 
     getSmokeDetected(callback) {
-        this.log.debug('%s > getSmokeDetected', (this.constructor as any).name);
+        this.log.debug('%s (%s / %s) > getSmokeDetected', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.dDevice.getState());
     }
 
     getBatteryLevel(callback) {
-        this.log.debug('%s > getBatteryLevel', (this.constructor as any).name);
+        this.log.debug('%s (%s / %s) > getBatteryLevel', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.dDevice.getBatteryLevel())
     }
 
     getStatusLowBattery(callback) {
-        this.log.debug('%s > getStatusLowBattery', (this.constructor as any).name);
+        this.log.debug('%s (%s / %s) > getStatusLowBattery', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
         return callback(null, !this.dDevice.getBatteryLow())
     }
 
     getChargingState(callback) {
-        this.log.debug('%s > getChargingState', (this.constructor as any).name);
+        this.log.debug('%s (%s / %s) > getChargingState', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
         return callback(null, false)
     }
-
 }

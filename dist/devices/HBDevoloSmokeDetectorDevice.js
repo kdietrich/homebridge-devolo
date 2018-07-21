@@ -1,14 +1,20 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
 var HBDevoloDevice_1 = require("../HBDevoloDevice");
-var HBDevoloSmokeDetectorDevice = (function (_super) {
+var HBDevoloSmokeDetectorDevice = /** @class */ (function (_super) {
     __extends(HBDevoloSmokeDetectorDevice, _super);
-    function HBDevoloSmokeDetectorDevice(log, dAPI, dDevice, storage) {
-        var _this = _super.call(this, log, dAPI, dDevice, storage) || this;
+    function HBDevoloSmokeDetectorDevice(log, dAPI, dDevice, storage, config) {
+        var _this = _super.call(this, log, dAPI, dDevice, storage, config) || this;
         var self = _this;
         self.dDevice.events.on('onStateChanged', function (state) {
             self.log.info('%s (%s / %s) > State > %s', self.constructor.name, self.dDevice.id, self.dDevice.name, state);
@@ -28,8 +34,8 @@ var HBDevoloSmokeDetectorDevice = (function (_super) {
         this.informationService = new this.Service.AccessoryInformation();
         this.informationService
             .setCharacteristic(this.Characteristic.Manufacturer, 'Devolo')
-            .setCharacteristic(this.Characteristic.Model, 'Smoke Detector');
-        // .setCharacteristic(Characteristic.SerialNumber, 'ABfCDEFGHI')
+            .setCharacteristic(this.Characteristic.Model, 'Smoke Detector')
+            .setCharacteristic(this.Characteristic.SerialNumber, this.dDevice.id.replace('/', '-'));
         this.smokeSensorService = new this.Service.SmokeSensor();
         this.smokeSensorService.getCharacteristic(this.Characteristic.SmokeDetected)
             .on('get', this.getSmokeDetected.bind(this));
@@ -44,19 +50,19 @@ var HBDevoloSmokeDetectorDevice = (function (_super) {
         return [this.informationService, this.smokeSensorService, this.batteryService];
     };
     HBDevoloSmokeDetectorDevice.prototype.getSmokeDetected = function (callback) {
-        this.log.debug('%s > getSmokeDetected', this.constructor.name);
+        this.log.debug('%s (%s / %s) > getSmokeDetected', this.constructor.name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.dDevice.getState());
     };
     HBDevoloSmokeDetectorDevice.prototype.getBatteryLevel = function (callback) {
-        this.log.debug('%s > getBatteryLevel', this.constructor.name);
+        this.log.debug('%s (%s / %s) > getBatteryLevel', this.constructor.name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.dDevice.getBatteryLevel());
     };
     HBDevoloSmokeDetectorDevice.prototype.getStatusLowBattery = function (callback) {
-        this.log.debug('%s > getStatusLowBattery', this.constructor.name);
+        this.log.debug('%s (%s / %s) > getStatusLowBattery', this.constructor.name, this.dDevice.id, this.dDevice.name);
         return callback(null, !this.dDevice.getBatteryLow());
     };
     HBDevoloSmokeDetectorDevice.prototype.getChargingState = function (callback) {
-        this.log.debug('%s > getChargingState', this.constructor.name);
+        this.log.debug('%s (%s / %s) > getChargingState', this.constructor.name, this.dDevice.id, this.dDevice.name);
         return callback(null, false);
     };
     return HBDevoloSmokeDetectorDevice;
