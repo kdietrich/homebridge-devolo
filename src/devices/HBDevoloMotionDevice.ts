@@ -25,7 +25,7 @@ export class HBDevoloMotionDevice extends HBDevoloDevice {
 
             // START FakeGato (eve app)
             if (self.config.fakeGato) {
-                self.AddFakeGatoEntry({status: state});
+                self._addFakeGatoEntry({status: state});
                 if (state == 0) {
                     // NO MOTION
                 } else {
@@ -98,7 +98,7 @@ export class HBDevoloMotionDevice extends HBDevoloDevice {
 
         // START FakeGato (eve app)
         if (this.config.fakeGato) {
-            this.AddFakeGatoHistory('motion',false);
+            this._addFakeGatoHistory('motion',false);
             this.CheckFakeGatoHistoryLoaded();
             services = services.concat([this.loggingService]);
         }

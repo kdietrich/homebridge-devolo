@@ -60,7 +60,7 @@ export abstract class HBDevoloDevice implements HBIDevoloDevice {
     }
 
     // START FakeGato (eve app)
-    protected AddFakeGatoHistory(type: String, disTimer: boolean) {
+    protected _addFakeGatoHistory(type: String, disTimer: boolean) {
         var folder = this.Homebridge.user.storagePath() + '/.homebridge-devolo/fakegato-history';
         shell.mkdir('-p', folder);
 
@@ -70,7 +70,7 @@ export abstract class HBDevoloDevice implements HBIDevoloDevice {
         this.loggingService = new FakeGatoHistoryService(type, this, {storage: 'fs', path: folder, disableTimer: disTimer});
     }
 
-    protected AddFakeGatoEntry(data) {
+    protected _addFakeGatoEntry(data) {
         if ((this.loggingService != undefined) && (data != undefined)) {
             data.time = moment().unix();
             this.loggingService.addEntry(data);

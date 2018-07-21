@@ -22,7 +22,7 @@ var HBDevoloDoorWindowDevice = /** @class */ (function (_super) {
             self.contactSensorService.getCharacteristic(self.Characteristic.ContactSensorState).updateValue(state, null);
             // START FakeGato (eve app)
             if (self.config.fakeGato) {
-                self.AddFakeGatoEntry({ status: state });
+                self._addFakeGatoEntry({ status: state });
                 if (state == 0) {
                     // CLOSED
                     self.timeOpen = self.timeOpen + (moment().unix() - self.lastChange);
@@ -92,7 +92,7 @@ var HBDevoloDoorWindowDevice = /** @class */ (function (_super) {
         }
         // START FakeGato (eve app)
         if (this.config.fakeGato) {
-            this.AddFakeGatoHistory('door', false);
+            this._addFakeGatoHistory('door', false);
             this.CheckFakeGatoHistoryLoaded();
             services = services.concat([this.loggingService]);
         }

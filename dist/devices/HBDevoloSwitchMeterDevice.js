@@ -47,7 +47,7 @@ var HBDevoloSwitchMeterDevice = /** @class */ (function (_super) {
                 self.switchService.getCharacteristic(self.Characteristic.DevoloCurrentConsumption).updateValue(value, null);
                 // START FakeGato (eve app)
                 if (self.config.fakeGato) {
-                    self.AddFakeGatoEntry({ power: value });
+                    self._addFakeGatoEntry({ power: value });
                     self.secondsSincelastChange = moment().unix() - self.lastChange;
                     self.totalConsumptionSincelastChange = self.lastValue * (self.secondsSincelastChange / 3600) / 1000; // kWh
                     self.totalConsumption = self.totalConsumption + self.totalConsumptionSincelastChange; // kWh
@@ -94,7 +94,7 @@ var HBDevoloSwitchMeterDevice = /** @class */ (function (_super) {
         var services = [this.informationService, this.switchService];
         // START FakeGato (eve app)
         if (this.config.fakeGato) {
-            this.AddFakeGatoHistory('energy', false);
+            this._addFakeGatoHistory('energy', false);
             this.CheckFakeGatoHistoryLoaded();
             services = services.concat([this.loggingService]);
         }

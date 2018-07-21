@@ -35,14 +35,14 @@ var HBDevoloDevice = /** @class */ (function () {
         return false;
     };
     // START FakeGato (eve app)
-    HBDevoloDevice.prototype.AddFakeGatoHistory = function (type, disTimer) {
+    HBDevoloDevice.prototype._addFakeGatoHistory = function (type, disTimer) {
         var folder = this.Homebridge.user.storagePath() + '/.homebridge-devolo/fakegato-history';
         shell.mkdir('-p', folder);
         var FakeGatoHistoryService = require('fakegato-history')(this.Homebridge);
         this.log.info("%s (%s / %s) > FakeGato initialized (%s).", this.constructor.name, this.dDevice.id, this.dDevice.name, folder);
         this.loggingService = new FakeGatoHistoryService(type, this, { storage: 'fs', path: folder, disableTimer: disTimer });
     };
-    HBDevoloDevice.prototype.AddFakeGatoEntry = function (data) {
+    HBDevoloDevice.prototype._addFakeGatoEntry = function (data) {
         if ((this.loggingService != undefined) && (data != undefined)) {
             data.time = moment().unix();
             this.loggingService.addEntry(data);
