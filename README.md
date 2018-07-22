@@ -26,7 +26,7 @@ This homebridge plugin allows you to control your Devolo Home Control devices vi
 - Qubino Flush Dimmer
 - Qubino Flush Shutter
 
-![homekit-macos_180713](homekit-macos_180713.png)
+![homekit-macos_180713](screenshots/_homekit-macos_180713.png)
 
 Feel free to submit an issue or pull request to add more.
 
@@ -56,6 +56,7 @@ Feel free to submit an issue or pull request to add more.
 | `sceneWhitelist`  | `['MyScene1', 'MyScene2']` | specify the scenes which you want to use in Apple Home by their exact names. By default no scene is exported. |
 | `deviceBlacklist`  | `['BlockedDevice1', 'BlockedDevice2']` | specify the devices which you DON'T want to use in Apple Home by their exact names. By default all devices are exported. |
 | `deviceDebugging`  | `false` | when set to true homebridge-devolo will output some debugging information and terminate afterwards. This is helpful to get information for new device integrations. |
+| `fakeGato`  | `false` | when set to true homebridge-devolo will save history data for some devices, these will reported in the eve app ([screenshots here](screenshots/)) |
 | `lightBlacklist`  | `['BlockedLightDevice1', 'BlockedLightDevice2']` | specify door or motion devices which you DON'T want to use his light/lux sensor in Apple Home by their exact names. By default all devices are exported. |
 | `tempBlacklist`  | `['BlockedTempDevice1', 'BlockedTempDevice2']` | specify door or motion devices which you DON'T want to use his temperature sensor in Apple Home by their exact names. By default all devices are exported. |
 
