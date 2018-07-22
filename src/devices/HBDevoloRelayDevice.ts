@@ -23,28 +23,6 @@ export class HBDevoloRelayDevice extends HBDevoloDevice {
         self.dDevice.events.on('onStateChanged', function(state: number) {
             self.log.info('%s (%s / %s) > State > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state);
             self.switchService.getCharacteristic(self.Characteristic.On).updateValue(state, null);
-
-            // START FakeGato (eve app)
-            if (self.config.fakeGato) {
-                if (state == 0) {
-                    // OFF
-                    self.secondsSincelastChange = moment().unix() - self.lastChange;
-                    self.totalConsumptionSincelastChange = self.lastValue * (self.secondsSincelastChange / 3600) / 1000; // kWh
-                    self.totalConsumption = self.totalConsumption + self.totalConsumptionSincelastChange; // kWh
-                    self.lastChange = moment().unix();
-
-                    self.switchService.getCharacteristic(self.Characteristic.TotalConsumption).updateValue(self.totalConsumption.toFixed(6), null)
-                    self.log.info("%s (%s / %s) > FakeGato > SwitchState changed to off > lastValue was %s W, totalConsumption set to %s kWh, lastChange set to %s, secondsSincelastChange was %s, totalConsumptionSincelastChange was %s kWh, lastReset is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, self.lastValue, self.totalConsumption.toFixed(6), self.lastChange, self.secondsSincelastChange, self.totalConsumptionSincelastChange.toFixed(6), self.lastReset)
-                    self.loggingService.setExtraPersistedData([{"totalConsumption": self.totalConsumption.toFixed(6), "lastValue": self.lastValue, "lastChange": self.lastChange, "lastReset": self.lastReset}]);
-                } else {
-                    // ON
-                    self.lastChange = moment().unix();
-                    self.log.debug('%s (%s / %s) > FakeGato > SwitchState changed to on > lastChange set to %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, self.lastChange);
-                    self.loggingService.setExtraPersistedData([{"totalConsumption": self.totalConsumption.toFixed(6), "lastValue": self.lastValue, "lastChange": self.lastChange, "lastReset": self.lastReset}]);
-                }
-            }
-            // END FakeGato (eve app)
-
         });
         self.dDevice.events.on('onCurrentValueChanged', function(type: string, value: number) {
             if(type==='energy') {
@@ -55,17 +33,17 @@ export class HBDevoloRelayDevice extends HBDevoloDevice {
                 if (self.config.fakeGato) {
                     self._addFakeGatoEntry({power: value});
                     self.secondsSincelastChange = moment().unix() - self.lastChange;
-                    self.totalConsumptionSincelastChange = self.lastValue * (self.secondsSincelastChange / 3600) / 1000; // kWh
-                    self.totalConsumption = self.totalConsumption + self.totalConsumptionSincelastChange; // kWh
-                    self.lastChange = moment().unix();
+                    self.totalConsumptionSincelastChange = +(self.lastValue * (self.secondsSincelastChange / 3600) / 1000).toFixed(6); // kWh
+                    self.totalConsumption = +(self.totalConsumption + self.totalConsumptionSincelastChange).toFixed(6); // kWh
 
                     self.switchService.getCharacteristic(self.Characteristic.CurrentConsumption).updateValue(value, null)
-                    self.switchService.getCharacteristic(self.Characteristic.TotalConsumption).updateValue(self.totalConsumption.toFixed(6), null)
+                    self.switchService.getCharacteristic(self.Characteristic.TotalConsumption).updateValue(self.totalConsumption, null)
 
-                    self.log.info("%s (%s / %s) > FakeGato > CurrentConsumption changed to %s W > lastValue was %s, totalConsumption set to %s kWh, lastChange set to %s, secondsSincelastChange was %s, totalConsumptionSincelastChange was %s kWh, lastReset is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value, self.lastValue,  self.totalConsumption.toFixed(6), self.lastChange, self.secondsSincelastChange, self.totalConsumptionSincelastChange.toFixed(6), self.lastReset)
+                    self.log.info("%s (%s / %s) > FakeGato > CurrentConsumption changed to %s W > lastValue was %s, totalConsumption set to %s kWh, lastChange set to %s, secondsSincelastChange was %s, totalConsumptionSincelastChange was %s kWh, lastReset is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value, self.lastValue,  self.totalConsumption, self.lastChange, self.secondsSincelastChange, self.totalConsumptionSincelastChange, self.lastReset)
 
+                    self.lastChange = moment().unix();
                     self.lastValue = value;
-                    self.loggingService.setExtraPersistedData([{"totalConsumption": self.totalConsumption.toFixed(6), "lastValue": self.lastValue, "lastChange": self.lastChange, "lastReset": self.lastReset}]);
+                    self.loggingService.setExtraPersistedData([{"totalConsumption": self.totalConsumption, "lastValue": self.lastValue, "lastChange": self.lastChange, "lastReset": self.lastReset}]);
                 }
                 // END FakeGato (eve app)
 
