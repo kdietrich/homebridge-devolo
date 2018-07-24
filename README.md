@@ -48,6 +48,8 @@ Feel free to submit an issue or pull request to add more.
 ]
 ```
 
+Important: If you are using multiple central units with the same myDevolo account, please follow the special install instructions described below.
+
 ## Optional parameters
 
 | Name of parameter | Default value | Notes |
@@ -60,6 +62,16 @@ Feel free to submit an issue or pull request to add more.
 | `lightBlacklist`  | `['BlockedLightDevice1', 'BlockedLightDevice2']` | specify door or motion devices which you DON'T want to use his light/lux sensor in Apple Home by their exact names. By default all devices are exported. |
 | `tempBlacklist`  | `['BlockedTempDevice1', 'BlockedTempDevice2']` | specify door or motion devices which you DON'T want to use his temperature sensor in Apple Home by their exact names. By default all devices are exported. |
 
+
+## Multiple central units
+
+If you have multiple central units with the same myDevolo account you will likely receive the following error message when starting up homebridge: "[Devolo] HBDevoloPlatform > SyntaxError: Unexpected token U in JSON at position 0". Please follow the following instructions to resolve this: Log in to your myDevolo account and click on the pen icon beneath the central unit you want to use. Note the serial number of the central unit. Add the following entry to your config.json (beside host, email, password etc.):
+
+```
+    ...
+    "gateway" : "your_serial_number"
+    ...
+```
 
 ## Credits
 
