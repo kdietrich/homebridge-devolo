@@ -88,6 +88,9 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 
 ## Changes
 
+#### v0.1.11-dev
+- ...
+
 #### v0.1.10 (2018-08-03)
 - add `lightBlacklist` (light/lux sensor) and `tempBlacklist` (temperature sensor) for Devolo Door Sensor / Window Contact and Devolo Motion Sensor
 - add FakeGato History (Eve App) DOOR for Devolo Door Sensor / Window Contact
