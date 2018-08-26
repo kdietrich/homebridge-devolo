@@ -1,5 +1,5 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+var HBFakeGarageDoor_1 = require("./HBFakeGarageDoor");
 var HBDevoloSwitchMeterDevice_1 = require("./devices/HBDevoloSwitchMeterDevice");
 var HBDevoloHumidityDevice_1 = require("./devices/HBDevoloHumidityDevice");
 var HBDevoloDoorWindowDevice_1 = require("./devices/HBDevoloDoorWindowDevice");
@@ -22,7 +22,7 @@ var storage = require('node-persist');
 var Homebridge;
 var Service;
 var Characteristic;
-var HBDevoloCentralUnit = /** @class */ (function () {
+var HBDevoloCentralUnit = (function () {
     function HBDevoloCentralUnit(log, config, dAPI) {
         this.accessoryList = [];
         this.deviceList = [];
@@ -126,6 +126,12 @@ var HBDevoloCentralUnit = /** @class */ (function () {
                     self.accessoryList.push(d);
                     self.deviceList.push(d);
                 }
+            }
+            if (self.config.fakeGaragedoor) {
+                var fakeGarageDoor = new HBFakeGarageDoor_1.HBFakeGarageDoor(self.log, self.dAPI, devices, storage, self.config);
+                fakeGarageDoor.setHomebridge(Homebridge);
+                self.accessoryList.push(fakeGarageDoor);
+                self.deviceList.push(fakeGarageDoor);
             }
             self.dAPI.getRules(function (err, rules) {
                 if (err) {

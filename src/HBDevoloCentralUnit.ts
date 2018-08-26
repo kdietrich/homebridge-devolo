@@ -1,5 +1,6 @@
 import {HBDevoloPlatformConfig,HBIDevoloDevice} from './HBDevoloMisc';
 import {HBDevoloDevice} from './HBDevoloDevice';
+import {HBFakeGarageDoor} from './HBFakeGarageDoor';
 import {HBDevoloSwitchMeterDevice} from './devices/HBDevoloSwitchMeterDevice';
 import {HBDevoloHumidityDevice} from './devices/HBDevoloHumidityDevice';
 import {HBDevoloDoorWindowDevice} from './devices/HBDevoloDoorWindowDevice';
@@ -144,6 +145,13 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
                     self.accessoryList.push(d);
                     self.deviceList.push(d);
                 }
+            }
+
+            if(self.config.fakeGaragedoor) {
+                var fakeGarageDoor = new HBFakeGarageDoor(self.log, self.dAPI, devices, storage, self.config);
+                fakeGarageDoor.setHomebridge(Homebridge);
+                self.accessoryList.push(fakeGarageDoor);
+                self.deviceList.push(fakeGarageDoor);
             }
 
             self.dAPI.getRules(function(err: string, rules?: Rule[]) {

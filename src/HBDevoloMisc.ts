@@ -25,4 +25,6 @@ export class HBDevoloPlatformConfig {
     fakeGato?: boolean = false;
     lightBlacklist?: string[];
     tempBlacklist?: string[];
+    fakeGaragedoor?: boolean = false;
+    fakeGaragedoorParams?;
 }
