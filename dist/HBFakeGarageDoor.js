@@ -42,9 +42,9 @@ var HBFakeGarageDoor = /** @class */ (function () {
                 // GARAGEDOOR = OPEN || OPENING || CLOSING || STOPPED > CLOSE
                 self.garageDoorOpenerService.getCharacteristic(self.Characteristic.TargetDoorState).updateValue(self.Characteristic.TargetDoorState.CLOSED, null);
                 self.log.debug('%s (%s / %s) > onStateChanged > TargetDoorState was %s, set to %s', self.constructor.name, self.dDoorDevice.id, self.dDoorDevice.name, self.mappingDoorState(self.garageDoorLastTargetDoorState), self.mappingDoorState(self.Characteristic.TargetDoorState.CLOSED));
-                self.garageDoorOpenerService.getCharacteristic(self.Characteristic.CurrentDoorState).updateValue(self.Characteristic.CurrentDoorState.CLOSED, null);
-                self.log.debug('%s (%s / %s) > onStateChanged > CurrentDoorState was %s, set to %s', self.constructor.name, self.dDoorDevice.id, self.dDoorDevice.name, self.mappingDoorState(self.garageDoorLastTargetDoorState), self.mappingDoorState(self.Characteristic.CurrentDoorState.CLOSED));
                 self.garageDoorLastTargetDoorState = self.Characteristic.TargetDoorState.CLOSED;
+                self.garageDoorOpenerService.getCharacteristic(self.Characteristic.CurrentDoorState).updateValue(self.Characteristic.CurrentDoorState.CLOSED, null);
+                self.log.debug('%s (%s / %s) > onStateChanged > CurrentDoorState was %s, set to %s', self.constructor.name, self.dDoorDevice.id, self.dDoorDevice.name, self.mappingDoorState(self.garageDoorLastCurrentDoorState), self.mappingDoorState(self.Characteristic.CurrentDoorState.CLOSED));
                 self.garageDoorLastCurrentDoorState = self.Characteristic.CurrentDoorState.CLOSED;
             }
         });
@@ -97,9 +97,10 @@ var HBFakeGarageDoor = /** @class */ (function () {
             callback();
         });
         if (this.garageDoorLastCurrentDoorState === this.Characteristic.CurrentDoorState.CLOSED) {
-            // GARAGEDOOR = CLOSED > OPEN
+            // GARAGEDOOR = CLOSED > OPENING
             //// onStateChanged set TargetDoorState to OPEN, CurrentDoorState to OPENING and later CurrentDoorState to OPEN
-            /* this.garageDoorOpenerService.getCharacteristic(this.Characteristic.TargetDoorState).updateValue(this.Characteristic.TargetDoorState.OPEN, null);
+            /*
+            this.garageDoorOpenerService.getCharacteristic(this.Characteristic.TargetDoorState).updateValue(this.Characteristic.TargetDoorState.OPEN, null);
             this.log.debug('%s (%s / %s) > setTargetDoorState > TargetDoorState was %s, set to %s', (this.constructor as any).name, this.dDoorDevice.id, this.dDoorDevice.name, this.mappingDoorState(this.garageDoorLastTargetDoorState), this.mappingDoorState(this.Characteristic.TargetDoorState.OPEN), this.config.fakeGaragedoorParams.openTime);
             this.garageDoorLastTargetDoorState = this.Characteristic.TargetDoorState.OPEN;
 
@@ -119,7 +120,7 @@ var HBFakeGarageDoor = /** @class */ (function () {
             */
         }
         else if (this.garageDoorLastCurrentDoorState === this.Characteristic.CurrentDoorState.OPEN) {
-            // GARAGEDOOR = OPEN > CLOSED
+            // GARAGEDOOR = OPEN > CLOSING
             this.garageDoorOpenerService.getCharacteristic(this.Characteristic.TargetDoorState).updateValue(this.Characteristic.TargetDoorState.CLOSED, null);
             this.log.debug('%s (%s / %s) > setTargetDoorState > TargetDoorState was %s, set to %s', this.constructor.name, this.dDoorDevice.id, this.dDoorDevice.name, this.mappingDoorState(this.garageDoorLastTargetDoorState), this.mappingDoorState(this.Characteristic.TargetDoorState.CLOSED));
             this.garageDoorLastTargetDoorState = this.Characteristic.TargetDoorState.CLOSED;
@@ -137,7 +138,7 @@ var HBFakeGarageDoor = /** @class */ (function () {
         else {
             // GARAGEDOOR = STOPPED > OPENING/CLOSING
             if (this.garageDoorLastTargetDoorState === this.Characteristic.TargetDoorState.CLOSED) {
-                // GARAGEDOOR = TARGET CLOSED
+                // GARAGEDOOR = TARGET CLOSED > OPENING
                 this.garageDoorOpenerService.getCharacteristic(this.Characteristic.TargetDoorState).updateValue(this.Characteristic.TargetDoorState.OPEN, null);
                 this.log.debug('%s (%s / %s) > setTargetDoorState > TargetDoorState was %s, set to %s', this.constructor.name, this.dDoorDevice.id, this.dDoorDevice.name, this.mappingDoorState(this.garageDoorLastTargetDoorState), this.mappingDoorState(this.Characteristic.TargetDoorState.OPEN));
                 this.garageDoorLastTargetDoorState = this.Characteristic.TargetDoorState.OPEN;
@@ -155,7 +156,7 @@ var HBFakeGarageDoor = /** @class */ (function () {
                 }, self.config.fakeGaragedoorParams.openTime * 1000);
             }
             else {
-                // GARAGEDOOR = TARGET OPEN
+                // GARAGEDOOR = TARGET OPEN > CLOSING
                 this.garageDoorOpenerService.getCharacteristic(this.Characteristic.TargetDoorState).updateValue(this.Characteristic.TargetDoorState.CLOSED, null);
                 this.log.debug('%s (%s / %s) > setTargetDoorState > TargetDoorState was %s, set to %s', this.constructor.name, this.dDoorDevice.id, this.dDoorDevice.name, this.mappingDoorState(this.garageDoorLastTargetDoorState), this.mappingDoorState(this.Characteristic.TargetDoorState.CLOSED));
                 this.garageDoorLastTargetDoorState = this.Characteristic.TargetDoorState.CLOSED;

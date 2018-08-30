@@ -58,7 +58,7 @@ Important: If you are using multiple central units with the same myDevolo accoun
 | `sceneWhitelist`  | `['MyScene1', 'MyScene2']` | specify the scenes which you want to use in Apple Home by their exact names. By default no scene is exported. |
 | `deviceBlacklist`  | `['BlockedDevice1', 'BlockedDevice2']` | specify the devices which you DON'T want to use in Apple Home by their exact names. By default all devices are exported. |
 | `deviceDebugging`  | `false` | when set to true homebridge-devolo will output some debugging information and terminate afterwards. This is helpful to get information for new device integrations. |
-| `fakeGato`  | `false` | when set to true homebridge-devolo will save history data for some devices, these will reported in the eve app ([screenshots here](screenshots/)) |
+| `fakeGato`  | `false` | when set to true homebridge-devolo will save history data for some devices, these will reported in the eve app ([screenshots here](pictures/fakegato/)) |
 | `lightBlacklist`  | `['BlockedLightDevice1', 'BlockedLightDevice2']` | specify door or motion devices which you DON'T want to use his light/lux sensor in Apple Home by their exact names. By default all devices are exported. |
 | `tempBlacklist`  | `['BlockedTempDevice1', 'BlockedTempDevice2']` | specify door or motion devices which you DON'T want to use his temperature sensor in Apple Home by their exact names. By default all devices are exported. |
 | `fakeGaragedoor`  | `false` | when set to true homebridge-devolo will emulate a full compatible garage door (more info [here](#garage-door)) |
@@ -75,13 +75,7 @@ If you have multiple central units with the same myDevolo account you will likel
 
 ## Garage Door
 
-You need a devolo door/window contact (garage door) and a qubino flush 1d (garage door motor) - [pictures & screenshots comming soon](pictures/garagedoor/).
-
-| Name of parameter | Notes |
-|---|---|
-| `openTime`  | specify the time until the garage door is completely open. |
-| `doorDevice`  | specify the door contact by their exact names in myDevolo. |
-| `relayDevice`  | specify the relay device by their exact names in myDevolo. |
+You need a devolo door/window contact (garage door) and a qubino flush 1d (garage door motor) - [pictures & screenshots](pictures/garagedoor/). Addition you still need a myDevolo rule: If the qubino flush 1d turn on for 1 second, then turn off.
 
 Add the following entry to your config.json
 
@@ -94,6 +88,11 @@ Add the following entry to your config.json
         "relayDevice": "garage door motor"
 ```
 
+| Name of parameter | Notes |
+|---|---|
+| `openTime`  | specify the time until the garage door is completely open. |
+| `doorDevice`  | specify the door contact by their exact names in myDevolo. |
+| `relayDevice`  | specify the relay device by their exact names in myDevolo. |
 
 ## Credits
 
