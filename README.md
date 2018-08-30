@@ -26,7 +26,7 @@ This homebridge plugin allows you to control your Devolo Home Control devices vi
 - Qubino Flush Dimmer
 - Qubino Flush Shutter
 
-![homekit-macos_180713](screenshots/_homekit-macos_180713.png)
+![homekit-macos_180713](pictures/_homekit-macos_180713.png)
 
 Feel free to submit an issue or pull request to add more.
 
