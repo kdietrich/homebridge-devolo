@@ -1,0 +1,31 @@
+{
+    "bridge": {
+        "name": "Homebridge",
+        "username": "CC:22:3D:E3:CE:30",
+        "port": 51826,
+        "pin": "123-45-678"
+    },
+
+    "accessories": [],
+
+    "platforms": [{
+        "platform": "Devolo",
+        "name": "Devolo",
+        "host": "192.168.1.45",
+        "email": "maxmustermann6426@googlemail.com",
+        "password": "devolo4life",
+        "uuid": "12345678-ABCD-1234-9876-1234567890AB",
+        "gateway": "1234567890987654",
+        "passkey": "abcdef1234567890abcdef1234567890",
+        "deviceBlacklist": ["snowstar"],
+        "lightBlacklist": ["motion Bathroom", "door terrace door"],
+        "tempBlacklist": ["door terrace door"],
+        "fakeGato": true,
+        "fakeGaragedoor": true,
+        "fakeGaragedoorParams": {
+            "openTime": 15,
+            "doorDevice": "garage door contact",
+            "relayDevice": "garage door motor"
+        }
+    }]
+}

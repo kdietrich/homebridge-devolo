@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var HBFakeGarageDoor_1 = require("./HBFakeGarageDoor");
 var HBDevoloSwitchMeterDevice_1 = require("./devices/HBDevoloSwitchMeterDevice");
 var HBDevoloHumidityDevice_1 = require("./devices/HBDevoloHumidityDevice");
@@ -22,7 +23,7 @@ var storage = require('node-persist');
 var Homebridge;
 var Service;
 var Characteristic;
-var HBDevoloCentralUnit = (function () {
+var HBDevoloCentralUnit = /** @class */ (function () {
     function HBDevoloCentralUnit(log, config, dAPI) {
         this.accessoryList = [];
         this.deviceList = [];

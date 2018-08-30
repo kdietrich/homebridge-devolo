@@ -61,7 +61,7 @@ Important: If you are using multiple central units with the same myDevolo accoun
 | `fakeGato`  | `false` | when set to true homebridge-devolo will save history data for some devices, these will reported in the eve app ([screenshots here](screenshots/)) |
 | `lightBlacklist`  | `['BlockedLightDevice1', 'BlockedLightDevice2']` | specify door or motion devices which you DON'T want to use his light/lux sensor in Apple Home by their exact names. By default all devices are exported. |
 | `tempBlacklist`  | `['BlockedTempDevice1', 'BlockedTempDevice2']` | specify door or motion devices which you DON'T want to use his temperature sensor in Apple Home by their exact names. By default all devices are exported. |
-
+| `fakeGaragedoor`  | `false` | when set to true homebridge-devolo will emulate a full compatible garage door (more info [here](#garage-door)) |
 
 ## Multiple central units
 
@@ -72,6 +72,28 @@ If you have multiple central units with the same myDevolo account you will likel
     "gateway" : "your_serial_number"
     ...
 ```
+
+## Garage Door
+
+You need a devolo door/window contact (garage door) and a qubino flush 1d (garage door motor) - [pictures & screenshots comming soon](pictures/garagedoor/).
+
+| Name of parameter | Notes |
+|---|---|---|
+| `openTime`  | specify the time until the garage door is completely open. |
+| `doorDevice`  | specify the door contact by their exact names in myDevolo. |
+| `relayDevice`  | specify the relay device by their exact names in myDevolo. |
+
+Add the following entry to your config.json
+
+```
+    ...
+    "fakeGaragedoor": true,
+    "fakeGaragedoorParams": {
+        "openTime": 15,
+        "doorDevice": "garage door contact",
+        "relayDevice": "garage door motor"
+```
+
 
 ## Credits
 
@@ -89,7 +111,7 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 ## Changes
 
 #### v0.1.11-dev
-- ...
+- add a full compatible garage door with one Devolo Door Sensor / Window Contact and one Qubino Flush 1D
 
 #### v0.1.10 (2018-08-03)
 - add `lightBlacklist` (light/lux sensor) and `tempBlacklist` (temperature sensor) for Devolo Door Sensor / Window Contact and Devolo Motion Sensor
