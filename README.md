@@ -78,7 +78,7 @@ If you have multiple central units with the same myDevolo account you will likel
 You need a devolo door/window contact (garage door) and a qubino flush 1d (garage door motor) - [pictures & screenshots comming soon](pictures/garagedoor/).
 
 | Name of parameter | Notes |
-|---|---|---|
+|---|---|
 | `openTime`  | specify the time until the garage door is completely open. |
 | `doorDevice`  | specify the door contact by their exact names in myDevolo. |
 | `relayDevice`  | specify the relay device by their exact names in myDevolo. |
