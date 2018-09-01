@@ -75,7 +75,7 @@ If you have multiple central units with the same myDevolo account you will likel
 
 ## Garage Door
 
-You need a devolo door/window contact (garage door) and a qubino flush 1d (garage door motor) - [pictures & screenshots](pictures/garagedoor/). Addition you still need a myDevolo rule: If the qubino flush 1d turn on for 1 second, then turn off.
+You need a devolo door/window contact (garage door) and a qubino flush 1d (garage door motor) - [pictures & screenshots](pictures/garagedoor/). ~~Addition you still need a myDevolo rule: If the qubino flush 1d turn on for 1 second, then turn off.~~
 
 Add the following entry to your config.json
 
@@ -86,6 +86,7 @@ Add the following entry to your config.json
         "openTime": 15,
         "doorDevice": "garage door contact",
         "relayDevice": "garage door motor"
+    ...
 ```
 
 | Name of parameter | Notes |

@@ -89,12 +89,27 @@ var HBFakeGarageDoor = /** @class */ (function () {
     };
     HBFakeGarageDoor.prototype.setTargetDoorState = function (value, callback) {
         this.log.debug('%s (%s / %s) > setTargetDoorState to %s', this.constructor.name, this.dRelayDevice.id, this.dRelayDevice.name, value);
-        this.dRelayDevice.turnOn(function (err) {
+        /*
+        this.dRelayDevice.turnOn(function(err) {
+            if(err) {
+                callback(err); return;
+            }
+            callback();
+        });
+        */
+        var self = this;
+        self.dRelayDevice.turnOn(function (err) {
             if (err) {
                 callback(err);
                 return;
             }
-            callback();
+            self.dRelayDevice.turnOff(function (err) {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+                callback();
+            });
         });
         if (this.garageDoorLastCurrentDoorState === this.Characteristic.CurrentDoorState.CLOSED) {
             // GARAGEDOOR = CLOSED > OPENING

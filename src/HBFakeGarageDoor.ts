@@ -132,11 +132,26 @@ export class HBFakeGarageDoor implements HBIDevoloDevice {
     setTargetDoorState(value, callback) {
         this.log.debug('%s (%s / %s) > setTargetDoorState to %s', (this.constructor as any).name, this.dRelayDevice.id, this.dRelayDevice.name, value);
 
+        /*
         this.dRelayDevice.turnOn(function(err) {
             if(err) {
                 callback(err); return;
             }
             callback();
+        });
+        */
+
+        var self = this;
+        self.dRelayDevice.turnOn(function(err) {
+            if(err) {
+                callback(err); return;
+            }
+            self.dRelayDevice.turnOff(function(err) {
+                if(err) {
+                    callback(err); return;
+                }
+                callback();
+            });
         });
 
         if(this.garageDoorLastCurrentDoorState === this.Characteristic.CurrentDoorState.CLOSED) {
