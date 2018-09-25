@@ -27,7 +27,6 @@ export class HBDevoloSirenDevice extends HBDevoloDevice {
             .setCharacteristic(this.Characteristic.Model, 'Siren')
             .setCharacteristic(this.Characteristic.SerialNumber, this.dDevice.id.replace('/','-'))
 
-
         this.securitySystemService = new this.Service.SecuritySystem();
         this.securitySystemService.getCharacteristic(this.Characteristic.SecuritySystemCurrentState)
                      .on('get', this.getSecuritySystemCurrentState.bind(this))

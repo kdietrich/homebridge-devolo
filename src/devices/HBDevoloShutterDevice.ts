@@ -69,7 +69,6 @@ export class HBDevoloShutterDevice extends HBDevoloDevice {
     }
 
     getValue(callback) {
-
         this.log.debug('%s (%s / %s) > getValue is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.dDevice.getValue('blinds'));
         return callback(null, this.dDevice.getValue('blinds'));
     }

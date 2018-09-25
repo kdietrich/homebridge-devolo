@@ -111,6 +111,10 @@ export class HBFakeGarageDoor implements HBIDevoloDevice {
         this.garageDoorLastCurrentDoorState = (this.dDoorDevice.getState() ? 0 : 1);
         this.garageDoorLastTargetDoorState = (this.dDoorDevice.getState() ? 0 : 1);
 
+        // No notification when homebridge starts/restart, because default state 0 is open
+        this.garageDoorOpenerService.getCharacteristic(this.Characteristic.CurrentDoorState).updateValue(this.garageDoorLastCurrentDoorState, null);
+        this.garageDoorOpenerService.getCharacteristic(this.Characteristic.TargetDoorState).updateValue(this.garageDoorLastTargetDoorState, null);
+
         this.dDoorDevice.listen();
         this.dRelayDevice.listen();
 
