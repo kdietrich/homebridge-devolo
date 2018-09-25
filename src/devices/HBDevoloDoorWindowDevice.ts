@@ -1,4 +1,4 @@
-import {HBDevoloDevice} from '../HBDevoloDevice';
+import { HBDevoloDevice } from '../HBDevoloDevice';
 import { Devolo } from 'node-devolo/dist/Devolo';
 import { Device } from 'node-devolo/dist/DevoloDevice';
 
@@ -110,7 +110,6 @@ export class HBDevoloDoorWindowDevice extends HBDevoloDevice {
         // START FakeGato (eve app)
         if (this.config.fakeGato) {
             this._addFakeGatoHistory('door',false);
-            this.CheckFakeGatoHistoryLoaded();
             services = services.concat([this.loggingService]);
         }
         // END FakeGato (eve app)
@@ -192,41 +191,39 @@ export class HBDevoloDoorWindowDevice extends HBDevoloDevice {
         return callback();
     }
 
-    CheckFakeGatoHistoryLoaded() {
-        if(this.loggingService.isHistoryLoaded() == false) {
-              setTimeout(this.CheckFakeGatoHistoryLoaded.bind(this), 100);
+    onAfterFakeGatoHistoryLoaded() {
+        this.contactSensorService.addCharacteristic(this.Characteristic.LastActivation)
+            .on('get', this.getLastActivation.bind(this));
+        this.contactSensorService.addCharacteristic(this.Characteristic.TimesOpened)
+            .on('get', this.gettimesOpened.bind(this));
+        this.contactSensorService.addCharacteristic(this.Characteristic.OpenDuration)
+            .on('get', this.getOpenDuration.bind(this));
+        this.contactSensorService.addCharacteristic(this.Characteristic.ClosedDuration)
+            .on('get', this.getClosedDuration.bind(this));
+        this.loggingService.addCharacteristic(this.Characteristic.ResetTotal)
+            .on('get', this.getReset.bind(this))
+            .on('set', this.setReset.bind(this));
+
+        if (this.loggingService.getExtraPersistedData() == undefined) {
+            this.lastActivation = 0;
+            this.lastReset = moment().unix() - moment('2001-01-01T00:00:00Z').unix();
+            this.lastChange = moment().unix();
+            this.timesOpened = 0;
+            this.timeOpen = 0;
+            this.timeClose = 0;
+
+            this.loggingService.setExtraPersistedData([{"lastActivation": this.lastActivation, "lastReset": this.lastReset, "lastChange": this.lastChange, "timesOpened": this.timesOpened, "timeOpen": this.timeOpen, "timeClose": this.timeClose}]);
+
         } else {
-            this.contactSensorService.addCharacteristic(this.Characteristic.LastActivation)
-                .on('get', this.getLastActivation.bind(this));
-            this.contactSensorService.addCharacteristic(this.Characteristic.TimesOpened)
-                .on('get', this.gettimesOpened.bind(this));
-            this.contactSensorService.addCharacteristic(this.Characteristic.OpenDuration)
-                .on('get', this.getOpenDuration.bind(this));
-            this.contactSensorService.addCharacteristic(this.Characteristic.ClosedDuration)
-                .on('get', this.getClosedDuration.bind(this));
-            this.loggingService.addCharacteristic(this.Characteristic.ResetTotal)
-                .on('get', this.getReset.bind(this))
-                .on('set', this.setReset.bind(this));
-
-            if (this.loggingService.getExtraPersistedData() == undefined) {
-                this.lastActivation = 0;
-                this.lastReset = moment().unix() - moment('2001-01-01T00:00:00Z').unix();
-                this.lastChange = moment().unix();
-                this.timesOpened = 0;
-                this.timeOpen = 0;
-                this.timeClose = 0;
-
-                this.loggingService.setExtraPersistedData([{"lastActivation": this.lastActivation, "lastReset": this.lastReset, "lastChange": this.lastChange, "timesOpened": this.timesOpened, "timeOpen": this.timeOpen, "timeClose": this.timeClose}]);
-
-            } else {
-                this.lastActivation = this.loggingService.getExtraPersistedData()[0].lastActivation;
-                this.lastReset = this.loggingService.getExtraPersistedData()[0].lastReset;
-                this.lastChange = this.loggingService.getExtraPersistedData()[0].lastChange;
-                this.timesOpened = this.loggingService.getExtraPersistedData()[0].timesOpened;
-                this.timeOpen = this.loggingService.getExtraPersistedData()[0].timeOpen;
-                this.timeClose = this.loggingService.getExtraPersistedData()[0].timeClose;
-            }
+            this.lastActivation = this.loggingService.getExtraPersistedData()[0].lastActivation;
+            this.lastReset = this.loggingService.getExtraPersistedData()[0].lastReset;
+            this.lastChange = this.loggingService.getExtraPersistedData()[0].lastChange;
+            this.timesOpened = this.loggingService.getExtraPersistedData()[0].timesOpened;
+            this.timeOpen = this.loggingService.getExtraPersistedData()[0].timeOpen;
+            this.timeClose = this.loggingService.getExtraPersistedData()[0].timeClose;
         }
+
+        this.log.debug("%s (%s / %s) > FakeGato Characteristic loaded.", (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
     }
     // END FakeGato (eve app)
 }

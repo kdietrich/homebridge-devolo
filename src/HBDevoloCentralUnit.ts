@@ -12,7 +12,7 @@ import {HBDevoloRoomThermostatDevice} from './devices/HBDevoloRoomThermostatDevi
 import {HBDevoloWallSwitchDevice} from './devices/HBDevoloWallSwitchDevice';
 import {HBDevoloRemoteControlDevice} from './devices/HBDevoloRemoteControlDevice';
 import {HBDevoloSirenDevice} from './devices/HBDevoloSirenDevice';
-import {HBQubinoShutterDevice} from './devices/HBQubinoShutterDevice';
+import {HBDevoloShutterDevice} from './devices/HBDevoloShutterDevice';
 import {HBDevoloRelayDevice} from './devices/HBDevoloRelayDevice';
 import {HBDevoloDimmerDevice} from './devices/HBDevoloDimmerDevice';
 import {HBQubinoRelay2Device} from './devices/HBQubinoRelay2Device';
@@ -126,7 +126,7 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
                     d = new HBDevoloSirenDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else if((devices[i].constructor as any).name == (ShutterDevice as any).name) {
-                    d = new HBQubinoShutterDevice(self.log, self.dAPI, devices[i], storage, self.config);
+                    d = new HBDevoloShutterDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else if((devices[i].constructor as any).name == (RelayDevice as any).name) {
                     d = new HBDevoloRelayDevice(self.log, self.dAPI, devices[i], storage, self.config);

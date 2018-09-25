@@ -12,7 +12,7 @@ var HBDevoloRoomThermostatDevice_1 = require("./devices/HBDevoloRoomThermostatDe
 var HBDevoloWallSwitchDevice_1 = require("./devices/HBDevoloWallSwitchDevice");
 var HBDevoloRemoteControlDevice_1 = require("./devices/HBDevoloRemoteControlDevice");
 var HBDevoloSirenDevice_1 = require("./devices/HBDevoloSirenDevice");
-var HBQubinoShutterDevice_1 = require("./devices/HBQubinoShutterDevice");
+var HBDevoloShutterDevice_1 = require("./devices/HBDevoloShutterDevice");
 var HBDevoloRelayDevice_1 = require("./devices/HBDevoloRelayDevice");
 var HBDevoloDimmerDevice_1 = require("./devices/HBDevoloDimmerDevice");
 var HBQubinoRelay2Device_1 = require("./devices/HBQubinoRelay2Device");
@@ -108,7 +108,7 @@ var HBDevoloCentralUnit = /** @class */ (function () {
                     d = new HBDevoloSirenDevice_1.HBDevoloSirenDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.ShutterDevice.name) {
-                    d = new HBQubinoShutterDevice_1.HBQubinoShutterDevice(self.log, self.dAPI, devices[i], storage, self.config);
+                    d = new HBDevoloShutterDevice_1.HBDevoloShutterDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.RelayDevice.name) {
                     d = new HBDevoloRelayDevice_1.HBDevoloRelayDevice(self.log, self.dAPI, devices[i], storage, self.config);

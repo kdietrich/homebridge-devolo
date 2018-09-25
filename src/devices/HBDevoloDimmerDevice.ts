@@ -99,7 +99,6 @@ export class HBDevoloDimmerDevice extends HBDevoloDevice {
         // START FakeGato (eve app)
         if (this.config.fakeGato) {
             this._addFakeGatoHistory('energy',false);
-            this.CheckFakeGatoHistoryLoaded();
             services = services.concat([this.loggingService]);
         }
         // END FakeGato (eve app)
@@ -199,38 +198,34 @@ export class HBDevoloDimmerDevice extends HBDevoloDevice {
         return callback();
     }
 
-    CheckFakeGatoHistoryLoaded() {
-        if(this.loggingService.isHistoryLoaded() == false) {
-              setTimeout(this.CheckFakeGatoHistoryLoaded.bind(this), 100);
+    onAfterFakeGatoHistoryLoaded() {
+        this.switchService.addCharacteristic(this.Characteristic.CurrentConsumption)
+            .on('get', this.getCurrentConsumption.bind(this));
+        this.switchService.addCharacteristic(this.Characteristic.TotalConsumption)
+            .on('get', this.getTotalConsumption.bind(this));
+        this.loggingService.addCharacteristic(this.Characteristic.ResetTotal)
+            .on('get', this.getReset.bind(this))
+            .on('set', this.setReset.bind(this));
+
+        if (this.loggingService.getExtraPersistedData() == undefined) {
+            this.totalConsumption = 0;
+            this.lastValue = 0;
+            this.lastChange = moment().unix();
+            this.totalConsumptionSincelastChange = 0;
+            this.secondsSincelastChange = 0;
+            this.lastReset = moment().unix() - moment('2001-01-01T00:00:00Z').unix();
+
+            this.loggingService.setExtraPersistedData([{"totalConsumption": this.totalConsumption, "lastValue": this.lastValue, "lastChange": this.lastChange, "lastReset": this.lastReset}]);
         } else {
-            this.switchService.addCharacteristic(this.Characteristic.CurrentConsumption)
-                .on('get', this.getCurrentConsumption.bind(this));
-            this.switchService.addCharacteristic(this.Characteristic.TotalConsumption)
-                .on('get', this.getTotalConsumption.bind(this));
-            this.loggingService.addCharacteristic(this.Characteristic.ResetTotal)
-                .on('get', this.getReset.bind(this))
-                .on('set', this.setReset.bind(this));
-
-            if (this.loggingService.getExtraPersistedData() == undefined) {
-                this.totalConsumption = 0;
-                this.lastValue = 0;
-                this.lastChange = moment().unix();
-                this.totalConsumptionSincelastChange = 0;
-                this.secondsSincelastChange = 0;
-                this.lastReset = moment().unix() - moment('2001-01-01T00:00:00Z').unix();
-
-                this.loggingService.setExtraPersistedData([{"totalConsumption": this.totalConsumption, "lastValue": this.lastValue, "lastChange": this.lastChange, "lastReset": this.lastReset}]);
-
-            } else {
-                this.totalConsumption = this.loggingService.getExtraPersistedData()[0].totalConsumption;
-                this.lastValue =  this.loggingService.getExtraPersistedData()[0].lastValue;
-                this.lastChange = this.loggingService.getExtraPersistedData()[0].lastChange;
-                this.totalConsumptionSincelastChange = 0;
-                this.secondsSincelastChange = 0;
-                this.lastReset = this.loggingService.getExtraPersistedData()[0].lastReset;
-
-            }
+            this.totalConsumption = this.loggingService.getExtraPersistedData()[0].totalConsumption;
+            this.lastValue =  this.loggingService.getExtraPersistedData()[0].lastValue;
+            this.lastChange = this.loggingService.getExtraPersistedData()[0].lastChange;
+            this.totalConsumptionSincelastChange = 0;
+            this.secondsSincelastChange = 0;
+            this.lastReset = this.loggingService.getExtraPersistedData()[0].lastReset;
         }
+
+        this.log.debug("%s (%s / %s) > FakeGato Characteristic loaded.", (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
     }
     // END FakeGato (eve app)
 }

@@ -60,6 +60,18 @@ export abstract class HBDevoloDevice implements HBIDevoloDevice {
     }
 
     // START FakeGato (eve app)
+    protected onAfterFakeGatoHistoryLoaded() { }
+
+    protected fakeGatoHistoryLoaded() {
+        if(this.loggingService.isHistoryLoaded() == false) {
+              this.log.debug("%s (%s / %s) > Wait of FakeGato history loaded.", (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
+              setTimeout(this.fakeGatoHistoryLoaded.bind(this), 100);
+        } else {
+            this.log.debug("%s (%s / %s) > FakeGato history loaded.", (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
+            this.onAfterFakeGatoHistoryLoaded();
+        }
+    }
+
     protected _addFakeGatoHistory(type: String, disTimer: boolean) {
         var folder = this.Homebridge.user.storagePath() + '/.homebridge-devolo/fakegato-history';
         shell.mkdir('-p', folder);
@@ -68,6 +80,8 @@ export abstract class HBDevoloDevice implements HBIDevoloDevice {
 
         this.log.info("%s (%s / %s) > FakeGato initialized (%s).", (this.constructor as any).name, this.dDevice.id, this.dDevice.name, folder);
         this.loggingService = new FakeGatoHistoryService(type, this, {storage: 'fs', path: folder, disableTimer: disTimer});
+
+        this.fakeGatoHistoryLoaded();
     }
 
     protected _addFakeGatoEntry(data) {

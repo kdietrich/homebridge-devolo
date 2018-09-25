@@ -35,12 +35,24 @@ var HBDevoloDevice = /** @class */ (function () {
         return false;
     };
     // START FakeGato (eve app)
+    HBDevoloDevice.prototype.onAfterFakeGatoHistoryLoaded = function () { };
+    HBDevoloDevice.prototype.fakeGatoHistoryLoaded = function () {
+        if (this.loggingService.isHistoryLoaded() == false) {
+            this.log.debug("%s (%s / %s) > Wait of FakeGato history loaded.", this.constructor.name, this.dDevice.id, this.dDevice.name);
+            setTimeout(this.fakeGatoHistoryLoaded.bind(this), 100);
+        }
+        else {
+            this.log.debug("%s (%s / %s) > FakeGato history loaded.", this.constructor.name, this.dDevice.id, this.dDevice.name);
+            this.onAfterFakeGatoHistoryLoaded();
+        }
+    };
     HBDevoloDevice.prototype._addFakeGatoHistory = function (type, disTimer) {
         var folder = this.Homebridge.user.storagePath() + '/.homebridge-devolo/fakegato-history';
         shell.mkdir('-p', folder);
         var FakeGatoHistoryService = require('fakegato-history')(this.Homebridge);
         this.log.info("%s (%s / %s) > FakeGato initialized (%s).", this.constructor.name, this.dDevice.id, this.dDevice.name, folder);
         this.loggingService = new FakeGatoHistoryService(type, this, { storage: 'fs', path: folder, disableTimer: disTimer });
+        this.fakeGatoHistoryLoaded();
     };
     HBDevoloDevice.prototype._addFakeGatoEntry = function (data) {
         if ((this.loggingService != undefined) && (data != undefined)) {

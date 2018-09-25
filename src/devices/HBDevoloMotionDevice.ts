@@ -1,4 +1,4 @@
-import {HBDevoloDevice} from '../HBDevoloDevice';
+import { HBDevoloDevice } from '../HBDevoloDevice';
 import { Devolo } from 'node-devolo/dist/Devolo';
 import { Device } from 'node-devolo/dist/DevoloDevice';
 
@@ -99,7 +99,6 @@ export class HBDevoloMotionDevice extends HBDevoloDevice {
         // START FakeGato (eve app)
         if (this.config.fakeGato) {
             this._addFakeGatoHistory('motion',false);
-            this.CheckFakeGatoHistoryLoaded();
             services = services.concat([this.loggingService]);
         }
         // END FakeGato (eve app)
@@ -144,21 +143,19 @@ export class HBDevoloMotionDevice extends HBDevoloDevice {
         return callback(null, this.lastActivation);
     }
 
-    CheckFakeGatoHistoryLoaded() {
-        if(this.loggingService.isHistoryLoaded() == false) {
-              setTimeout(this.CheckFakeGatoHistoryLoaded.bind(this), 100);
+    onAfterFakeGatoHistoryLoaded() {
+        this.motionSensorService.addCharacteristic(this.Characteristic.LastActivation)
+            .on('get', this.getLastActivation.bind(this));
+
+        if (this.loggingService.getExtraPersistedData() == undefined) {
+            this.lastActivation = 0;
+            this.loggingService.setExtraPersistedData([{"lastActivation": this.lastActivation}]);
+
         } else {
-            this.motionSensorService.addCharacteristic(this.Characteristic.LastActivation)
-                .on('get', this.getLastActivation.bind(this));
-
-            if (this.loggingService.getExtraPersistedData() == undefined) {
-                this.lastActivation = 0;
-                this.loggingService.setExtraPersistedData([{"lastActivation": this.lastActivation}]);
-
-            } else {
-                this.lastActivation = this.loggingService.getExtraPersistedData()[0].lastActivation;
-            }
+            this.lastActivation = this.loggingService.getExtraPersistedData()[0].lastActivation;
         }
+
+        this.log.debug("%s (%s / %s) > FakeGato Characteristic loaded.", (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
     }
     // END FakeGato (eve app)
 }

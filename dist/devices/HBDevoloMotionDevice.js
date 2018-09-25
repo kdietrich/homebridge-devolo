@@ -88,7 +88,6 @@ var HBDevoloMotionDevice = /** @class */ (function (_super) {
         // START FakeGato (eve app)
         if (this.config.fakeGato) {
             this._addFakeGatoHistory('motion', false);
-            this.CheckFakeGatoHistoryLoaded();
             services = services.concat([this.loggingService]);
         }
         // END FakeGato (eve app)
@@ -124,21 +123,17 @@ var HBDevoloMotionDevice = /** @class */ (function (_super) {
         this.motionSensorService.getCharacteristic(this.Characteristic.LastActivation).updateValue(this.lastActivation, null);
         return callback(null, this.lastActivation);
     };
-    HBDevoloMotionDevice.prototype.CheckFakeGatoHistoryLoaded = function () {
-        if (this.loggingService.isHistoryLoaded() == false) {
-            setTimeout(this.CheckFakeGatoHistoryLoaded.bind(this), 100);
+    HBDevoloMotionDevice.prototype.onAfterFakeGatoHistoryLoaded = function () {
+        this.motionSensorService.addCharacteristic(this.Characteristic.LastActivation)
+            .on('get', this.getLastActivation.bind(this));
+        if (this.loggingService.getExtraPersistedData() == undefined) {
+            this.lastActivation = 0;
+            this.loggingService.setExtraPersistedData([{ "lastActivation": this.lastActivation }]);
         }
         else {
-            this.motionSensorService.addCharacteristic(this.Characteristic.LastActivation)
-                .on('get', this.getLastActivation.bind(this));
-            if (this.loggingService.getExtraPersistedData() == undefined) {
-                this.lastActivation = 0;
-                this.loggingService.setExtraPersistedData([{ "lastActivation": this.lastActivation }]);
-            }
-            else {
-                this.lastActivation = this.loggingService.getExtraPersistedData()[0].lastActivation;
-            }
+            this.lastActivation = this.loggingService.getExtraPersistedData()[0].lastActivation;
         }
+        this.log.debug("%s (%s / %s) > FakeGato Characteristic loaded.", this.constructor.name, this.dDevice.id, this.dDevice.name);
     };
     return HBDevoloMotionDevice;
 }(HBDevoloDevice_1.HBDevoloDevice));
