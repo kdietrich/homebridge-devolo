@@ -19,7 +19,7 @@ var HBDevoloWallSwitchDevice = /** @class */ (function (_super) {
         var self = _this;
         self.dDevice.events.on('onKeyPressedChanged', function (value) {
             if (value != 0) {
-                self.log.info('%s (%s / %s) > KeyPressed > %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
+                self.log.info('%s (%s / %s) > onKeyPressedChanged > KeyPressed is %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
                 if (self.dDevice.getKeyCount() == 2) {
                     if (value == 2)
                         value = 1;

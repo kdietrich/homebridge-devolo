@@ -1,7 +1,3 @@
-//Characteristic.PositionState.DECREASING = 0;
-//Characteristic.PositionState.INCREASING = 1;
-//Characteristic.PositionState.STOPPED = 2;
-
 import {HBDevoloDevice} from '../HBDevoloDevice';
 import { Devolo } from 'node-devolo/dist/Devolo';
 import { Device } from 'node-devolo/dist/DevoloDevice';
@@ -10,34 +6,57 @@ export class HBDevoloShutterDevice extends HBDevoloDevice {
 
     windowCoveringService;
 
+    shutterLastCurrentValue;
+    shutterLastTargetValue;
+    shutterLastPositionState;
+
     constructor(log, dAPI: Devolo, dDevice: Device, storage, config) {
         super(log, dAPI, dDevice, storage, config);
 
         var self = this;
         self.dDevice.events.on('onValueChanged', function(type: string, value: number) {
-            self.log.info('%s (%s / %s) > Position value > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
-            self.windowCoveringService.getCharacteristic(self.Characteristic.CurrentPosition).updateValue(value, null);
+            //self.windowCoveringService.getCharacteristic(self.Characteristic.CurrentPosition).updateValue(value, null);
+            self.log.info('%s (%s / %s) > onValueChanged > Current position was %s, wait of current consumption is 0, then set to %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, self.shutterLastCurrentValue, value);
+            self.shutterLastCurrentValue = value;
         });
         self.dDevice.events.on('onTargetValueChanged', function(type: string, value: number) {
-            self.log.info('%s (%s / %s) > Target position value > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
             self.windowCoveringService.getCharacteristic(self.Characteristic.TargetPosition).updateValue(value, null);
+            self.log.info('%s (%s / %s) > onTargetValueChanged > Target position was %s, set to %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, self.shutterLastTargetValue, value);
+            if (value > self.shutterLastTargetValue) {
+                // Öffnen
+                self.windowCoveringService.getCharacteristic(self.Characteristic.PositionState).updateValue(self.Characteristic.PositionState.INCREASING, null);
+                self.log.info('%s (%s / %s) > onTargetValueChanged > Target position was %s, now %s, set position state to increasing', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, self.shutterLastTargetValue, value);
+                self.shutterLastPositionState = self.Characteristic.PositionState.INCREASING
+            } else {
+                // Schließen
+                self.windowCoveringService.getCharacteristic(self.Characteristic.PositionState).updateValue(self.Characteristic.PositionState.DECREASING, null);
+                self.log.info('%s (%s / %s) > onTargetValueChanged > Target position was %s, now %s, set position state to decreasing', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, self.shutterLastTargetValue, value);
+                self.shutterLastPositionState = self.Characteristic.PositionState.DECREASING
+            }
+            self.shutterLastTargetValue = value;
         });
         self.dDevice.events.on('onCurrentValueChanged', function(type: string, value: number) {
             if(type==='energy') {
-                self.log.info('%s (%s / %s) > CurrentConsumption > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
                 self.windowCoveringService.getCharacteristic(self.Characteristic.DevoloCurrentConsumption).updateValue(value, null);
+                self.log.info('%s (%s / %s) > onCurrentValueChanged > CurrentConsumption is %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
+                if(value === 0) {
+                    self.windowCoveringService.getCharacteristic(self.Characteristic.CurrentPosition).updateValue(self.shutterLastCurrentValue, null);
+                    self.windowCoveringService.getCharacteristic(self.Characteristic.PositionState).updateValue(self.Characteristic.PositionState.STOPPED, null);
+                    self.log.info('%s (%s / %s) > onCurrentValueChanged > CurrentConsumption is %s, set current position to %s and position state to stopped', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value, self.shutterLastCurrentValue);
+                    self.shutterLastPositionState = self.Characteristic.PositionState.STOPPED
+                }
             }
         });
         self.dDevice.events.on('onTotalValueChanged', function(type: string, value: number) {
             if(type==='energy') {
-                self.log.info('%s (%s / %s) > DevoloTotalConsumption > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
                 self.windowCoveringService.getCharacteristic(self.Characteristic.DevoloTotalConsumption).updateValue(value, null);
+                self.log.info('%s (%s / %s) > onTotalValueChanged > DevoloTotalConsumption is %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
             }
         });
         self.dDevice.events.on('onSinceTimeChanged', function(type: string, value: number) {
             if(type==='energy') {
-                self.log.info('%s (%s / %s) > DevoloTotalConsumptionSince > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
                 self.windowCoveringService.getCharacteristic(self.Characteristic.DevoloTotalConsumptionSince).updateValue(new Date(value).toISOString().replace(/T/, ' ').replace(/\..+/, ''), null);
+                self.log.info('%s (%s / %s) > onSinceTimeChanged > DevoloTotalConsumptionSince is %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
             }
         });
     }
@@ -52,9 +71,7 @@ export class HBDevoloShutterDevice extends HBDevoloDevice {
         this.windowCoveringService = new this.Service.WindowCovering();
         this.windowCoveringService.getCharacteristic(this.Characteristic.CurrentPosition)
                      .on('get', this.getValue.bind(this));
-        //this.windowCoveringService.getCharacteristic(this.Characteristic.PositionState)
-        //             .on('get', this.getPositionState.bind(this))
-        //             .on('set', this.setPositionState.bind(this));
+        this.windowCoveringService.getCharacteristic(this.Characteristic.PositionState)
         this.windowCoveringService.getCharacteristic(this.Characteristic.TargetPosition)
                      .on('get', this.getTargetValue.bind(this))
                      .on('set', this.setTargetValue.bind(this));
@@ -63,6 +80,10 @@ export class HBDevoloShutterDevice extends HBDevoloDevice {
             maxValue: 100,
             minStep: 5
         });
+
+        this.shutterLastCurrentValue = this.dDevice.getValue('blinds');
+        this.shutterLastTargetValue = this.dDevice.getTargetValue('blinds');
+        this.shutterLastPositionState = this.Characteristic.PositionState.STOPPED
 
         this.dDevice.listen();
         return [this.informationService, this.windowCoveringService];
@@ -74,7 +95,7 @@ export class HBDevoloShutterDevice extends HBDevoloDevice {
     }
 
     getTargetValue(callback) {
-        this.log.debug('%s (%s / %s) > getTargetValue is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
+        this.log.debug('%s (%s / %s) > getTargetValue is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.dDevice.getTargetValue('blinds'));
         return callback(null, this.dDevice.getTargetValue('blinds'));
     }
 

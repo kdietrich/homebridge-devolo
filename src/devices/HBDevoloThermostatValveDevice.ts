@@ -13,22 +13,22 @@ export class HBDevoloThermostatValveDevice extends HBDevoloDevice {
         var self = this;
         self.dDevice.events.on('onValueChanged', function(type: string, value: number) {
             if(type==='temperature') {
-                self.log.info('%s (%s / %s) > Temperature > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
+                self.log.info('%s (%s / %s) > onValueChanged > Temperature is %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
                 self.thermostatService.getCharacteristic(self.Characteristic.CurrentTemperature).updateValue(value, null);
             }
         });
         self.dDevice.events.on('onTargetValueChanged', function(type: string, value: number) {
             if(type==='temperature') {
-                self.log.info('%s (%s / %s) > TargetTemperature > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
+                self.log.info('%s (%s / %s) > onTargetValueChanged > TargetTemperature is %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
                 self.thermostatService.getCharacteristic(self.Characteristic.TargetTemperature).updateValue(value, null);
             }
         });
         self.dDevice.events.on('onBatteryLevelChanged', function(value: number) {
-            self.log.info('%s (%s / %s) > Battery level > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
+            self.log.info('%s (%s / %s) > onBatteryLevelChanged > Battery level is %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
             self.batteryService.getCharacteristic(self.Characteristic.BatteryLevel).updateValue(value, null);
         });
         self.dDevice.events.on('onBatteryLowChanged', function(value: boolean) {
-            self.log.info('%s (%s / %s) > Battery low > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
+            self.log.info('%s (%s / %s) > onBatteryLowChanged > Battery is low (%s)', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
             self.batteryService.getCharacteristic(self.Characteristic.StatusLowBattery).updateValue(!value, null);
         });
     }

@@ -25,7 +25,7 @@ var HBDevoloRemoteControlDevice = /** @class */ (function (_super) {
                 value = 3;
             }
             if (value != 0) {
-                self.log.info('%s (%s / %s) > KeyPressed > %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
+                self.log.info('%s (%s / %s) > onKeyPressedChanged > KeyPressed is %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
                 self.statelessProgrammableSwitchList[value - 1].getCharacteristic(self.Characteristic.ProgrammableSwitchEvent).emit('change', { newValue: 0 });
             }
         });

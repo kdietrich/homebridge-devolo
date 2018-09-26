@@ -18,24 +18,24 @@ var HBQubinoRelay2Device = /** @class */ (function (_super) {
         _this.switchServices = [];
         var self = _this;
         self.dDevice.events.on('onStateChanged', function (state, num) {
-            self.log.info('%s (%s [%s] / %s) > State > %s', self.constructor.name, self.dDevice.id, num, self.dDevice.name, state);
+            self.log.info('%s (%s [%s] / %s) > onStateChanged > State is %s', self.constructor.name, self.dDevice.id, num, self.dDevice.name, state);
             self.switchServices[num - 1].getCharacteristic(self.Characteristic.On).updateValue(state, null);
         });
         self.dDevice.events.on('onCurrentValueChanged', function (type, value, num) {
             if (type === 'energy') {
-                self.log.info('%s (%s [%s] / %s) > CurrentConsumption > %s', self.constructor.name, self.dDevice.id, num, self.dDevice.name, value);
+                self.log.info('%s (%s [%s] / %s) > onCurrentValueChanged > CurrentConsumption is %s', self.constructor.name, self.dDevice.id, num, self.dDevice.name, value);
                 self.switchServices[num - 1].getCharacteristic(self.Characteristic.CurrentConsumption).updateValue(value, null);
             }
         });
         self.dDevice.events.on('onTotalValueChanged', function (type, value, num) {
             if (type === 'energy') {
-                self.log.info('%s (%s [%s] / %s) > TotalConsumption > %s', self.constructor.name, self.dDevice.id, num, self.dDevice.name, value);
+                self.log.info('%s (%s [%s] / %s) > onTotalValueChanged > TotalConsumption is %s', self.constructor.name, self.dDevice.id, num, self.dDevice.name, value);
                 self.switchServices[num - 1].getCharacteristic(self.Characteristic.TotalConsumption).updateValue(value, null);
             }
         });
         self.dDevice.events.on('onSinceTimeChanged', function (type, value, num) {
             if (type === 'energy') {
-                self.log.info('%s (%s [%s] / %s) > TotalConsumptionSince > %s', self.constructor.name, self.dDevice.id, num, self.dDevice.name, value);
+                self.log.info('%s (%s [%s] / %s) > onSinceTimeChanged > TotalConsumptionSince is %s', self.constructor.name, self.dDevice.id, num, self.dDevice.name, value);
                 self.switchServices[num - 1].getCharacteristic(self.Characteristic.TotalConsumptionSince).updateValue(new Date(value).toISOString().replace(/T/, ' ').replace(/\..+/, ''), null);
             }
         });

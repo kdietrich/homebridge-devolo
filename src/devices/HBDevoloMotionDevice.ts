@@ -20,7 +20,7 @@ export class HBDevoloMotionDevice extends HBDevoloDevice {
         var self = this;
 
         self.dDevice.events.on('onStateChanged', function(state: number) {
-            self.log.info('%s (%s / %s) > State > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state);
+            self.log.info('%s (%s / %s) > onStateChanged > State is %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state);
             self.motionSensorService.getCharacteristic(self.Characteristic.MotionDetected).updateValue(state, null);
 
             // START FakeGato (eve app)
@@ -33,7 +33,7 @@ export class HBDevoloMotionDevice extends HBDevoloDevice {
                     self.lastActivation = moment().unix() - self.loggingService.getInitialTime();
                     self.motionSensorService.getCharacteristic(self.Characteristic.LastActivation).updateValue(self.lastActivation, null)
                 }
-                self.log.info("%s (%s / %s) > FakeGato > MotionState changed to %s > lastActivation is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state, self.lastActivation)
+                self.log.info("%s (%s / %s) > onStateChanged FakeGato > MotionState changed to %s, lastActivation is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state, self.lastActivation)
                 self.loggingService.setExtraPersistedData([{"lastActivation": self.lastActivation}]);
             }
             // END FakeGato (eve app)
@@ -41,20 +41,20 @@ export class HBDevoloMotionDevice extends HBDevoloDevice {
         });
         self.dDevice.events.on('onValueChanged', function(type: string, value: number) {
             if(type==='temperature') {
-                self.log.info('%s (%s / %s) > Temperature > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
+                self.log.info('%s (%s / %s) > onValueChanged > Temperature is %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
                 self.temperatureService.getCharacteristic(self.Characteristic.CurrentTemperature).updateValue(value, null);
             }
             else if(type==='light') {
-                self.log.info('%s (%s / %s) > Light > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
+                self.log.info('%s (%s / %s) > onValueChanged > Light is %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
                 self.lightSensorService.getCharacteristic(self.Characteristic.CurrentAmbientLightLevel).updateValue(value/100*500, null); //convert percentage to lux
             }
         });
         self.dDevice.events.on('onBatteryLevelChanged', function(value: number) {
-            self.log.info('%s (%s / %s) > Battery level > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
+            self.log.info('%s (%s / %s) > onBatteryLevelChanged > Battery level is %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
             self.batteryService.getCharacteristic(self.Characteristic.BatteryLevel).updateValue(value, null);
         });
         self.dDevice.events.on('onBatteryLowChanged', function(value: boolean) {
-            self.log.info('%s (%s / %s) > Battery low > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
+            self.log.info('%s (%s / %s) > onBatteryLowChanged > Battery is low (%s)', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
             self.batteryService.getCharacteristic(self.Characteristic.StatusLowBattery).updateValue(!value, null);
         });
     }

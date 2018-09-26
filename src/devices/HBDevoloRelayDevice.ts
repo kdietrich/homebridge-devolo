@@ -21,12 +21,12 @@ export class HBDevoloRelayDevice extends HBDevoloDevice {
 
         var self = this;
         self.dDevice.events.on('onStateChanged', function(state: number) {
-            self.log.info('%s (%s / %s) > State > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state);
+            self.log.info('%s (%s / %s) > onStateChanged > State is %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state);
             self.switchService.getCharacteristic(self.Characteristic.On).updateValue(state, null);
         });
         self.dDevice.events.on('onCurrentValueChanged', function(type: string, value: number) {
             if(type==='energy') {
-                self.log.info('%s (%s / %s) > CurrentConsumption > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
+                self.log.info('%s (%s / %s) > onCurrentValueChanged > CurrentConsumption is %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
                 self.switchService.getCharacteristic(self.Characteristic.DevoloCurrentConsumption).updateValue(value, null);
 
                 // START FakeGato (eve app)
@@ -39,7 +39,7 @@ export class HBDevoloRelayDevice extends HBDevoloDevice {
                     self.switchService.getCharacteristic(self.Characteristic.CurrentConsumption).updateValue(value, null)
                     self.switchService.getCharacteristic(self.Characteristic.TotalConsumption).updateValue(self.totalConsumption, null)
 
-                    self.log.info("%s (%s / %s) > FakeGato > CurrentConsumption changed to %s W > lastValue was %s, totalConsumption set to %s kWh, lastChange set to %s, secondsSincelastChange was %s, totalConsumptionSincelastChange was %s kWh, lastReset is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value, self.lastValue,  self.totalConsumption, self.lastChange, self.secondsSincelastChange, self.totalConsumptionSincelastChange, self.lastReset)
+                    self.log.info("%s (%s / %s) > onCurrentValueChanged FakeGato > CurrentConsumption changed to %s W, lastValue was %s, totalConsumption set to %s kWh, lastChange set to %s, secondsSincelastChange was %s, totalConsumptionSincelastChange was %s kWh, lastReset is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value, self.lastValue,  self.totalConsumption, self.lastChange, self.secondsSincelastChange, self.totalConsumptionSincelastChange, self.lastReset)
 
                     self.lastChange = moment().unix();
                     self.lastValue = value;
@@ -51,13 +51,13 @@ export class HBDevoloRelayDevice extends HBDevoloDevice {
         });
         self.dDevice.events.on('onTotalValueChanged', function(type: string, value: number) {
             if(type==='energy') {
-                self.log.info('%s (%s / %s) > DevoloTotalConsumption > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
+                self.log.info('%s (%s / %s) > onTotalValueChanged > DevoloTotalConsumption is %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
                 self.switchService.getCharacteristic(self.Characteristic.DevoloTotalConsumption).updateValue(value, null);
             }
         });
         self.dDevice.events.on('onSinceTimeChanged', function(type: string, value: number) {
             if(type==='energy') {
-                self.log.info('%s (%s / %s) > DevoloTotalConsumptionSince > %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
+                self.log.info('%s (%s / %s) > onSinceTimeChanged > DevoloTotalConsumptionSince is %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
                 self.switchService.getCharacteristic(self.Characteristic.DevoloTotalConsumptionSince).updateValue(new Date(value).toISOString().replace(/T/, ' ').replace(/\..+/, ''), null);
             }
         });
