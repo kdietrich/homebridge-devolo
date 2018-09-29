@@ -2,7 +2,7 @@ import { HBDevoloDevice } from '../HBDevoloDevice';
 import { Devolo } from 'node-devolo/dist/Devolo';
 import { Device } from 'node-devolo/dist/DevoloDevice';
 
-export class HBQubinoRelay2Device extends HBDevoloDevice {
+export class HBOtherRelaySwitchXDevice extends HBDevoloDevice {
 
     switchServices = [];
 

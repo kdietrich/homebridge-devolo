@@ -15,7 +15,7 @@ import {HBDevoloSirenDevice} from './devices/HBDevoloSirenDevice';
 import {HBDevoloShutterDevice} from './devices/HBDevoloShutterDevice';
 import {HBDevoloRelayDevice} from './devices/HBDevoloRelayDevice';
 import {HBDevoloDimmerDevice} from './devices/HBDevoloDimmerDevice';
-import {HBQubinoRelay2Device} from './devices/HBQubinoRelay2Device';
+import {HBOtherRelaySwitchXDevice} from './devices/HBOtherRelaySwitchXDevice';
 import {HBDevoloRule} from './devices/HBDevoloRule';
 import {HBDevoloScene} from './devices/HBDevoloScene';
 import {Devolo} from 'node-devolo/dist/Devolo';
@@ -135,7 +135,7 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
                     d = new HBDevoloDimmerDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else if((devices[i].constructor as any).name == (Relay2Device as any).name) {
-                    d = new HBQubinoRelay2Device(self.log, self.dAPI, devices[i], storage, self.config);
+                    d = new HBOtherRelaySwitchXDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else {
                     self.log.info("%s > Device \"%s\" is not supported (yet). Open an issue on github and ask for adding it.", (self.constructor as any).name, devices[i].model);

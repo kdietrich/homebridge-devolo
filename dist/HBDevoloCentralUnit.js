@@ -15,7 +15,7 @@ var HBDevoloSirenDevice_1 = require("./devices/HBDevoloSirenDevice");
 var HBDevoloShutterDevice_1 = require("./devices/HBDevoloShutterDevice");
 var HBDevoloRelayDevice_1 = require("./devices/HBDevoloRelayDevice");
 var HBDevoloDimmerDevice_1 = require("./devices/HBDevoloDimmerDevice");
-var HBQubinoRelay2Device_1 = require("./devices/HBQubinoRelay2Device");
+var HBOtherRelaySwitchXDevice_1 = require("./devices/HBOtherRelaySwitchXDevice");
 var HBDevoloRule_1 = require("./devices/HBDevoloRule");
 var HBDevoloScene_1 = require("./devices/HBDevoloScene");
 var DevoloDevice_1 = require("node-devolo/dist/DevoloDevice");
@@ -117,7 +117,7 @@ var HBDevoloCentralUnit = /** @class */ (function () {
                     d = new HBDevoloDimmerDevice_1.HBDevoloDimmerDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.Relay2Device.name) {
-                    d = new HBQubinoRelay2Device_1.HBQubinoRelay2Device(self.log, self.dAPI, devices[i], storage, self.config);
+                    d = new HBOtherRelaySwitchXDevice_1.HBOtherRelaySwitchXDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else {
                     self.log.info("%s > Device \"%s\" is not supported (yet). Open an issue on github and ask for adding it.", self.constructor.name, devices[i].model);
