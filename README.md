@@ -113,6 +113,8 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 
 #### v0.1.11-dev
 - Devolo flush shutter supported
+- Aeotec Siren supported
+- Fibaro Switch/Relay 1st/2nd Gen supported (FGS-211, FGS-212, FGS-213, FGS-221, FGS-222, FGS-223)
 - add a full compatible garage door with one Devolo Door Sensor / Window Contact and one Qubino Flush 1D
 
 #### v0.1.10 (2018-08-03)
