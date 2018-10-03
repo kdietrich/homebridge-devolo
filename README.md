@@ -1,3 +1,7 @@
+[![npm](https://img.shields.io/npm/dt/homebridge-devolo.svg)](https://www.npmjs.com/package/homebridge-devolo)
+[![npm version](https://badge.fury.io/js/homebridge-devolo.svg)](https://badge.fury.io/js/homebridge-devolo)
+[![dependencies Status](https://david-dm.org/kdietrich/homebridge-devolo/status.svg)](https://david-dm.org/kdietrich/homebridge-devolo)
+
 # homebridge-devolo
 
 ## Homebridge plugin for Devolo Home Control
@@ -20,14 +24,16 @@ This homebridge plugin allows you to control your Devolo Home Control devices vi
 - Devolo Flush Relay
 - Devolo Flush Dimmer
 - Devolo Flush Shutter
-- Danfoss Thermostat Valve (LC-13)
+- Danfoss Thermostat Valve / Radiator Thermostat (LC-13)
 - Qubino Flush 1
 - Qubino Flush 1D
 - Qubino Flush 2
 - Qubino Flush Dimmer
 - Qubino Flush Shutter
+- Aeotec Siren Gen5 (ZW080-C15)
+- Fibaro Switch/Relay 1st/2nd Gen (FGS-211, FGS-212, FGS-213, FGS-221, FGS-222, FGS-223)
 
-![homekit-macos_180713](pictures/_homekit-macos_180713.png)
+![homekit-macos_180929](pictures/_homekit-macos_180929.jpg)
 
 Feel free to submit an issue or pull request to add more.
 
@@ -76,8 +82,7 @@ If you have multiple central units with the same myDevolo account you will likel
 
 ## Garage Door
 
-You need a devolo door/window contact (garage door) and a qubino flush 1d (garage door motor) - [pictures & screenshots](pictures/garagedoor/). ~~Addition you still need a myDevolo rule: If the qubino flush 1d turn on for 1 second, then turn off.~~
-
+You need a devolo door/window contact (garage door) and a qubino flush 1d (garage door motor) - [pictures & screenshots](pictures/garagedoor/).
 Add the following entry to your config.json
 
 ```
@@ -111,11 +116,11 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 
 ## Changes
 
-#### v0.1.11-dev
+#### v0.1.11 (2018-10-03)
 - Devolo flush shutter supported
-- Aeotec Siren supported
-- Fibaro Switch/Relay 1st/2nd Gen supported (FGS-211, FGS-212, FGS-213, FGS-221, FGS-222, FGS-223)
-- add a full compatible garage door with one Devolo Door Sensor / Window Contact and one Qubino Flush 1D
+- Aeotec siren supported
+- Fibaro switch/relay 1st/2nd gen supported (FGS-211, FGS-212, FGS-213, FGS-221, FGS-222, FGS-223)
+- add a full compatible garage door (GarageDoorOpener) with one Devolo Door Sensor / Window Contact and one Qubino Flush 1D
 
 #### v0.1.10 (2018-08-03)
 - add `lightBlacklist` (light/lux sensor) and `tempBlacklist` (temperature sensor) for Devolo Door Sensor / Window Contact and Devolo Motion Sensor

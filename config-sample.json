@@ -18,7 +18,7 @@
         "gateway": "1234567890987654",
         "passkey": "abcdef1234567890abcdef1234567890",
         "deviceBlacklist": ["snowstar"],
-        "lightBlacklist": ["motion Bathroom", "door terrace door"],
+        "lightBlacklist": ["motion bathroom", "door terrace door"],
         "tempBlacklist": ["door terrace door"],
         "fakeGato": true,
         "fakeGaragedoor": true,

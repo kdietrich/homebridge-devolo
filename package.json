@@ -1,8 +1,17 @@
 {
   "name": "homebridge-devolo",
-  "version": "0.1.11-dev",
+  "version": "0.1.11",
   "description": "Homebridge plugin for Devolo Home Control",
-  "author": "Kevin Dietrich",
+  "authors": [
+    {
+      "name": "Kevin Dietrich",
+      "url": "https://www.naerd.de"
+    },
+    {
+      "name": "Nico Hartung",
+      "url": "https://www.loggn.de"
+    }
+  ],
   "license": "MIT",
   "main": "dist/index.js",
   "keywords": [
