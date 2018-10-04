@@ -40,28 +40,26 @@ export class HBOtherRelaySwitchXDevice extends HBDevoloDevice {
             .setCharacteristic(this.Characteristic.Model, 'Single-Double-Triple-Quattro Relay-Switch')
             .setCharacteristic(this.Characteristic.SerialNumber, this.dDevice.id.replace('/','-'))
 
-        let sensorCount = 1;
-        let sensorCountArray = 0;
+        var services = [this.informationService];
+
+        let sensorCount = 0;
         for(let i=0; i<this.dDevice.sensors.length; i++) {
             let sensor = this.dDevice.sensors[i];
             if(sensor.id.indexOf('BinarySwitch') > -1) {
+                this.switchServices.push(new this.Service.Outlet(this.name + ' ' + (sensorCount+1), this.name + ' ' + (sensorCount+1)));
+                this.switchServices[sensorCount].getCharacteristic(this.Characteristic.On)
+                             .on('get', this.getSwitchState.bind([this, (sensorCount+1)]))
+                             .on('set', this.setSwitchState.bind([this, (sensorCount+1)]));
+                this.switchServices[sensorCount].addCharacteristic(this.Characteristic.DevoloCurrentConsumption)
+                            .on('get', this.getDevoloCurrentConsumption.bind([this, (sensorCount+1)]))
+                this.switchServices[sensorCount].addCharacteristic(this.Characteristic.DevoloTotalConsumption)
+                            .on('get', this.getDevoloTotalConsumption.bind([this, (sensorCount+1)]))
+                this.switchServices[sensorCount].addCharacteristic(this.Characteristic.DevoloTotalConsumptionSince)
+                            .on('get', this.getDevoloTotalConsumptionSince.bind([this, (sensorCount+1)]))
 
-                if(!this.config.switchBlacklistDoubleRelaySwitch || !this._isInList(this.name + ' ' + sensorCount, this.config.switchBlacklistDoubleRelaySwitch)) {
-
-                    this.log.debug('Initializing platform accessory \'%s\' with switch %s (homekitSensor: %s)', this.dDevice.name, sensorCount, sensorCountArray);
-
-                    this.switchServices.push(new this.Service.Outlet(this.name + ' ' + sensorCount, this.name + ' ' + sensorCount));
-                    this.switchServices[sensorCountArray].getCharacteristic(this.Characteristic.On)
-                                 .on('get', this.getSwitchState.bind([this, sensorCount]))
-                                 .on('set', this.setSwitchState.bind([this, sensorCount]));
-                    this.switchServices[sensorCountArray].addCharacteristic(this.Characteristic.DevoloCurrentConsumption)
-                                .on('get', this.getDevoloCurrentConsumption.bind([this, sensorCount]))
-                    this.switchServices[sensorCountArray].addCharacteristic(this.Characteristic.DevoloTotalConsumption)
-                                .on('get', this.getDevoloTotalConsumption.bind([this, sensorCount]))
-                    this.switchServices[sensorCountArray].addCharacteristic(this.Characteristic.DevoloTotalConsumptionSince)
-                                .on('get', this.getDevoloTotalConsumptionSince.bind([this, sensorCount]))
-
-                    sensorCountArray++;
+                if(!this.config.switchBlacklistDoubleRelaySwitch || !this._isInList(this.name + ' ' + (sensorCount+1), this.config.switchBlacklistDoubleRelaySwitch)) {
+                    this.log.debug('Initializing platform accessory \'%s\' with switch %s', this.dDevice.name, (sensorCount+1));
+                    services = services.concat([this.switchServices[sensorCount]]);
                 }
 
                 sensorCount++;
@@ -69,7 +67,7 @@ export class HBOtherRelaySwitchXDevice extends HBDevoloDevice {
         }
 
         this.dDevice.listen();
-        return [this.informationService].concat(this.switchServices);
+        return services;
     }
 
     getSwitchState(callback) {
