@@ -44,26 +44,32 @@ var HBOtherRelaySwitchXDevice = /** @class */ (function (_super) {
     HBOtherRelaySwitchXDevice.prototype.getServices = function () {
         this.informationService = new this.Service.AccessoryInformation();
         this.informationService
-            .setCharacteristic(this.Characteristic.Manufacturer, 'Qubino')
-            .setCharacteristic(this.Characteristic.Model, 'Flush x')
+            .setCharacteristic(this.Characteristic.Manufacturer, 'Other')
+            .setCharacteristic(this.Characteristic.Model, 'Single-Double-Triple-Quattro Relay-Switch')
             .setCharacteristic(this.Characteristic.SerialNumber, this.dDevice.id.replace('/', '-'));
-        var sensorCount = 0;
+        var sensorCount = 1;
+        var sensorCountArray = 0;
         for (var i = 0; i < this.dDevice.sensors.length; i++) {
             var sensor = this.dDevice.sensors[i];
             if (sensor.id.indexOf('BinarySwitch') > -1) {
-                this.switchServices.push(new this.Service.Outlet(this.name + ' ' + (sensorCount + 1), this.name + ' ' + (sensorCount + 1)));
-                this.switchServices[sensorCount].getCharacteristic(this.Characteristic.On)
-                    .on('get', this.getSwitchState.bind([this, (sensorCount + 1)]))
-                    .on('set', this.setSwitchState.bind([this, (sensorCount + 1)]));
-                this.switchServices[sensorCount].addCharacteristic(this.Characteristic.DevoloCurrentConsumption)
-                    .on('get', this.getDevoloCurrentConsumption.bind([this, (sensorCount + 1)]));
-                this.switchServices[sensorCount].addCharacteristic(this.Characteristic.DevoloTotalConsumption)
-                    .on('get', this.getDevoloTotalConsumption.bind([this, (sensorCount + 1)]));
-                this.switchServices[sensorCount].addCharacteristic(this.Characteristic.DevoloTotalConsumptionSince)
-                    .on('get', this.getDevoloTotalConsumptionSince.bind([this, (sensorCount + 1)]));
+                if (!this.config.switchBlacklistDoubleRelaySwitch || !this._isInList(this.name + ' ' + sensorCount, this.config.switchBlacklistDoubleRelaySwitch)) {
+                    this.log.debug('Initializing platform accessory \'%s\' with switch %s (homekitSensor: %s)', this.dDevice.name, sensorCount, sensorCountArray);
+                    this.switchServices.push(new this.Service.Outlet(this.name + ' ' + sensorCount, this.name + ' ' + sensorCount));
+                    this.switchServices[sensorCountArray].getCharacteristic(this.Characteristic.On)
+                        .on('get', this.getSwitchState.bind([this, sensorCount]))
+                        .on('set', this.setSwitchState.bind([this, sensorCount]));
+                    this.switchServices[sensorCountArray].addCharacteristic(this.Characteristic.DevoloCurrentConsumption)
+                        .on('get', this.getDevoloCurrentConsumption.bind([this, sensorCount]));
+                    this.switchServices[sensorCountArray].addCharacteristic(this.Characteristic.DevoloTotalConsumption)
+                        .on('get', this.getDevoloTotalConsumption.bind([this, sensorCount]));
+                    this.switchServices[sensorCountArray].addCharacteristic(this.Characteristic.DevoloTotalConsumptionSince)
+                        .on('get', this.getDevoloTotalConsumptionSince.bind([this, sensorCount]));
+                    sensorCountArray++;
+                }
                 sensorCount++;
             }
         }
+        console.log(this.switchServices);
         this.dDevice.listen();
         return [this.informationService].concat(this.switchServices);
     };

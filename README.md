@@ -61,13 +61,14 @@ Important: If you are using multiple central units with the same myDevolo accoun
 
 | Name of parameter | Default value | Notes |
 |---|---|---|
-| `ruleWhitelist`  | `['MyRule1', 'MyRule2']` | specify the rules which you want to use in Apple Home by their exact names. By default no rule is exported. |
-| `sceneWhitelist`  | `['MyScene1', 'MyScene2']` | specify the scenes which you want to use in Apple Home by their exact names. By default no scene is exported. |
-| `deviceBlacklist`  | `['BlockedDevice1', 'BlockedDevice2']` | specify the devices which you DON'T want to use in Apple Home by their exact names. By default all devices are exported. |
+| `ruleWhitelist`  | `['MyRule1', 'MyRule2']` | specify the rules which you want to use in Apple Home by their exact names in mydevolo. By default no rule is exported. |
+| `sceneWhitelist`  | `['MyScene1', 'MyScene2']` | specify the scenes which you want to use in Apple Home by their exact names in mydevolo. By default no scene is exported. |
+| `deviceBlacklist`  | `['BlockedDevice1', 'BlockedDevice2']` | specify the devices which you DON'T want to use in Apple Home by their exact names in mydevolo. By default all devices are exported. |
+| `switchBlacklistDoubleRelaySwitch` | `['BlockedSwitch1 2', 'BlockedSwitch2 1']` | specify the switches of double/triple/quattro relays/switches (e.g.: qubino flush 2, fibaro fgs-223) which you DON'T want to use in Apple Home by their exact names in mydevolo. Blacklist never ALL switches of a device. By default all switches are exported. |
 | `deviceDebugging`  | `false` | when set to true homebridge-devolo will output some debugging information and terminate afterwards. This is helpful to get information for new device integrations. |
 | `fakeGato`  | `false` | when set to true homebridge-devolo will save history data for some devices, these will reported in the eve app ([screenshots here](pictures/fakegato/)) |
-| `lightBlacklist`  | `['BlockedLightDevice1', 'BlockedLightDevice2']` | specify door or motion devices which you DON'T want to use his light/lux sensor in Apple Home by their exact names. By default all devices are exported. |
-| `tempBlacklist`  | `['BlockedTempDevice1', 'BlockedTempDevice2']` | specify door or motion devices which you DON'T want to use his temperature sensor in Apple Home by their exact names. By default all devices are exported. |
+| `lightBlacklist`  | `['BlockedLightDevice1', 'BlockedLightDevice2']` | specify door or motion devices which you DON'T want to use his light/lux sensor in Apple Home by their exact names in mydevolo. By default all devices are exported. |
+| `tempBlacklist`  | `['BlockedTempDevice1', 'BlockedTempDevice2']` | specify door or motion devices which you DON'T want to use his temperature sensor in Apple Home by their exact names in mydevolo. By default all devices are exported. |
 | `fakeGaragedoor`  | `false` | when set to true homebridge-devolo will emulate a full compatible garage door (more info [here](#garage-door)) |
 
 ## Multiple central units
@@ -115,6 +116,10 @@ I'm happy to provide support for new devices. If you own an unsupported device y
 If you run into issues related to this plugin, feel free to open an issue. Please start your homebridge installation with the command `homebridge -D > logfile.txt 2>&1` and attach the generated logfile.
 
 ## Changes
+
+#### v0.1.12-dev
+- Fibaro wall plug supported (FGWPE/F-101, FGWPE/F-102, FGWPG-111)
+- add `switchBlacklistDoubleRelaySwitch` for double/triple/quattro relays/switches
 
 #### v0.1.11 (2018-10-03)
 - Devolo flush shutter supported

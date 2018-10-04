@@ -116,7 +116,7 @@ var HBDevoloCentralUnit = /** @class */ (function () {
                 else if (devices[i].constructor.name == DevoloDevice_1.DimmerDevice.name) {
                     d = new HBDevoloDimmerDevice_1.HBDevoloDimmerDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
-                else if (devices[i].constructor.name == DevoloDevice_1.Relay2Device.name) {
+                else if (devices[i].constructor.name == DevoloDevice_1.RelaySwitchXDevice.name) {
                     d = new HBOtherRelaySwitchXDevice_1.HBOtherRelaySwitchXDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else {

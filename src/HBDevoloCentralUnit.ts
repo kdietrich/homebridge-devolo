@@ -19,7 +19,7 @@ import {HBOtherRelaySwitchXDevice} from './devices/HBOtherRelaySwitchXDevice';
 import {HBDevoloRule} from './devices/HBDevoloRule';
 import {HBDevoloScene} from './devices/HBDevoloScene';
 import {Devolo} from 'node-devolo/dist/Devolo';
-import {Device,SwitchMeterDevice,HumidityDevice,DoorWindowDevice,MotionDevice,FloodDevice,ThermostatValveDevice,SmokeDetectorDevice,RoomThermostatDevice,ShutterDevice,WallSwitchDevice,RemoteControlDevice,SirenDevice,RelayDevice,DimmerDevice,Relay2Device} from 'node-devolo/dist/DevoloDevice';
+import {Device,SwitchMeterDevice,HumidityDevice,DoorWindowDevice,MotionDevice,FloodDevice,ThermostatValveDevice,SmokeDetectorDevice,RoomThermostatDevice,ShutterDevice,WallSwitchDevice,RemoteControlDevice,SirenDevice,RelayDevice,DimmerDevice,RelaySwitchXDevice} from 'node-devolo/dist/DevoloDevice';
 import {Rule,Scene} from 'node-devolo/dist/DevoloMisc';
 
 const storage = require('node-persist');
@@ -134,7 +134,7 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
                 else if((devices[i].constructor as any).name == (DimmerDevice as any).name) {
                     d = new HBDevoloDimmerDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
-                else if((devices[i].constructor as any).name == (Relay2Device as any).name) {
+                else if((devices[i].constructor as any).name == (RelaySwitchXDevice as any).name) {
                     d = new HBOtherRelaySwitchXDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else {

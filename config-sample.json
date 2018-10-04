@@ -18,8 +18,10 @@
         "gateway": "1234567890987654",
         "passkey": "abcdef1234567890abcdef1234567890",
         "deviceBlacklist": ["snowstar"],
+        "switchBlacklistDoubleRelaySwitch": ["switch kitchen 2", "switch livingroom 1"],
         "lightBlacklist": ["motion bathroom", "door terrace door"],
         "tempBlacklist": ["door terrace door"],
+        "deviceDebugging": false,
         "fakeGato": true,
         "fakeGaragedoor": true,
         "fakeGaragedoorParams": {
