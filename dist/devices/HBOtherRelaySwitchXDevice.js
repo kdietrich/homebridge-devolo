@@ -69,7 +69,6 @@ var HBOtherRelaySwitchXDevice = /** @class */ (function (_super) {
                 sensorCount++;
             }
         }
-        console.log(services);
         this.dDevice.listen();
         return services;
     };
