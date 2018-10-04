@@ -13,7 +13,7 @@ export class HBDevoloSirenDevice extends HBDevoloDevice {
 
         var self = this;
 
-        self.currentState = storage.getItemSync('hbd-siren-state');
+        self.currentState = storage.getItem('hbd-siren-state');
         if(self.currentState===undefined) {
             self.currentState = 3;
             storage.setItem('hbd-siren-state', self.currentState);
