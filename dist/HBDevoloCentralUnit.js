@@ -41,7 +41,7 @@ var HBDevoloCentralUnit = /** @class */ (function () {
         Characteristic = homebridge.hap.Characteristic;
     };
     HBDevoloCentralUnit.prototype.initStorage = function () {
-        storage.init({ dir: Homebridge.user.storagePath() + '/.homebridge-devolo/node-persist' });
+        storage.initSync({ dir: Homebridge.user.storagePath() + '/.homebridge-devolo/node-persist' });
     };
     HBDevoloCentralUnit.prototype.accessories = function (callback) {
         var self = this;

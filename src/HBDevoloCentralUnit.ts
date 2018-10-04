@@ -55,7 +55,7 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
     }
 
     initStorage() {
-        storage.init({dir: Homebridge.user.storagePath() + '/.homebridge-devolo/node-persist'});
+        storage.initSync({dir: Homebridge.user.storagePath() + '/.homebridge-devolo/node-persist'});
     }
 
     accessories(callback : (err:string, accessories?: HBIDevoloDevice[]) => void) {
