@@ -1,3 +1,4 @@
+[![GitHub last commit](https://img.shields.io/github/last-commit/kdietrich/homebridge-devolo.svg)](https://github.com/kdietrich/homebridge-devolo)
 [![npm](https://img.shields.io/npm/dt/homebridge-devolo.svg)](https://www.npmjs.com/package/homebridge-devolo)
 [![npm version](https://badge.fury.io/js/homebridge-devolo.svg)](https://badge.fury.io/js/homebridge-devolo)
 [![dependencies Status](https://david-dm.org/kdietrich/homebridge-devolo/status.svg)](https://david-dm.org/kdietrich/homebridge-devolo)
