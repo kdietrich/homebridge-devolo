@@ -1,4 +1,7 @@
-[![GitHub last commit](https://img.shields.io/github/last-commit/kdietrich/homebridge-devolo.svg)](https://github.com/kdietrich/homebridge-devolo)
+![GitHub last commit](https://img.shields.io/github/last-commit/kdietrich/homebridge-devolo.svg)
+![GitHub issues](https://img.shields.io/github/issues-raw/kdietrich/homebridge-devolo.svg)
+![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/kdietrich/homebridge-devolo.svg)
+
 [![npm](https://img.shields.io/npm/dt/homebridge-devolo.svg)](https://www.npmjs.com/package/homebridge-devolo)
 [![npm version](https://badge.fury.io/js/homebridge-devolo.svg)](https://badge.fury.io/js/homebridge-devolo)
 [![dependencies Status](https://david-dm.org/kdietrich/homebridge-devolo/status.svg)](https://david-dm.org/kdietrich/homebridge-devolo)
@@ -118,9 +121,10 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 
 ## Changes
 
-#### v0.1.12-dev
+#### v0.1.12 (2018-10-10)
 - Fibaro wall plug supported (FGWPE/F-101, FGWPE/F-102, FGWPG-111)
 - add `switchBlacklistDoubleRelaySwitch` for double/triple/quattro relays/switches
+- add support for more variants of Danfoss thermostat valve
 
 #### v0.1.11 (2018-10-03)
 - Devolo flush shutter supported
