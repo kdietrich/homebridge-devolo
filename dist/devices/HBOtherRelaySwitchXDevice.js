@@ -75,26 +75,30 @@ var HBOtherRelaySwitchXDevice = /** @class */ (function (_super) {
     HBOtherRelaySwitchXDevice.prototype.getSwitchState = function (callback) {
         var self = this[0];
         var num = this[1];
-        self.log.debug('%s (%s [%s] / %s) > getSwitchState', self.constructor.name, self.dDevice.id, num, self.dDevice.name);
-        return callback(null, self.dDevice.getState(num) != 0);
+        this.apiGetSwitchState = self.dDevice.getState(num) != 0;
+        self.log.debug('%s (%s [%s] / %s) > getSwitchState is %s', self.constructor.name, self.dDevice.id, num, self.dDevice.name, this.apiGetSwitchState);
+        return callback(null, this.apiGetSwitchState);
     };
     HBOtherRelaySwitchXDevice.prototype.getDevoloCurrentConsumption = function (callback) {
         var self = this[0];
         var num = this[1];
-        self.log.debug('%s (%s [%s] / %s) > getDevoloCurrentConsumption', self.constructor.name, self.dDevice.id, num, self.dDevice.name);
-        return callback(null, self.dDevice.getCurrentValue('energy', num));
+        this.apiGetDevoloCurrentConsumption = self.dDevice.getCurrentValue('energy', num);
+        self.log.debug('%s (%s [%s] / %s) > getDevoloCurrentConsumption is %s', self.constructor.name, self.dDevice.id, num, self.dDevice.name, this.apiGetDevoloCurrentConsumption);
+        return callback(null, this.apiGetDevoloCurrentConsumption);
     };
     HBOtherRelaySwitchXDevice.prototype.getDevoloTotalConsumption = function (callback) {
         var self = this[0];
         var num = this[1];
-        self.log.debug('%s (%s [%s] / %s) > getDevoloTotalConsumption', self.constructor.name, self.dDevice.id, num, self.dDevice.name);
-        return callback(null, self.dDevice.getTotalValue('energy', num));
+        this.apiGetDevoloTotalConsumption = self.dDevice.getTotalValue('energy', num);
+        self.log.debug('%s (%s [%s] / %s) > getDevoloTotalConsumption is %s', self.constructor.name, self.dDevice.id, num, self.dDevice.name, this.apiGetDevoloTotalConsumption);
+        return callback(null, this.apiGetDevoloTotalConsumption);
     };
     HBOtherRelaySwitchXDevice.prototype.getDevoloTotalConsumptionSince = function (callback) {
         var self = this[0];
         var num = this[1];
-        self.log.debug('%s (%s [%s] / %s) > getDevoloTotalConsumptionSince', self.constructor.name, self.dDevice.id, num, self.dDevice.name);
-        return callback(null, new Date(self.dDevice.getSinceTime('energy', num)).toISOString().replace(/T/, ' ').replace(/\..+/, ''));
+        this.apiGetDevoloTotalConsumptionSince = new Date(self.dDevice.getSinceTime('energy', num)).toISOString().replace(/T/, ' ').replace(/\..+/, '');
+        self.log.debug('%s (%s [%s] / %s) > getDevoloTotalConsumptionSince is %s', self.constructor.name, self.dDevice.id, num, self.dDevice.name, this.apiGetDevoloTotalConsumptionSince);
+        return callback(null, this.apiGetDevoloTotalConsumptionSince);
     };
     HBOtherRelaySwitchXDevice.prototype.setSwitchState = function (value, callback) {
         var self = this[0];

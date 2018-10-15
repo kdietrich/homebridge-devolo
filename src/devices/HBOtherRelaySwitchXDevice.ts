@@ -6,6 +6,11 @@ export class HBOtherRelaySwitchXDevice extends HBDevoloDevice {
 
     switchServices = [];
 
+    apiGetSwitchState;
+    apiGetDevoloCurrentConsumption;
+    apiGetDevoloTotalConsumption;
+    apiGetDevoloTotalConsumptionSince;
+
     constructor(log, dAPI: Devolo, dDevice: Device, storage, config) {
         super(log, dAPI, dDevice, storage, config);
         var self = this;
@@ -73,29 +78,33 @@ export class HBOtherRelaySwitchXDevice extends HBDevoloDevice {
     getSwitchState(callback) {
         var self = this[0];
         var num = this[1];
-        self.log.debug('%s (%s [%s] / %s) > getSwitchState', (self.constructor as any).name, self.dDevice.id, num, self.dDevice.name);
-        return callback(null, self.dDevice.getState(num)!=0);
+        this.apiGetSwitchState = self.dDevice.getState(num)!=0
+        self.log.debug('%s (%s [%s] / %s) > getSwitchState is %s', (self.constructor as any).name, self.dDevice.id, num, self.dDevice.name, this.apiGetSwitchState);
+        return callback(null, this.apiGetSwitchState);
     }
 
     getDevoloCurrentConsumption(callback) {
         var self = this[0];
         var num = this[1];
-        self.log.debug('%s (%s [%s] / %s) > getDevoloCurrentConsumption', (self.constructor as any).name, self.dDevice.id, num, self.dDevice.name);
-        return callback(null, self.dDevice.getCurrentValue('energy', num));
+        this.apiGetDevoloCurrentConsumption = self.dDevice.getCurrentValue('energy', num)
+        self.log.debug('%s (%s [%s] / %s) > getDevoloCurrentConsumption is %s', (self.constructor as any).name, self.dDevice.id, num, self.dDevice.name, this.apiGetDevoloCurrentConsumption);
+        return callback(null, this.apiGetDevoloCurrentConsumption);
     }
 
     getDevoloTotalConsumption(callback) {
         var self = this[0];
         var num = this[1];
-        self.log.debug('%s (%s [%s] / %s) > getDevoloTotalConsumption', (self.constructor as any).name, self.dDevice.id, num, self.dDevice.name);
-        return callback(null, self.dDevice.getTotalValue('energy', num));
+        this.apiGetDevoloTotalConsumption = self.dDevice.getTotalValue('energy', num)
+        self.log.debug('%s (%s [%s] / %s) > getDevoloTotalConsumption is %s', (self.constructor as any).name, self.dDevice.id, num, self.dDevice.name, this.apiGetDevoloTotalConsumption);
+        return callback(null, this.apiGetDevoloTotalConsumption);
     }
 
     getDevoloTotalConsumptionSince(callback) {
         var self = this[0];
         var num = this[1];
-        self.log.debug('%s (%s [%s] / %s) > getDevoloTotalConsumptionSince', (self.constructor as any).name, self.dDevice.id, num, self.dDevice.name);
-        return callback(null, new Date(self.dDevice.getSinceTime('energy', num)).toISOString().replace(/T/, ' ').replace(/\..+/, ''));
+        this.apiGetDevoloTotalConsumptionSince = new Date(self.dDevice.getSinceTime('energy', num)).toISOString().replace(/T/, ' ').replace(/\..+/, '')
+        self.log.debug('%s (%s [%s] / %s) > getDevoloTotalConsumptionSince is %s', (self.constructor as any).name, self.dDevice.id, num, self.dDevice.name, this.apiGetDevoloTotalConsumptionSince);
+        return callback(null, this.apiGetDevoloTotalConsumptionSince);
     }
 
     setSwitchState(value, callback) {

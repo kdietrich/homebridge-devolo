@@ -121,6 +121,8 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 
 ## Changes
 
+#### v0.1.13-dev
+
 #### v0.1.12 (2018-10-10)
 - Fibaro wall plug supported (FGWPE/F-101, FGWPE/F-102, FGWPG-111)
 - add `switchBlacklistDoubleRelaySwitch` for double/triple/quattro relays/switches

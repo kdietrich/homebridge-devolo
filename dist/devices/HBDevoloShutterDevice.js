@@ -89,12 +89,14 @@ var HBDevoloShutterDevice = /** @class */ (function (_super) {
         return [this.informationService, this.windowCoveringService];
     };
     HBDevoloShutterDevice.prototype.getValue = function (callback) {
-        this.log.debug('%s (%s / %s) > getValue is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.dDevice.getValue('blinds'));
-        return callback(null, this.dDevice.getValue('blinds'));
+        this.apiGetValue = this.dDevice.getValue('blinds');
+        this.log.debug('%s (%s / %s) > getValue is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetValue);
+        return callback(null, this.apiGetValue);
     };
     HBDevoloShutterDevice.prototype.getTargetValue = function (callback) {
-        this.log.debug('%s (%s / %s) > getTargetValue is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.dDevice.getTargetValue('blinds'));
-        return callback(null, this.dDevice.getTargetValue('blinds'));
+        this.apiGetTargetValue = this.dDevice.getTargetValue('blinds');
+        this.log.debug('%s (%s / %s) > getTargetValue is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetTargetValue);
+        return callback(null, this.apiGetTargetValue);
     };
     HBDevoloShutterDevice.prototype.setTargetValue = function (value, callback) {
         this.log.debug('%s (%s / %s) > setTargetValue to %s', this.constructor.name, this.dDevice.id, this.dDevice.name, value);

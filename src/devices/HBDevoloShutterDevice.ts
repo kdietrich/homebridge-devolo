@@ -6,6 +6,9 @@ export class HBDevoloShutterDevice extends HBDevoloDevice {
 
     windowCoveringService;
 
+    apiGetValue;
+    apiGetTargetValue;
+
     shutterLastCurrentValue;
     shutterLastTargetValue;
     shutterLastPositionState;
@@ -90,13 +93,15 @@ export class HBDevoloShutterDevice extends HBDevoloDevice {
     }
 
     getValue(callback) {
-        this.log.debug('%s (%s / %s) > getValue is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.dDevice.getValue('blinds'));
-        return callback(null, this.dDevice.getValue('blinds'));
+        this.apiGetValue = this.dDevice.getValue('blinds')
+        this.log.debug('%s (%s / %s) > getValue is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.apiGetValue);
+        return callback(null, this.apiGetValue);
     }
 
     getTargetValue(callback) {
-        this.log.debug('%s (%s / %s) > getTargetValue is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.dDevice.getTargetValue('blinds'));
-        return callback(null, this.dDevice.getTargetValue('blinds'));
+        this.apiGetTargetValue = this.dDevice.getTargetValue('blinds')
+        this.log.debug('%s (%s / %s) > getTargetValue is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.apiGetTargetValue);
+        return callback(null, this.apiGetTargetValue);
     }
 
     setTargetValue(value, callback) {
