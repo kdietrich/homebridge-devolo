@@ -8,6 +8,10 @@ export class HBDevoloHumidityDevice extends HBDevoloDevice {
     temperatureService;
     batteryService;
 
+    // FakeGato (eve app)
+    lastTemperature;
+    lastHumidity;
+
     constructor(log, dAPI: Devolo, dDevice: Device, storage, config) {
         super(log, dAPI, dDevice, storage, config);
 
@@ -16,10 +20,28 @@ export class HBDevoloHumidityDevice extends HBDevoloDevice {
             if(type==='temperature') {
                 self.log.info('%s (%s / %s) > onValueChanged > Temperature is %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
                 self.temperatureService.getCharacteristic(self.Characteristic.CurrentTemperature).updateValue(value, null);
+
+                // START FakeGato (eve app)
+                if (self.config.fakeGato) {
+                    self._addFakeGatoEntry({temp: value, humidity: self.lastHumidity});
+                    self.log.info("%s (%s / %s) > onStateChanged FakeGato > CurrentTemperature changed to %s, LastHumidity is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value, self.lastHumidity);
+                    self.lastTemperature = value;
+                }
+                // END FakeGato (eve app)
+
             }
             else if(type==='humidity') {
                 self.log.info('%s (%s / %s) > onValueChanged > Humidity is %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
                 self.humidityService.getCharacteristic(self.Characteristic.CurrentRelativeHumidity).updateValue(value, null);
+
+                // START FakeGato (eve app)
+                if (self.config.fakeGato) {
+                    self._addFakeGatoEntry({temp: self.lastTemperature, humidity: value});
+                    self.log.info("%s (%s / %s) > onStateChanged FakeGato > CurrentHumidity changed to %s, LastTemperature is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value, self.lastTemperature);
+                    self.lastHumidity = value;
+                }
+                // END FakeGato (eve app)
+
             }
         });
         self.dDevice.events.on('onBatteryLevelChanged', function(value: number) {
@@ -55,8 +77,20 @@ export class HBDevoloHumidityDevice extends HBDevoloDevice {
         this.batteryService.getCharacteristic(this.Characteristic.StatusLowBattery)
                      .on('get', this.getStatusLowBattery.bind(this));
 
+        this.lastTemperature = this.dDevice.getValue('temperature');
+        this.lastHumidity = this.dDevice.getValue('humidity');
+
+        var services = [this.informationService, this.humidityService, this.temperatureService, this.batteryService];
+
+        // START FakeGato (eve app)
+        if (this.config.fakeGato) {
+            this._addFakeGatoHistory('weather',false);
+            services = services.concat([this.loggingService]);
+        }
+        // END FakeGato (eve app)
+
         this.dDevice.listen();
-        return [this.informationService, this.humidityService, this.temperatureService, this.batteryService];
+        return services;
     }
 
     getCurrentRelativeHumidity(callback) {

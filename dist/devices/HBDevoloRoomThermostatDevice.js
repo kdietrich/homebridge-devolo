@@ -20,12 +20,26 @@ var HBDevoloRoomThermostatDevice = /** @class */ (function (_super) {
             if (type === 'temperature') {
                 self.log.info('%s (%s / %s) > onValueChanged > Temperature is %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
                 self.thermostatService.getCharacteristic(self.Characteristic.CurrentTemperature).updateValue(value, null);
+                // START FakeGato (eve app)
+                if (self.config.fakeGato) {
+                    self._addFakeGatoEntry({ currentTemp: value, setTemp: self.lastTargetTemp });
+                    self.log.info("%s (%s / %s) > onStateChanged FakeGato > CurrentTemperature changed to %s, TargetTemperature is %s", self.constructor.name, self.dDevice.id, self.dDevice.name, value, self.lastTargetTemp);
+                    self.lastCurrentTemp = value;
+                }
+                // END FakeGato (eve app)
             }
         });
         self.dDevice.events.on('onTargetValueChanged', function (type, value) {
             if (type === 'temperature') {
                 self.log.info('%s (%s / %s) > onTargetValueChanged > TargetTemperature is %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
                 self.thermostatService.getCharacteristic(self.Characteristic.TargetTemperature).updateValue(value, null);
+                // START FakeGato (eve app)
+                if (self.config.fakeGato) {
+                    self._addFakeGatoEntry({ currentTemp: self.lastCurrentTemp, setTemp: value });
+                    self.log.info("%s (%s / %s) > onStateChanged FakeGato > TargetTemperature changed to %s, CurrentTemperature is %s", self.constructor.name, self.dDevice.id, self.dDevice.name, value, self.lastCurrentTemp);
+                    self.lastTargetTemp = value;
+                }
+                // END FakeGato (eve app)
             }
         });
         self.dDevice.events.on('onBatteryLevelChanged', function (value) {
@@ -65,8 +79,17 @@ var HBDevoloRoomThermostatDevice = /** @class */ (function (_super) {
             .on('get', this.getChargingState.bind(this));
         this.batteryService.getCharacteristic(this.Characteristic.StatusLowBattery)
             .on('get', this.getStatusLowBattery.bind(this));
+        this.lastCurrentTemp = this.dDevice.getValue('temperature');
+        this.lastTargetTemp = this.dDevice.getTargetValue('temperature');
+        var services = [this.informationService, this.thermostatService, this.batteryService];
+        // START FakeGato (eve app)
+        if (this.config.fakeGato) {
+            this._addFakeGatoHistory('thermo', false);
+            services = services.concat([this.loggingService]);
+        }
+        // END FakeGato (eve app)
         this.dDevice.listen();
-        return [this.informationService, this.thermostatService, this.batteryService];
+        return services;
     };
     HBDevoloRoomThermostatDevice.prototype.getCurrentTemperature = function (callback) {
         this.log.debug('%s (%s / %s) > getCurrentTemperature', this.constructor.name, this.dDevice.id, this.dDevice.name);

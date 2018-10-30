@@ -122,6 +122,8 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 ## Changes
 
 #### v0.1.13-dev
+- add FakeGato History (Eve App) THERMO for Devolo Room Thermostat, Devolo and Danfoss Thermostat Valve
+- add FakeGato History (Eve App) WEATHER for Devolo Humidity Sensor
 
 #### v0.1.12 (2018-10-10)
 - Fibaro wall plug supported (FGWPE/F-101, FGWPE/F-102, FGWPG-111)

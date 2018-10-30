@@ -36,10 +36,10 @@ export class HBDevoloSwitchMeterDevice extends HBDevoloDevice {
                     self.totalConsumptionSincelastChange = +(self.lastValue * (self.secondsSincelastChange / 3600) / 1000).toFixed(6); // kWh
                     self.totalConsumption = +(self.totalConsumption + self.totalConsumptionSincelastChange).toFixed(6); // kWh
 
-                    self.switchService.getCharacteristic(self.Characteristic.CurrentConsumption).updateValue(value, null)
-                    self.switchService.getCharacteristic(self.Characteristic.TotalConsumption).updateValue(self.totalConsumption, null)
+                    self.switchService.getCharacteristic(self.Characteristic.CurrentConsumption).updateValue(value, null);
+                    self.switchService.getCharacteristic(self.Characteristic.TotalConsumption).updateValue(self.totalConsumption, null);
 
-                    self.log.info("%s (%s / %s) > onCurrentValueChanged FakeGato > CurrentConsumption changed to %s W, lastValue was %s, totalConsumption set to %s kWh, lastChange set to %s, secondsSincelastChange was %s, totalConsumptionSincelastChange was %s kWh, lastReset is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value, self.lastValue,  self.totalConsumption, self.lastChange, self.secondsSincelastChange, self.totalConsumptionSincelastChange, self.lastReset)
+                    self.log.info("%s (%s / %s) > onCurrentValueChanged FakeGato > CurrentConsumption changed to %s W, lastValue was %s, totalConsumption set to %s kWh, lastChange set to %s, secondsSincelastChange was %s, totalConsumptionSincelastChange was %s kWh, lastReset is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value, self.lastValue,  self.totalConsumption, self.lastChange, self.secondsSincelastChange, self.totalConsumptionSincelastChange, self.lastReset);
 
                     self.lastChange = moment().unix();
                     self.lastValue = value;

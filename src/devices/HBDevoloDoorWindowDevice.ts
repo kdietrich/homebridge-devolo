@@ -44,7 +44,7 @@ export class HBDevoloDoorWindowDevice extends HBDevoloDevice {
                     self.contactSensorService.getCharacteristic(self.Characteristic.LastActivation).updateValue(self.lastActivation, null)
                 }
                 self.lastChange = moment().unix();
-                self.log.info("%s (%s / %s) > onStateChanged FakeGato > SensorState changed to %s, lastActivation is %s, lastReset is %s, lastChange is %s timesOpened is %s, timeOpen is %s, timeClose is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state, self.lastActivation, self.lastReset, self.lastChange, self.timesOpened, self.timeOpen, self.timeClose)
+                self.log.info("%s (%s / %s) > onStateChanged FakeGato > SensorState changed to %s, lastActivation is %s, lastReset is %s, lastChange is %s timesOpened is %s, timeOpen is %s, timeClose is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state, self.lastActivation, self.lastReset, self.lastChange, self.timesOpened, self.timeOpen, self.timeClose);
                 self.loggingService.setExtraPersistedData([{"lastActivation": self.lastActivation, "lastReset": self.lastReset, "lastChange": self.lastChange, "timesOpened": self.timesOpened, "timeOpen": self.timeOpen, "timeClose": self.timeClose}]);
             }
             // END FakeGato (eve app)

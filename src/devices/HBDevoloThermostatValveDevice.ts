@@ -7,6 +7,10 @@ export class HBDevoloThermostatValveDevice extends HBDevoloDevice {
     thermostatService;
     batteryService;
 
+    // FakeGato (eve app)
+    lastCurrentTemp;
+    lastTargetTemp;
+
     constructor(log, dAPI: Devolo, dDevice: Device, storage, config) {
         super(log, dAPI, dDevice, storage, config);
 
@@ -15,12 +19,30 @@ export class HBDevoloThermostatValveDevice extends HBDevoloDevice {
             if(type==='temperature') {
                 self.log.info('%s (%s / %s) > onValueChanged > Temperature is %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
                 self.thermostatService.getCharacteristic(self.Characteristic.CurrentTemperature).updateValue(value, null);
+
+                // START FakeGato (eve app)
+                if (self.config.fakeGato) {
+                    self._addFakeGatoEntry({currentTemp: value, setTemp: self.lastTargetTemp});
+                    self.log.info("%s (%s / %s) > onStateChanged FakeGato > CurrentTemperature changed to %s, TargetTemperature is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value, self.lastTargetTemp);
+                    self.lastCurrentTemp = value;
+                }
+                // END FakeGato (eve app)
+
             }
         });
         self.dDevice.events.on('onTargetValueChanged', function(type: string, value: number) {
             if(type==='temperature') {
                 self.log.info('%s (%s / %s) > onTargetValueChanged > TargetTemperature is %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
                 self.thermostatService.getCharacteristic(self.Characteristic.TargetTemperature).updateValue(value, null);
+
+                // START FakeGato (eve app)
+                if (self.config.fakeGato) {
+                    self._addFakeGatoEntry({currentTemp: self.lastCurrentTemp, setTemp: value});
+                    self.log.info("%s (%s / %s) > onStateChanged FakeGato > TargetTemperature changed to %s, CurrentTemperature is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value, self.lastCurrentTemp);
+                    self.lastTargetTemp = value;
+                }
+                // END FakeGato (eve app)
+
             }
         });
         self.dDevice.events.on('onBatteryLevelChanged', function(value: number) {
@@ -63,8 +85,20 @@ export class HBDevoloThermostatValveDevice extends HBDevoloDevice {
         this.batteryService.getCharacteristic(this.Characteristic.StatusLowBattery)
                      .on('get', this.getStatusLowBattery.bind(this));
 
+        this.lastCurrentTemp = this.dDevice.getValue('temperature');
+        this.lastTargetTemp = this.dDevice.getTargetValue('temperature');
+
+        var services = [this.informationService, this.thermostatService, this.batteryService];
+
+        // START FakeGato (eve app)
+        if (this.config.fakeGato) {
+            this._addFakeGatoHistory('thermo',false);
+            services = services.concat([this.loggingService]);
+        }
+        // END FakeGato (eve app)
+
         this.dDevice.listen();
-        return [this.informationService, this.thermostatService, this.batteryService];
+        return services;
     }
 
     getCurrentTemperature(callback) {

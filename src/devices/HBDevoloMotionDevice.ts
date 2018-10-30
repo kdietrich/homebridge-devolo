@@ -33,7 +33,7 @@ export class HBDevoloMotionDevice extends HBDevoloDevice {
                     self.lastActivation = moment().unix() - self.loggingService.getInitialTime();
                     self.motionSensorService.getCharacteristic(self.Characteristic.LastActivation).updateValue(self.lastActivation, null)
                 }
-                self.log.info("%s (%s / %s) > onStateChanged FakeGato > MotionState changed to %s, lastActivation is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state, self.lastActivation)
+                self.log.info("%s (%s / %s) > onStateChanged FakeGato > MotionState changed to %s, lastActivation is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state, self.lastActivation);
                 self.loggingService.setExtraPersistedData([{"lastActivation": self.lastActivation}]);
             }
             // END FakeGato (eve app)
