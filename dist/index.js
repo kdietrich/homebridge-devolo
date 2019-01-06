@@ -250,6 +250,60 @@ module.exports = function (homebridge) {
     };
     util.inherits(Characteristic.Voltage, Characteristic);
     Characteristic.Voltage.UUID = 'E863F10A-079E-48FF-8F27-9C2605A29F52';
+    /// Eve Weather
+    Characteristic.AirPressure = function () {
+        Characteristic.call(this, 'AirPressure', 'E863F10F-079E-48FF-8F27-9C2605A29F52');
+        this.setProps({
+            format: Characteristic.Formats.UINT16,
+            unit: "hPa",
+            perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+        });
+        this.value = this.getDefaultValue();
+    };
+    util.inherits(Characteristic.AirPressure, Characteristic);
+    Characteristic.AirPressure.UUID = 'E863F10F-079E-48FF-8F27-9C2605A29F52';
+    Service.AirPressure = function (displayName, subtype) {
+        Service.call(this, displayName, 'E863F001-079E-48FF-8F27-9C2605A29F52', subtype);
+        //this.addCharacteristic(Characteristic.AirPressure);
+    };
+    util.inherits(Service.AirPressure, Service);
+    Service.AirPressure.UUID = 'E863F001-079E-48FF-8F27-9C2605A29F52';
     // END FakeGato (eve app)
+    // START Z-Weather
+    Characteristic.WindSpeed = function () {
+        Characteristic.call(this, 'WindSpeed', '00000020-0000-0000-0000-199207310822');
+        this.setProps({
+            format: Characteristic.Formats.FLOAT,
+            unit: "km/h",
+            perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+        });
+        this.value = this.getDefaultValue();
+    };
+    util.inherits(Characteristic.WindSpeed, Characteristic);
+    Characteristic.WindSpeed.UUID = '00000020-0000-0000-0000-199207310822';
+    Service.WindSpeed = function (displayName, subtype) {
+        Service.call(this, displayName, '00000030-0000-0000-0000-199207310822', subtype);
+        //this.addCharacteristic(Characteristic.WindSpeed);
+    };
+    util.inherits(Service.WindSpeed, Service);
+    Service.WindSpeed.UUID = '00000030-0000-0000-0000-199207310822';
+    Characteristic.DewPoint = function () {
+        Characteristic.call(this, 'DewPoint', '00000021-0000-0000-0000-199207310822');
+        this.setProps({
+            format: Characteristic.Formats.FLOAT,
+            unit: "celsius",
+            perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+        });
+        this.value = this.getDefaultValue();
+    };
+    util.inherits(Characteristic.DewPoint, Characteristic);
+    Characteristic.DewPoint.UUID = '00000021-0000-0000-0000-199207310822';
+    Service.DewPoint = function (displayName, subtype) {
+        Service.call(this, displayName, '00000031-0000-0000-0000-199207310822', subtype);
+        //this.addCharacteristic(Characteristic.DewPoint);
+    };
+    util.inherits(Service.DewPoint, Service);
+    Service.DewPoint.UUID = '00000031-0000-0000-0000-199207310822';
+    // END Z-Weather
     homebridge.registerPlatform("homebridge-devolo", "Devolo", HBDevoloPlatform, false);
 };

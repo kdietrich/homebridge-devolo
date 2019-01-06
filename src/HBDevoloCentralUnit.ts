@@ -16,10 +16,11 @@ import {HBDevoloShutterDevice} from './devices/HBDevoloShutterDevice';
 import {HBDevoloRelayDevice} from './devices/HBDevoloRelayDevice';
 import {HBDevoloDimmerDevice} from './devices/HBDevoloDimmerDevice';
 import {HBOtherRelaySwitchXDevice} from './devices/HBOtherRelaySwitchXDevice';
+import {HBPoppZWeatherDevice} from './devices/HBPoppZWeatherDevice';
 import {HBDevoloRule} from './devices/HBDevoloRule';
 import {HBDevoloScene} from './devices/HBDevoloScene';
 import {Devolo} from 'node-devolo/dist/Devolo';
-import {Device,SwitchMeterDevice,HumidityDevice,DoorWindowDevice,MotionDevice,FloodDevice,ThermostatValveDevice,SmokeDetectorDevice,RoomThermostatDevice,ShutterDevice,WallSwitchDevice,RemoteControlDevice,SirenDevice,RelayDevice,DimmerDevice,RelaySwitchXDevice} from 'node-devolo/dist/DevoloDevice';
+import {Device,SwitchMeterDevice,HumidityDevice,DoorWindowDevice,MotionDevice,FloodDevice,ThermostatValveDevice,SmokeDetectorDevice,RoomThermostatDevice,ShutterDevice,WallSwitchDevice,RemoteControlDevice,SirenDevice,RelayDevice,DimmerDevice,RelaySwitchXDevice,ZWeatherDevice} from 'node-devolo/dist/DevoloDevice';
 import {Rule,Scene} from 'node-devolo/dist/DevoloMisc';
 
 const storage = require('node-persist');
@@ -136,6 +137,9 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
                 }
                 else if((devices[i].constructor as any).name == (RelaySwitchXDevice as any).name) {
                     d = new HBOtherRelaySwitchXDevice(self.log, self.dAPI, devices[i], storage, self.config);
+                }
+                else if((devices[i].constructor as any).name == (ZWeatherDevice as any).name) {
+                    d = new HBPoppZWeatherDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else {
                     self.log.info("%s > Device \"%s\" is not supported (yet). Open an issue on github and ask for adding it.", (self.constructor as any).name, devices[i].model);

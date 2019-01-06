@@ -36,6 +36,7 @@ This homebridge plugin allows you to control your Devolo Home Control devices vi
 - Qubino Flush Shutter
 - Aeotec Siren Gen5 (ZW080-C15)
 - Fibaro Switch/Relay 1st/2nd Gen (FGS-211, FGS-212, FGS-213, FGS-221, FGS-222, FGS-223)
+- Popp Z-Weather
 
 ![homekit-macos_180929](pictures/_homekit-macos_180929.jpg)
 
@@ -122,6 +123,7 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 ## Changes
 
 #### v0.1.13-dev
+- Popp Z-Weather supported
 - add FakeGato History (Eve App) THERMO for Devolo Room Thermostat, Devolo and Danfoss Thermostat Valve
 - add FakeGato History (Eve App) WEATHER for Devolo Humidity Sensor
 - Bugfix in `node-devolo` for multiple sensors per device
