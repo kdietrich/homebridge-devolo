@@ -122,7 +122,7 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 
 ## Changes
 
-#### v0.1.13-dev
+#### v0.1.13 (2019-01-09)
 - Popp Z-Weather supported
 - add FakeGato History (Eve App) THERMO for Devolo Room Thermostat, Devolo and Danfoss Thermostat Valve
 - add FakeGato History (Eve App) WEATHER for Devolo Humidity Sensor
