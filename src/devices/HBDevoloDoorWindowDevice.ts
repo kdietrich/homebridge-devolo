@@ -11,6 +11,13 @@ export class HBDevoloDoorWindowDevice extends HBDevoloDevice {
     batteryService;
     lightSensorService;
 
+    apiGetContactSensorState;
+    apiGetCurrentTemperature;
+    apiGetCurrentAmbientLightLevel;
+    apiGetBatteryLevel;
+    apiGetStatusLowBattery;
+    apiGetChargingState;
+
     // FakeGato (eve app)
     lastActivation;
     lastReset;
@@ -25,11 +32,11 @@ export class HBDevoloDoorWindowDevice extends HBDevoloDevice {
         var self = this;
 
         self.dDevice.events.on('onStateChanged', function(state: number) {
-            self.log.info('%s (%s / %s) > onStateChanged > State is %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state);
+            self.log.info('%s (%s / %s) > onStateChanged > SensorState is %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state);
             self.contactSensorService.getCharacteristic(self.Characteristic.ContactSensorState).updateValue(state, null);
 
             // START FakeGato (eve app)
-            if (self.config.fakeGato) {
+            if (self.config.fakeGato && self.loggingService.isHistoryLoaded()) {
                 self._addFakeGatoEntry({status: state});
                 if (state == 0) {
                     // CLOSED
@@ -46,6 +53,8 @@ export class HBDevoloDoorWindowDevice extends HBDevoloDevice {
                 self.lastChange = moment().unix();
                 self.log.info("%s (%s / %s) > onStateChanged FakeGato > SensorState changed to %s, lastActivation is %s, lastReset is %s, lastChange is %s timesOpened is %s, timeOpen is %s, timeClose is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state, self.lastActivation, self.lastReset, self.lastChange, self.timesOpened, self.timeOpen, self.timeClose);
                 self.loggingService.setExtraPersistedData([{"lastActivation": self.lastActivation, "lastReset": self.lastReset, "lastChange": self.lastChange, "timesOpened": self.timesOpened, "timeOpen": self.timeOpen, "timeClose": self.timeClose}]);
+            } else {
+                self.log.info("%s (%s / %s) > onStateChanged FakeGato > SensorState %s not added - FakeGato history not yet loaded", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state);
             }
             // END FakeGato (eve app)
 
@@ -119,33 +128,39 @@ export class HBDevoloDoorWindowDevice extends HBDevoloDevice {
     }
 
     getContactSensorState(callback) {
-        this.log.debug('%s (%s / %s) > getContactSensorState', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
-        return callback(null, this.dDevice.getState());
+        this.apiGetContactSensorState = this.dDevice.getState();
+        this.log.debug('%s (%s / %s) > getContactSensorState is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.apiGetContactSensorState);
+        return callback(null, this.apiGetContactSensorState);
     }
 
     getCurrentTemperature(callback) {
-        this.log.debug('%s (%s / %s) > getCurrentTemperature', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
-        return callback(null, this.dDevice.getValue('temperature'));
+        this.apiGetCurrentTemperature = this.dDevice.getValue('temperature');
+        this.log.debug('%s (%s / %s) > getCurrentTemperature is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.apiGetCurrentTemperature);
+        return callback(null, this.apiGetCurrentTemperature);
     }
 
     getCurrentAmbientLightLevel(callback) {
-        this.log.debug('%s (%s / %s) > getCurrentAmbientLightLevel', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
-        return callback(null, this.dDevice.getValue('light')/100*500); //convert percentage to lux
+        this.apiGetCurrentAmbientLightLevel = this.dDevice.getValue('light')/100*500; //convert percentage to lux
+        this.log.debug('%s (%s / %s) > getCurrentAmbientLightLevel is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.apiGetCurrentAmbientLightLevel);
+        return callback(null, this.apiGetCurrentAmbientLightLevel);
     }
 
     getBatteryLevel(callback) {
-        this.log.debug('%s (%s / %s) > getBatteryLevel', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
-        return callback(null, this.dDevice.getBatteryLevel())
+        this.apiGetBatteryLevel = this.dDevice.getBatteryLevel();
+        this.log.debug('%s (%s / %s) > getBatteryLevel is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.apiGetBatteryLevel);
+        return callback(null, this.apiGetBatteryLevel)
     }
 
     getStatusLowBattery(callback) {
-        this.log.debug('%s (%s / %s) > getStatusLowBattery', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
-        return callback(null, !this.dDevice.getBatteryLow())
+        this.apiGetStatusLowBattery = !this.dDevice.getBatteryLow();
+        this.log.debug('%s (%s / %s) > getStatusLowBattery is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.apiGetStatusLowBattery);
+        return callback(null, this.apiGetStatusLowBattery)
     }
 
     getChargingState(callback) {
-        this.log.debug('%s (%s / %s) > getChargingState', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
-        return callback(null, false)
+        this.apiGetChargingState = false;
+        this.log.debug('%s (%s / %s) > getChargingState is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.apiGetChargingState);
+        return callback(null, this.apiGetChargingState)
     }
 
     // START FakeGato (eve app)

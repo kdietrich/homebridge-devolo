@@ -122,6 +122,10 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 
 ## Changes
 
+#### v0.1.14-dev
+- Bugfix: CurrentConsumption is reported before FakeGato History is loaded (Cannot add a Characteristic with the same UUID as another Characteristic in this Service)
+- add values and states from devolo requests in homebridge log
+
 #### v0.1.13 (2019-01-09)
 - Popp Z-Weather supported
 - add FakeGato History (Eve App) THERMO for Devolo Room Thermostat, Devolo and Danfoss Thermostat Valve

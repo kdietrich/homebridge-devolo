@@ -1,8 +1,11 @@
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -18,24 +21,30 @@ var HBDevoloHumidityDevice = /** @class */ (function (_super) {
         var self = _this;
         self.dDevice.events.on('onValueChanged', function (type, value) {
             if (type === 'temperature') {
-                self.log.info('%s (%s / %s) > onValueChanged > Temperature is %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
+                self.log.info('%s (%s / %s) > onValueChanged > CurrentTemperature is %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
                 self.temperatureService.getCharacteristic(self.Characteristic.CurrentTemperature).updateValue(value, null);
                 // START FakeGato (eve app)
-                if (self.config.fakeGato) {
+                if (self.config.fakeGato && self.loggingService.isHistoryLoaded()) {
                     self._addFakeGatoEntry({ temp: value, humidity: self.lastHumidity });
-                    self.log.info("%s (%s / %s) > onStateChanged FakeGato > CurrentTemperature changed to %s, LastHumidity is %s", self.constructor.name, self.dDevice.id, self.dDevice.name, value, self.lastHumidity);
+                    self.log.info("%s (%s / %s) > onValueChanged FakeGato > CurrentTemperature changed to %s, LastHumidity is %s", self.constructor.name, self.dDevice.id, self.dDevice.name, value, self.lastHumidity);
                     self.lastTemperature = value;
+                }
+                else {
+                    self.log.info("%s (%s / %s) > onValueChanged FakeGato > CurrentTemperature %s not added - FakeGato history not yet loaded", self.constructor.name, self.dDevice.id, self.dDevice.name, value);
                 }
                 // END FakeGato (eve app)
             }
             else if (type === 'humidity') {
-                self.log.info('%s (%s / %s) > onValueChanged > Humidity is %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
+                self.log.info('%s (%s / %s) > onValueChanged > CurrentHumidity is %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
                 self.humidityService.getCharacteristic(self.Characteristic.CurrentRelativeHumidity).updateValue(value, null);
                 // START FakeGato (eve app)
-                if (self.config.fakeGato) {
+                if (self.config.fakeGato && self.loggingService.isHistoryLoaded()) {
                     self._addFakeGatoEntry({ temp: self.lastTemperature, humidity: value });
-                    self.log.info("%s (%s / %s) > onStateChanged FakeGato > CurrentHumidity changed to %s, LastTemperature is %s", self.constructor.name, self.dDevice.id, self.dDevice.name, value, self.lastTemperature);
+                    self.log.info("%s (%s / %s) > onValueChanged FakeGato > CurrentHumidity changed to %s, LastTemperature is %s", self.constructor.name, self.dDevice.id, self.dDevice.name, value, self.lastTemperature);
                     self.lastHumidity = value;
+                }
+                else {
+                    self.log.info("%s (%s / %s) > onValueChanged FakeGato > CurrentHumidity %s not added - FakeGato history not yet loaded", self.constructor.name, self.dDevice.id, self.dDevice.name, value);
                 }
                 // END FakeGato (eve app)
             }
@@ -82,24 +91,29 @@ var HBDevoloHumidityDevice = /** @class */ (function (_super) {
         return services;
     };
     HBDevoloHumidityDevice.prototype.getCurrentRelativeHumidity = function (callback) {
-        this.log.debug('%s (%s / %s) > getCurrentRelativeHumidity', this.constructor.name, this.dDevice.id, this.dDevice.name);
-        return callback(null, this.dDevice.getValue('humidity'));
+        this.apiGetCurrentRelativeHumidity = this.dDevice.getValue('humidity');
+        this.log.debug('%s (%s / %s) > getCurrentRelativeHumidity is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetCurrentRelativeHumidity);
+        return callback(null, this.apiGetCurrentRelativeHumidity);
     };
     HBDevoloHumidityDevice.prototype.getCurrentTemperature = function (callback) {
-        this.log.debug('%s (%s / %s) > getCurrentTemperature', this.constructor.name, this.dDevice.id, this.dDevice.name);
-        return callback(null, this.dDevice.getValue('temperature'));
+        this.apiGetCurrentTemperature = this.dDevice.getValue('temperature');
+        this.log.debug('%s (%s / %s) > getCurrentTemperature is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetCurrentTemperature);
+        return callback(null, this.apiGetCurrentTemperature);
     };
     HBDevoloHumidityDevice.prototype.getBatteryLevel = function (callback) {
-        this.log.debug('%s (%s / %s) > getBatteryLevel', this.constructor.name, this.dDevice.id, this.dDevice.name);
-        return callback(null, this.dDevice.getBatteryLevel());
+        this.apiGetBatteryLevel = this.dDevice.getBatteryLevel();
+        this.log.debug('%s (%s / %s) > getBatteryLevel is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetBatteryLevel);
+        return callback(null, this.apiGetBatteryLevel);
     };
     HBDevoloHumidityDevice.prototype.getStatusLowBattery = function (callback) {
-        this.log.debug('%s (%s / %s) > getStatusLowBattery', this.constructor.name, this.dDevice.id, this.dDevice.name);
-        return callback(null, !this.dDevice.getBatteryLow());
+        this.apiGetStatusLowBattery = !this.dDevice.getBatteryLow();
+        this.log.debug('%s (%s / %s) > getStatusLowBattery is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetStatusLowBattery);
+        return callback(null, this.apiGetStatusLowBattery);
     };
     HBDevoloHumidityDevice.prototype.getChargingState = function (callback) {
-        this.log.debug('%s (%s / %s) > getChargingState', this.constructor.name, this.dDevice.id, this.dDevice.name);
-        return callback(null, false);
+        this.apiGetChargingState = false;
+        this.log.debug('%s (%s / %s) > getChargingState is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetChargingState);
+        return callback(null, this.apiGetChargingState);
     };
     return HBDevoloHumidityDevice;
 }(HBDevoloDevice_1.HBDevoloDevice));

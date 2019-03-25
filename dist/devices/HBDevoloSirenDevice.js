@@ -1,8 +1,11 @@
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -40,7 +43,7 @@ var HBDevoloSirenDevice = /** @class */ (function (_super) {
         return [this.informationService, this.securitySystemService];
     };
     HBDevoloSirenDevice.prototype.getSecuritySystemCurrentState = function (callback) {
-        this.log.debug('%s (%s / %s) > getSecuritySystemCurrentState', this.constructor.name, this.dDevice.id, this.dDevice.name);
+        this.log.debug('%s (%s / %s) > getSecuritySystemCurrentState is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.currentState);
         return callback(null, this.currentState);
     };
     HBDevoloSirenDevice.prototype.setSecuritySystemCurrentState = function (value, callback) {
@@ -52,7 +55,7 @@ var HBDevoloSirenDevice = /** @class */ (function (_super) {
         return callback();
     };
     HBDevoloSirenDevice.prototype.getSecuritySystemTargetState = function (callback) {
-        this.log.debug('%s (%s / %s) > getSecuritySystemTargetState', this.constructor.name, this.dDevice.id, this.dDevice.name);
+        this.log.debug('%s (%s / %s) > getSecuritySystemTargetState is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.currentState);
         return callback(null, this.currentState);
     };
     HBDevoloSirenDevice.prototype.setSecuritySystemTargetState = function (value, callback) {

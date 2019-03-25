@@ -7,6 +7,11 @@ export class HBDevoloFloodDevice extends HBDevoloDevice {
     leakSensorService;
     batteryService;
 
+    apiGetLeakDetected;
+    apiGetBatteryLevel;
+    apiGetStatusLowBattery;
+    apiGetChargingState;
+
     constructor(log, dAPI: Devolo, dDevice: Device, storage, config) {
         super(log, dAPI, dDevice, storage, config);
 
@@ -50,22 +55,26 @@ export class HBDevoloFloodDevice extends HBDevoloDevice {
     }
 
     getLeakDetected(callback) {
-        this.log.debug('%s (%s / %s) > getLeakDetected', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
-        return callback(null, this.dDevice.getState());
+        this.apiGetLeakDetected = this.dDevice.getState();
+        this.log.debug('%s (%s / %s) > getLeakDetected is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.apiGetLeakDetected);
+        return callback(null, this.apiGetLeakDetected);
     }
 
     getBatteryLevel(callback) {
-        this.log.debug('%s (%s / %s) > getBatteryLevel', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
-        return callback(null, this.dDevice.getBatteryLevel())
+        this.apiGetBatteryLevel = this.dDevice.getBatteryLevel();
+        this.log.debug('%s (%s / %s) > getBatteryLevel is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.apiGetBatteryLevel);
+        return callback(null, this.apiGetBatteryLevel)
     }
 
     getStatusLowBattery(callback) {
-        this.log.debug('%s (%s / %s) > getStatusLowBattery', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
-        return callback(null, !this.dDevice.getBatteryLow())
+        this.apiGetStatusLowBattery = !this.dDevice.getBatteryLow();
+        this.log.debug('%s (%s / %s) > getStatusLowBattery is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.apiGetStatusLowBattery);
+        return callback(null, this.apiGetStatusLowBattery)
     }
 
     getChargingState(callback) {
-        this.log.debug('%s (%s / %s) > getChargingState', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
-        return callback(null, false)
+        this.apiGetChargingState = false;
+        this.log.debug('%s (%s / %s) > getChargingState is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.apiGetChargingState);
+        return callback(null, this.apiGetChargingState)
     }
 }

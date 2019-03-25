@@ -1,8 +1,11 @@
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -18,10 +21,10 @@ var HBDevoloMotionDevice = /** @class */ (function (_super) {
         var _this = _super.call(this, log, dAPI, dDevice, storage, config) || this;
         var self = _this;
         self.dDevice.events.on('onStateChanged', function (state) {
-            self.log.info('%s (%s / %s) > onStateChanged > State is %s', self.constructor.name, self.dDevice.id, self.dDevice.name, state);
+            self.log.info('%s (%s / %s) > onStateChanged > MotionState is %s', self.constructor.name, self.dDevice.id, self.dDevice.name, state);
             self.motionSensorService.getCharacteristic(self.Characteristic.MotionDetected).updateValue(state, null);
             // START FakeGato (eve app)
-            if (self.config.fakeGato) {
+            if (self.config.fakeGato && self.loggingService.isHistoryLoaded()) {
                 self._addFakeGatoEntry({ status: state });
                 if (state == 0) {
                     // NO MOTION
@@ -33,6 +36,9 @@ var HBDevoloMotionDevice = /** @class */ (function (_super) {
                 }
                 self.log.info("%s (%s / %s) > onStateChanged FakeGato > MotionState changed to %s, lastActivation is %s", self.constructor.name, self.dDevice.id, self.dDevice.name, state, self.lastActivation);
                 self.loggingService.setExtraPersistedData([{ "lastActivation": self.lastActivation }]);
+            }
+            else {
+                self.log.info("%s (%s / %s) > onStateChanged FakeGato > MotionState %s not added - FakeGato history not yet loaded", self.constructor.name, self.dDevice.id, self.dDevice.name, state);
             }
             // END FakeGato (eve app)
         });
@@ -95,28 +101,34 @@ var HBDevoloMotionDevice = /** @class */ (function (_super) {
         return services;
     };
     HBDevoloMotionDevice.prototype.getMotionDetected = function (callback) {
-        this.log.debug('%s (%s / %s) > getMotionDetected', this.constructor.name, this.dDevice.id, this.dDevice.name);
-        return callback(null, this.dDevice.getState());
+        this.apiGetMotionDetected = this.dDevice.getState();
+        this.log.debug('%s (%s / %s) > getMotionDetected is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetMotionDetected);
+        return callback(null, this.apiGetMotionDetected);
     };
     HBDevoloMotionDevice.prototype.getCurrentTemperature = function (callback) {
-        this.log.debug('%s (%s / %s) > getCurrentTemperature', this.constructor.name, this.dDevice.id, this.dDevice.name);
-        return callback(null, this.dDevice.getValue('temperature'));
+        this.apiGetCurrentTemperature = this.dDevice.getValue('temperature');
+        this.log.debug('%s (%s / %s) > getCurrentTemperature is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetCurrentTemperature);
+        return callback(null, this.apiGetCurrentTemperature);
     };
     HBDevoloMotionDevice.prototype.getCurrentAmbientLightLevel = function (callback) {
-        this.log.debug('%s (%s / %s) > getCurrentAmbientLightLevel', this.constructor.name, this.dDevice.id, this.dDevice.name);
-        return callback(null, this.dDevice.getValue('light') / 100 * 500); //convert percentage to lux
+        this.apiGetCurrentAmbientLightLevel = this.dDevice.getValue('light') / 100 * 500; //convert percentage to lux
+        this.log.debug('%s (%s / %s) > getCurrentAmbientLightLevel is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetCurrentAmbientLightLevel);
+        return callback(null, this.apiGetCurrentAmbientLightLevel);
     };
     HBDevoloMotionDevice.prototype.getBatteryLevel = function (callback) {
-        this.log.debug('%s (%s / %s) > getBatteryLevel', this.constructor.name, this.dDevice.id, this.dDevice.name);
-        return callback(null, this.dDevice.getBatteryLevel());
+        this.apiGetBatteryLevel = this.dDevice.getBatteryLevel();
+        this.log.debug('%s (%s / %s) > getBatteryLevel is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetBatteryLevel);
+        return callback(null, this.apiGetBatteryLevel);
     };
     HBDevoloMotionDevice.prototype.getStatusLowBattery = function (callback) {
-        this.log.debug('%s (%s / %s) > getStatusLowBattery', this.constructor.name, this.dDevice.id, this.dDevice.name);
-        return callback(null, !this.dDevice.getBatteryLow());
+        this.apiGetStatusLowBattery = !this.dDevice.getBatteryLow();
+        this.log.debug('%s (%s / %s) > getStatusLowBattery is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetStatusLowBattery);
+        return callback(null, this.apiGetStatusLowBattery);
     };
     HBDevoloMotionDevice.prototype.getChargingState = function (callback) {
-        this.log.debug('%s (%s / %s) > getChargingState', this.constructor.name, this.dDevice.id, this.dDevice.name);
-        return callback(null, false);
+        this.apiGetChargingState = false;
+        this.log.debug('%s (%s / %s) > getChargingState is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetChargingState);
+        return callback(null, this.apiGetChargingState);
     };
     HBDevoloMotionDevice.prototype.getLastActivation = function (callback) {
         this.log.debug('%s (%s / %s) > getLastActivation will report %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.lastActivation);

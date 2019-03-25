@@ -7,6 +7,12 @@ export class HBDevoloRoomThermostatDevice extends HBDevoloDevice {
     thermostatService;
     batteryService;
 
+    apiGetCurrentTemperature;
+    apiGetTargetTemperature;
+    apiGetBatteryLevel;
+    apiGetStatusLowBattery;
+    apiGetChargingState;
+
     // FakeGato (eve app)
     lastCurrentTemp;
     lastTargetTemp;
@@ -17,14 +23,16 @@ export class HBDevoloRoomThermostatDevice extends HBDevoloDevice {
         var self = this;
         self.dDevice.events.on('onValueChanged', function(type: string, value: number) {
             if(type==='temperature') {
-                self.log.info('%s (%s / %s) > onValueChanged > Temperature is %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
+                self.log.info('%s (%s / %s) > onValueChanged > CurrentTemperature is %s', (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
                 self.thermostatService.getCharacteristic(self.Characteristic.CurrentTemperature).updateValue(value, null);
 
                 // START FakeGato (eve app)
-                if (self.config.fakeGato) {
+                if (self.config.fakeGato && self.loggingService.isHistoryLoaded()) {
                     self._addFakeGatoEntry({currentTemp: value, setTemp: self.lastTargetTemp});
-                    self.log.info("%s (%s / %s) > onStateChanged FakeGato > CurrentTemperature changed to %s, TargetTemperature is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value, self.lastTargetTemp);
+                    self.log.info("%s (%s / %s) > onValueChanged FakeGato > CurrentTemperature changed to %s, TargetTemperature is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value, self.lastTargetTemp);
                     self.lastCurrentTemp = value;
+                } else {
+                    self.log.info("%s (%s / %s) > onValueChanged FakeGato > CurrentTemperature %s not added - FakeGato history not yet loaded", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
                 }
                 // END FakeGato (eve app)
 
@@ -36,10 +44,12 @@ export class HBDevoloRoomThermostatDevice extends HBDevoloDevice {
                 self.thermostatService.getCharacteristic(self.Characteristic.TargetTemperature).updateValue(value, null);
 
                 // START FakeGato (eve app)
-                if (self.config.fakeGato) {
+                if (self.config.fakeGato && self.loggingService.isHistoryLoaded()) {
                     self._addFakeGatoEntry({currentTemp: self.lastCurrentTemp, setTemp: value});
-                    self.log.info("%s (%s / %s) > onStateChanged FakeGato > TargetTemperature changed to %s, CurrentTemperature is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value, self.lastCurrentTemp);
+                    self.log.info("%s (%s / %s) > onTargetValueChanged FakeGato > TargetTemperature changed to %s, CurrentTemperature is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value, self.lastCurrentTemp);
                     self.lastTargetTemp = value;
+                } else {
+                    self.log.info("%s (%s / %s) > onTargetValueChanged FakeGato > TargetTemperature %s not added - FakeGato history not yet loaded", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
                 }
                 // END FakeGato (eve app)
 
@@ -102,13 +112,15 @@ export class HBDevoloRoomThermostatDevice extends HBDevoloDevice {
     }
 
     getCurrentTemperature(callback) {
-        this.log.debug('%s (%s / %s) > getCurrentTemperature', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
-        return callback(null, this.dDevice.getValue('temperature'));
+        this.apiGetCurrentTemperature = this.dDevice.getValue('temperature');
+        this.log.debug('%s (%s / %s) > getCurrentTemperature is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.apiGetCurrentTemperature);
+        return callback(null, this.apiGetCurrentTemperature);
     }
 
     getTargetTemperature(callback) {
-        this.log.debug('%s (%s / %s) > getTargetTemperature', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
-        return callback(null, this.dDevice.getTargetValue('temperature'));
+        this.apiGetTargetTemperature = this.dDevice.getTargetValue('temperature');
+        this.log.debug('%s (%s / %s) > getTargetTemperature is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.apiGetTargetTemperature);
+        return callback(null, this.apiGetTargetTemperature);
     }
 
 
@@ -128,17 +140,20 @@ export class HBDevoloRoomThermostatDevice extends HBDevoloDevice {
     }
 
     getBatteryLevel(callback) {
-        this.log.debug('%s (%s / %s) > getBatteryLevel', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
-        return callback(null, this.dDevice.getBatteryLevel())
+        this.apiGetBatteryLevel = this.dDevice.getBatteryLevel();
+        this.log.debug('%s (%s / %s) > getBatteryLevel is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.apiGetBatteryLevel);
+        return callback(null, this.apiGetBatteryLevel)
     }
 
     getStatusLowBattery(callback) {
-        this.log.debug('%s (%s / %s) > getStatusLowBattery', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
-        return callback(null, !this.dDevice.getBatteryLow())
+        this.apiGetStatusLowBattery = !this.dDevice.getBatteryLow();
+        this.log.debug('%s (%s / %s) > getStatusLowBattery is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.apiGetStatusLowBattery);
+        return callback(null, this.apiGetStatusLowBattery)
     }
 
     getChargingState(callback) {
-        this.log.debug('%s (%s / %s) > getChargingState', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
-        return callback(null, false)
+        this.apiGetChargingState = false;
+        this.log.debug('%s (%s / %s) > getChargingState is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.apiGetChargingState);
+        return callback(null, this.apiGetChargingState)
     }
 }

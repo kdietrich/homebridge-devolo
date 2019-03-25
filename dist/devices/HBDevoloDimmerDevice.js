@@ -1,8 +1,11 @@
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -32,7 +35,7 @@ var HBDevoloDimmerDevice = /** @class */ (function (_super) {
                 self.log.info('%s (%s / %s) > onCurrentValueChanged > CurrentConsumption is %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
                 self.switchService.getCharacteristic(self.Characteristic.DevoloCurrentConsumption).updateValue(value, null);
                 // START FakeGato (eve app)
-                if (self.config.fakeGato) {
+                if (self.config.fakeGato && self.loggingService.isHistoryLoaded()) {
                     self._addFakeGatoEntry({ power: value });
                     self.secondsSincelastChange = moment().unix() - self.lastChange;
                     self.totalConsumptionSincelastChange = +(self.lastValue * (self.secondsSincelastChange / 3600) / 1000).toFixed(6); // kWh
@@ -43,6 +46,9 @@ var HBDevoloDimmerDevice = /** @class */ (function (_super) {
                     self.lastChange = moment().unix();
                     self.lastValue = value;
                     self.loggingService.setExtraPersistedData([{ "totalConsumption": self.totalConsumption, "lastValue": self.lastValue, "lastChange": self.lastChange, "lastReset": self.lastReset }]);
+                }
+                else {
+                    self.log.info("%s (%s / %s) > onCurrentValueChanged FakeGato > CurrentConsumption %s not added - FakeGato history not yet loaded", self.constructor.name, self.dDevice.id, self.dDevice.name, value);
                 }
                 // END FakeGato (eve app)
             }
@@ -94,24 +100,29 @@ var HBDevoloDimmerDevice = /** @class */ (function (_super) {
         return services;
     };
     HBDevoloDimmerDevice.prototype.getSwitchState = function (callback) {
-        this.log.debug('%s (%s / %s) > getSwitchState', this.constructor.name, this.dDevice.id, this.dDevice.name);
-        return callback(null, this.dDevice.getState() != 0);
+        this.apiGetSwitchState = this.dDevice.getState() != 0;
+        this.log.debug('%s (%s / %s) > getSwitchState is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetSwitchState);
+        return callback(null, this.apiGetSwitchState);
     };
     HBDevoloDimmerDevice.prototype.getBrightness = function (callback) {
-        this.log.debug('%s (%s / %s) > getBrightness', this.constructor.name, this.dDevice.id, this.dDevice.name);
-        return callback(null, this.dDevice.getValue('dimmer'));
+        this.apiGetBrightness = this.dDevice.getValue('dimmer');
+        this.log.debug('%s (%s / %s) > getBrightness is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetBrightness);
+        return callback(null, this.apiGetBrightness);
     };
     HBDevoloDimmerDevice.prototype.getDevoloCurrentConsumption = function (callback) {
-        this.log.debug('%s (%s / %s) > getDevoloCurrentConsumption', this.constructor.name, this.dDevice.id, this.dDevice.name);
-        return callback(null, this.dDevice.getCurrentValue('energy'));
+        this.apiGetDevoloCurrentConsumption = this.dDevice.getCurrentValue('energy');
+        this.log.debug('%s (%s / %s) > getDevoloCurrentConsumption is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetDevoloCurrentConsumption);
+        return callback(null, this.apiGetDevoloCurrentConsumption);
     };
     HBDevoloDimmerDevice.prototype.getDevoloTotalConsumption = function (callback) {
-        this.log.debug('%s (%s / %s) > getDevoloTotalConsumption', this.constructor.name, this.dDevice.id, this.dDevice.name);
-        return callback(null, this.dDevice.getTotalValue('energy'));
+        this.apiGetDevoloTotalConsumption = this.dDevice.getTotalValue('energy');
+        this.log.debug('%s (%s / %s) > getDevoloTotalConsumption is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetDevoloTotalConsumption);
+        return callback(null, this.apiGetDevoloTotalConsumption);
     };
     HBDevoloDimmerDevice.prototype.getDevoloTotalConsumptionSince = function (callback) {
-        this.log.debug('%s (%s / %s) > getDevoloTotalConsumptionSince', this.constructor.name, this.dDevice.id, this.dDevice.name);
-        return callback(null, new Date(this.dDevice.getSinceTime('energy')).toISOString().replace(/T/, ' ').replace(/\..+/, ''));
+        this.apiGetDevoloTotalConsumptionSince = new Date(this.dDevice.getSinceTime('energy')).toISOString().replace(/T/, ' ').replace(/\..+/, '');
+        this.log.debug('%s (%s / %s) > getDevoloTotalConsumptionSince is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetDevoloTotalConsumptionSince);
+        return callback(null, this.apiGetDevoloTotalConsumptionSince);
     };
     HBDevoloDimmerDevice.prototype.setSwitchState = function (value, callback) {
         this.log.debug('%s (%s / %s) > setSwitchState to %s', this.constructor.name, this.dDevice.id, this.dDevice.name, value);
@@ -152,11 +163,12 @@ var HBDevoloDimmerDevice = /** @class */ (function (_super) {
     };
     // START FakeGato (eve app)
     HBDevoloDimmerDevice.prototype.getCurrentConsumption = function (callback) {
-        this.log.debug('%s (%s / %s) > getCurrentConsumption', this.constructor.name, this.dDevice.id, this.dDevice.name);
-        return callback(null, this.dDevice.getCurrentValue('energy'));
+        this.apiGetCurrentConsumption = this.dDevice.getCurrentValue('energy');
+        this.log.debug('%s (%s / %s) > getCurrentConsumption is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetCurrentConsumption);
+        return callback(null, this.apiGetCurrentConsumption);
     };
     HBDevoloDimmerDevice.prototype.getTotalConsumption = function (callback) {
-        this.log.debug('%s (%s / %s) > getTotalConsumption', this.constructor.name, this.dDevice.id, this.dDevice.name);
+        this.log.debug('%s (%s / %s) > getTotalConsumption will report %s', this.constructor.name, this.dDevice.id, this.dDevice.name);
         return callback(null, this.totalConsumption);
     };
     HBDevoloDimmerDevice.prototype.getReset = function (callback) {

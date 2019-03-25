@@ -40,7 +40,7 @@ export class HBDevoloSirenDevice extends HBDevoloDevice {
     }
 
     getSecuritySystemCurrentState(callback) {
-        this.log.debug('%s (%s / %s) > getSecuritySystemCurrentState', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
+        this.log.debug('%s (%s / %s) > getSecuritySystemCurrentState is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.currentState);
         return callback(null, this.currentState);
     }
 
@@ -54,7 +54,7 @@ export class HBDevoloSirenDevice extends HBDevoloDevice {
     }
 
     getSecuritySystemTargetState(callback) {
-        this.log.debug('%s (%s / %s) > getSecuritySystemTargetState', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
+        this.log.debug('%s (%s / %s) > getSecuritySystemTargetState is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.currentState);
         return callback(null, this.currentState);
     }
 

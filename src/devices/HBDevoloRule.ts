@@ -6,6 +6,8 @@ export class HBDevoloRule extends HBDevoloDevice {
 
     switchService;
 
+    apiGetSwitchState;
+
     constructor(log, dAPI: Devolo, dDevice: Device, storage, config) {
         super(log, dAPI, dDevice, storage, config);
 
@@ -33,8 +35,9 @@ export class HBDevoloRule extends HBDevoloDevice {
     }
 
     getSwitchState(callback) {
-        this.log.debug('%s (%s / %s) > getSwitchState', (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
-        return callback(null, this.dDevice.getEnabled());
+        this.apiGetSwitchState = this.dDevice.getEnabled();
+        this.log.debug('%s (%s / %s) > getSwitchState is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.apiGetSwitchState);
+        return callback(null, this.apiGetSwitchState);
     }
 
     setSwitchState(value, callback) {
