@@ -9,7 +9,7 @@
 # homebridge-devolo
 
 ## Homebridge plugin for Devolo Home Control
-(C) 2017-2018, Kevin Dietrich
+(c) 2017-2019, Kevin Dietrich & Nico Hartung
 
 This homebridge plugin allows you to control your Devolo Home Control devices via Apple's homekit. The following devices are currently supported:
 

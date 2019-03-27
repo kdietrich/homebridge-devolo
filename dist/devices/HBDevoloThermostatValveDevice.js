@@ -24,13 +24,15 @@ var HBDevoloThermostatValveDevice = /** @class */ (function (_super) {
                 self.log.info('%s (%s / %s) > onValueChanged > CurrentTemperature is %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
                 self.thermostatService.getCharacteristic(self.Characteristic.CurrentTemperature).updateValue(value, null);
                 // START FakeGato (eve app)
-                if (self.config.fakeGato && self.loggingService.isHistoryLoaded()) {
-                    self._addFakeGatoEntry({ currentTemp: value, setTemp: self.lastTargetTemp });
-                    self.log.info("%s (%s / %s) > onValueChanged FakeGato > CurrentTemperature changed to %s, TargetTemperature is %s", self.constructor.name, self.dDevice.id, self.dDevice.name, value, self.lastTargetTemp);
-                    self.lastCurrentTemp = value;
-                }
-                else {
-                    self.log.info("%s (%s / %s) > onValueChanged FakeGato > CurrentTemperature %s not added - FakeGato history not yet loaded", self.constructor.name, self.dDevice.id, self.dDevice.name, value);
+                if (self.config.fakeGato) {
+                    if (self.loggingService.isHistoryLoaded()) {
+                        self._addFakeGatoEntry({ currentTemp: value, setTemp: self.lastTargetTemp });
+                        self.log.info("%s (%s / %s) > onValueChanged FakeGato > CurrentTemperature changed to %s, TargetTemperature is %s", self.constructor.name, self.dDevice.id, self.dDevice.name, value, self.lastTargetTemp);
+                        self.lastCurrentTemp = value;
+                    }
+                    else {
+                        self.log.info("%s (%s / %s) > onValueChanged FakeGato > CurrentTemperature %s not added - FakeGato history not yet loaded", self.constructor.name, self.dDevice.id, self.dDevice.name, value);
+                    }
                 }
                 // END FakeGato (eve app)
             }
@@ -40,13 +42,15 @@ var HBDevoloThermostatValveDevice = /** @class */ (function (_super) {
                 self.log.info('%s (%s / %s) > onTargetValueChanged > TargetTemperature is %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
                 self.thermostatService.getCharacteristic(self.Characteristic.TargetTemperature).updateValue(value, null);
                 // START FakeGato (eve app)
-                if (self.config.fakeGato && self.loggingService.isHistoryLoaded()) {
-                    self._addFakeGatoEntry({ currentTemp: self.lastCurrentTemp, setTemp: value });
-                    self.log.info("%s (%s / %s) > onTargetValueChanged FakeGato > TargetTemperature changed to %s, CurrentTemperature is %s", self.constructor.name, self.dDevice.id, self.dDevice.name, value, self.lastCurrentTemp);
-                    self.lastTargetTemp = value;
-                }
-                else {
-                    self.log.info("%s (%s / %s) > onTargetValueChanged FakeGato > TargetTemperature %s not added - FakeGato history not yet loaded", self.constructor.name, self.dDevice.id, self.dDevice.name, value);
+                if (self.config.fakeGato) {
+                    if (self.loggingService.isHistoryLoaded()) {
+                        self._addFakeGatoEntry({ currentTemp: self.lastCurrentTemp, setTemp: value });
+                        self.log.info("%s (%s / %s) > onTargetValueChanged FakeGato > TargetTemperature changed to %s, CurrentTemperature is %s", self.constructor.name, self.dDevice.id, self.dDevice.name, value, self.lastCurrentTemp);
+                        self.lastTargetTemp = value;
+                    }
+                    else {
+                        self.log.info("%s (%s / %s) > onTargetValueChanged FakeGato > TargetTemperature %s not added - FakeGato history not yet loaded", self.constructor.name, self.dDevice.id, self.dDevice.name, value);
+                    }
                 }
                 // END FakeGato (eve app)
             }

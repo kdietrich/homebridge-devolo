@@ -28,12 +28,14 @@ export class HBDevoloHumidityDevice extends HBDevoloDevice {
                 self.temperatureService.getCharacteristic(self.Characteristic.CurrentTemperature).updateValue(value, null);
 
                 // START FakeGato (eve app)
-                if (self.config.fakeGato && self.loggingService.isHistoryLoaded()) {
-                    self._addFakeGatoEntry({temp: value, humidity: self.lastHumidity});
-                    self.log.info("%s (%s / %s) > onValueChanged FakeGato > CurrentTemperature changed to %s, LastHumidity is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value, self.lastHumidity);
-                    self.lastTemperature = value;
-                } else {
-                    self.log.info("%s (%s / %s) > onValueChanged FakeGato > CurrentTemperature %s not added - FakeGato history not yet loaded", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
+                if (self.config.fakeGato) {
+                    if (self.loggingService.isHistoryLoaded()) {
+                        self._addFakeGatoEntry({temp: value, humidity: self.lastHumidity});
+                        self.log.info("%s (%s / %s) > onValueChanged FakeGato > CurrentTemperature changed to %s, LastHumidity is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value, self.lastHumidity);
+                        self.lastTemperature = value;
+                    } else {
+                        self.log.info("%s (%s / %s) > onValueChanged FakeGato > CurrentTemperature %s not added - FakeGato history not yet loaded", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
+                    }
                 }
                 // END FakeGato (eve app)
 
@@ -43,12 +45,14 @@ export class HBDevoloHumidityDevice extends HBDevoloDevice {
                 self.humidityService.getCharacteristic(self.Characteristic.CurrentRelativeHumidity).updateValue(value, null);
 
                 // START FakeGato (eve app)
-                if (self.config.fakeGato && self.loggingService.isHistoryLoaded()) {
-                    self._addFakeGatoEntry({temp: self.lastTemperature, humidity: value});
-                    self.log.info("%s (%s / %s) > onValueChanged FakeGato > CurrentHumidity changed to %s, LastTemperature is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value, self.lastTemperature);
-                    self.lastHumidity = value;
-                } else {
-                    self.log.info("%s (%s / %s) > onValueChanged FakeGato > CurrentHumidity %s not added - FakeGato history not yet loaded", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
+                if (self.config.fakeGato) {
+                    if (self.loggingService.isHistoryLoaded()) {
+                        self._addFakeGatoEntry({temp: self.lastTemperature, humidity: value});
+                        self.log.info("%s (%s / %s) > onValueChanged FakeGato > CurrentHumidity changed to %s, LastTemperature is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value, self.lastTemperature);
+                        self.lastHumidity = value;
+                    } else {
+                        self.log.info("%s (%s / %s) > onValueChanged FakeGato > CurrentHumidity %s not added - FakeGato history not yet loaded", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, value);
+                    }
                 }
                 // END FakeGato (eve app)
 

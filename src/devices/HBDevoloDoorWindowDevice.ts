@@ -36,25 +36,27 @@ export class HBDevoloDoorWindowDevice extends HBDevoloDevice {
             self.contactSensorService.getCharacteristic(self.Characteristic.ContactSensorState).updateValue(state, null);
 
             // START FakeGato (eve app)
-            if (self.config.fakeGato && self.loggingService.isHistoryLoaded()) {
-                self._addFakeGatoEntry({status: state});
-                if (state == 0) {
-                    // CLOSED
-                    self.timeOpen = self.timeOpen + (moment().unix() - self.lastChange);
-                } else {
-                    // OPEN
-                    self.timeClose = self.timeClose + (moment().unix() - self.lastChange);
-                    self.timesOpened = self.timesOpened + 1;
-                    self.lastActivation = moment().unix() - self.loggingService.getInitialTime();
+            if (self.config.fakeGato) {
+                if (self.loggingService.isHistoryLoaded()) {
+                    self._addFakeGatoEntry({status: state});
+                    if (state == 0) {
+                        // CLOSED
+                        self.timeOpen = self.timeOpen + (moment().unix() - self.lastChange);
+                    } else {
+                        // OPEN
+                        self.timeClose = self.timeClose + (moment().unix() - self.lastChange);
+                        self.timesOpened = self.timesOpened + 1;
+                        self.lastActivation = moment().unix() - self.loggingService.getInitialTime();
 
-                    self.contactSensorService.getCharacteristic(self.Characteristic.TimesOpened).updateValue(self.timesOpened, null)
-                    self.contactSensorService.getCharacteristic(self.Characteristic.LastActivation).updateValue(self.lastActivation, null)
+                        self.contactSensorService.getCharacteristic(self.Characteristic.TimesOpened).updateValue(self.timesOpened, null)
+                        self.contactSensorService.getCharacteristic(self.Characteristic.LastActivation).updateValue(self.lastActivation, null)
+                    }
+                    self.lastChange = moment().unix();
+                    self.log.info("%s (%s / %s) > onStateChanged FakeGato > SensorState changed to %s, lastActivation is %s, lastReset is %s, lastChange is %s timesOpened is %s, timeOpen is %s, timeClose is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state, self.lastActivation, self.lastReset, self.lastChange, self.timesOpened, self.timeOpen, self.timeClose);
+                    self.loggingService.setExtraPersistedData([{"lastActivation": self.lastActivation, "lastReset": self.lastReset, "lastChange": self.lastChange, "timesOpened": self.timesOpened, "timeOpen": self.timeOpen, "timeClose": self.timeClose}]);
+                } else {
+                    self.log.info("%s (%s / %s) > onStateChanged FakeGato > SensorState %s not added - FakeGato history not yet loaded", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state);
                 }
-                self.lastChange = moment().unix();
-                self.log.info("%s (%s / %s) > onStateChanged FakeGato > SensorState changed to %s, lastActivation is %s, lastReset is %s, lastChange is %s timesOpened is %s, timeOpen is %s, timeClose is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state, self.lastActivation, self.lastReset, self.lastChange, self.timesOpened, self.timeOpen, self.timeClose);
-                self.loggingService.setExtraPersistedData([{"lastActivation": self.lastActivation, "lastReset": self.lastReset, "lastChange": self.lastChange, "timesOpened": self.timesOpened, "timeOpen": self.timeOpen, "timeClose": self.timeClose}]);
-            } else {
-                self.log.info("%s (%s / %s) > onStateChanged FakeGato > SensorState %s not added - FakeGato history not yet loaded", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state);
             }
             // END FakeGato (eve app)
 

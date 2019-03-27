@@ -31,19 +31,21 @@ export class HBDevoloMotionDevice extends HBDevoloDevice {
             self.motionSensorService.getCharacteristic(self.Characteristic.MotionDetected).updateValue(state, null);
 
             // START FakeGato (eve app)
-            if (self.config.fakeGato && self.loggingService.isHistoryLoaded()) {
-                self._addFakeGatoEntry({status: state});
-                if (state == 0) {
-                    // NO MOTION
+            if (self.config.fakeGato) {
+                if (self.loggingService.isHistoryLoaded()) {
+                    self._addFakeGatoEntry({status: state});
+                    if (state == 0) {
+                        // NO MOTION
+                    } else {
+                        // MOTION
+                        self.lastActivation = moment().unix() - self.loggingService.getInitialTime();
+                        self.motionSensorService.getCharacteristic(self.Characteristic.LastActivation).updateValue(self.lastActivation, null)
+                    }
+                    self.log.info("%s (%s / %s) > onStateChanged FakeGato > MotionState changed to %s, lastActivation is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state, self.lastActivation);
+                    self.loggingService.setExtraPersistedData([{"lastActivation": self.lastActivation}]);
                 } else {
-                    // MOTION
-                    self.lastActivation = moment().unix() - self.loggingService.getInitialTime();
-                    self.motionSensorService.getCharacteristic(self.Characteristic.LastActivation).updateValue(self.lastActivation, null)
+                    self.log.info("%s (%s / %s) > onStateChanged FakeGato > MotionState %s not added - FakeGato history not yet loaded", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state);
                 }
-                self.log.info("%s (%s / %s) > onStateChanged FakeGato > MotionState changed to %s, lastActivation is %s", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state, self.lastActivation);
-                self.loggingService.setExtraPersistedData([{"lastActivation": self.lastActivation}]);
-            } else {
-                self.log.info("%s (%s / %s) > onStateChanged FakeGato > MotionState %s not added - FakeGato history not yet loaded", (self.constructor as any).name, self.dDevice.id, self.dDevice.name, state);
             }
             // END FakeGato (eve app)
 

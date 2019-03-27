@@ -35,20 +35,22 @@ var HBDevoloDimmerDevice = /** @class */ (function (_super) {
                 self.log.info('%s (%s / %s) > onCurrentValueChanged > CurrentConsumption is %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
                 self.switchService.getCharacteristic(self.Characteristic.DevoloCurrentConsumption).updateValue(value, null);
                 // START FakeGato (eve app)
-                if (self.config.fakeGato && self.loggingService.isHistoryLoaded()) {
-                    self._addFakeGatoEntry({ power: value });
-                    self.secondsSincelastChange = moment().unix() - self.lastChange;
-                    self.totalConsumptionSincelastChange = +(self.lastValue * (self.secondsSincelastChange / 3600) / 1000).toFixed(6); // kWh
-                    self.totalConsumption = +(self.totalConsumption + self.totalConsumptionSincelastChange).toFixed(6); // kWh
-                    self.switchService.getCharacteristic(self.Characteristic.CurrentConsumption).updateValue(value, null);
-                    self.switchService.getCharacteristic(self.Characteristic.TotalConsumption).updateValue(self.totalConsumption, null);
-                    self.log.info("%s (%s / %s) > onCurrentValueChanged FakeGato > CurrentConsumption changed to %s W, lastValue was %s, totalConsumption set to %s kWh, lastChange set to %s, secondsSincelastChange was %s, totalConsumptionSincelastChange was %s kWh, lastReset is %s", self.constructor.name, self.dDevice.id, self.dDevice.name, value, self.lastValue, self.totalConsumption, self.lastChange, self.secondsSincelastChange, self.totalConsumptionSincelastChange, self.lastReset);
-                    self.lastChange = moment().unix();
-                    self.lastValue = value;
-                    self.loggingService.setExtraPersistedData([{ "totalConsumption": self.totalConsumption, "lastValue": self.lastValue, "lastChange": self.lastChange, "lastReset": self.lastReset }]);
-                }
-                else {
-                    self.log.info("%s (%s / %s) > onCurrentValueChanged FakeGato > CurrentConsumption %s not added - FakeGato history not yet loaded", self.constructor.name, self.dDevice.id, self.dDevice.name, value);
+                if (self.config.fakeGato) {
+                    if (self.loggingService.isHistoryLoaded()) {
+                        self._addFakeGatoEntry({ power: value });
+                        self.secondsSincelastChange = moment().unix() - self.lastChange;
+                        self.totalConsumptionSincelastChange = +(self.lastValue * (self.secondsSincelastChange / 3600) / 1000).toFixed(6); // kWh
+                        self.totalConsumption = +(self.totalConsumption + self.totalConsumptionSincelastChange).toFixed(6); // kWh
+                        self.switchService.getCharacteristic(self.Characteristic.CurrentConsumption).updateValue(value, null);
+                        self.switchService.getCharacteristic(self.Characteristic.TotalConsumption).updateValue(self.totalConsumption, null);
+                        self.log.info("%s (%s / %s) > onCurrentValueChanged FakeGato > CurrentConsumption changed to %s W, lastValue was %s, totalConsumption set to %s kWh, lastChange set to %s, secondsSincelastChange was %s, totalConsumptionSincelastChange was %s kWh, lastReset is %s", self.constructor.name, self.dDevice.id, self.dDevice.name, value, self.lastValue, self.totalConsumption, self.lastChange, self.secondsSincelastChange, self.totalConsumptionSincelastChange, self.lastReset);
+                        self.lastChange = moment().unix();
+                        self.lastValue = value;
+                        self.loggingService.setExtraPersistedData([{ "totalConsumption": self.totalConsumption, "lastValue": self.lastValue, "lastChange": self.lastChange, "lastReset": self.lastReset }]);
+                    }
+                    else {
+                        self.log.info("%s (%s / %s) > onCurrentValueChanged FakeGato > CurrentConsumption %s not added - FakeGato history not yet loaded", self.constructor.name, self.dDevice.id, self.dDevice.name, value);
+                    }
                 }
                 // END FakeGato (eve app)
             }
