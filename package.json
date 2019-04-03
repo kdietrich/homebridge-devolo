@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "fakegato-history": "^0.5.2",
-    "node-devolo": "git+https://github.com/kdietrich/node-devolo.git#aa6b680c2383b732caa67be56f5aa1024f83e2f6",
+    "node-devolo": "git+https://github.com/kdietrich/node-devolo.git#3b1a0a71598db76cb1cdfa8f08e2bc585ad6398c",
     "node-persist": "^2.1.0",
     "shelljs": "^0.8.2"
   },
