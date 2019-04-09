@@ -136,4 +136,11 @@ export class HBDevoloHumidityDevice extends HBDevoloDevice {
         this.log.debug('%s (%s / %s) > getChargingState is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.apiGetChargingState);
         return callback(null, this.apiGetChargingState)
     }
+
+    // START FakeGato (eve app)
+    onAfterFakeGatoHistoryLoaded() {
+        // initial state post homebridge-restart, otherwise no graph
+        this._addFakeGatoEntry({temp: this.dDevice.getValue('temperature'), humidity: this.dDevice.getValue('humidity')});
+    }
+    // END FakeGato (eve app)
 }

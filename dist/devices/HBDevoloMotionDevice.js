@@ -147,7 +147,7 @@ var HBDevoloMotionDevice = /** @class */ (function (_super) {
         else {
             this.lastActivation = this.loggingService.getExtraPersistedData()[0].lastActivation;
         }
-        // initial state post homebridge-restart, otherwise no graph - motion and door
+        // initial state post homebridge-restart, otherwise no graph
         this._addFakeGatoEntry({ status: this.dDevice.getState() });
         this.log.debug("%s (%s / %s) > FakeGato Characteristic loaded.", this.constructor.name, this.dDevice.id, this.dDevice.name);
     };

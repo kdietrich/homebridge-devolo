@@ -119,6 +119,11 @@ var HBDevoloHumidityDevice = /** @class */ (function (_super) {
         this.log.debug('%s (%s / %s) > getChargingState is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetChargingState);
         return callback(null, this.apiGetChargingState);
     };
+    // START FakeGato (eve app)
+    HBDevoloHumidityDevice.prototype.onAfterFakeGatoHistoryLoaded = function () {
+        // initial state post homebridge-restart, otherwise no graph
+        this._addFakeGatoEntry({ temp: this.dDevice.getValue('temperature'), humidity: this.dDevice.getValue('humidity') });
+    };
     return HBDevoloHumidityDevice;
 }(HBDevoloDevice_1.HBDevoloDevice));
 exports.HBDevoloHumidityDevice = HBDevoloHumidityDevice;

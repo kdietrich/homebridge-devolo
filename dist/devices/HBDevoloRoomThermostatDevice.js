@@ -144,6 +144,11 @@ var HBDevoloRoomThermostatDevice = /** @class */ (function (_super) {
         this.log.debug('%s (%s / %s) > getChargingState is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetChargingState);
         return callback(null, this.apiGetChargingState);
     };
+    // START FakeGato (eve app)
+    HBDevoloRoomThermostatDevice.prototype.onAfterFakeGatoHistoryLoaded = function () {
+        // initial state post homebridge-restart, otherwise no graph
+        this._addFakeGatoEntry({ currentTemp: this.dDevice.getValue('temperature'), setTemp: this.dDevice.getTargetValue('temperature') });
+    };
     return HBDevoloRoomThermostatDevice;
 }(HBDevoloDevice_1.HBDevoloDevice));
 exports.HBDevoloRoomThermostatDevice = HBDevoloRoomThermostatDevice;

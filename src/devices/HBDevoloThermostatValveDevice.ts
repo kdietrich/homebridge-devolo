@@ -159,4 +159,11 @@ export class HBDevoloThermostatValveDevice extends HBDevoloDevice {
         this.log.debug('%s (%s / %s) > getChargingState is %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, this.apiGetChargingState);
         return callback(null, false)
     }
+
+    // START FakeGato (eve app)
+    onAfterFakeGatoHistoryLoaded() {
+        // initial state post homebridge-restart, otherwise no graph
+        this._addFakeGatoEntry({currentTemp: this.dDevice.getValue('temperature'), setTemp: this.dDevice.getTargetValue('temperature')});
+    }
+    // END FakeGato (eve app)
 }

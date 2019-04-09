@@ -242,6 +242,9 @@ export class HBDevoloDimmerDevice extends HBDevoloDevice {
             this.lastReset = this.loggingService.getExtraPersistedData()[0].lastReset;
         }
 
+        // initial state post homebridge-restart, otherwise no graph
+        this._addFakeGatoEntry({power: this.dDevice.getCurrentValue('energy')});
+
         this.log.debug("%s (%s / %s) > FakeGato Characteristic loaded.", (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
     }
     // END FakeGato (eve app)
