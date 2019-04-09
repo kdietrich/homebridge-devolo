@@ -240,6 +240,9 @@ export class HBDevoloDoorWindowDevice extends HBDevoloDevice {
             this.timeClose = this.loggingService.getExtraPersistedData()[0].timeClose;
         }
 
+        // initial state post homebridge-restart, otherwise no graph - motion and door
+        this._addFakeGatoEntry({status: this.dDevice.getState()});
+
         this.log.debug("%s (%s / %s) > FakeGato Characteristic loaded.", (this.constructor as any).name, this.dDevice.id, this.dDevice.name);
     }
     // END FakeGato (eve app)

@@ -203,6 +203,8 @@ var HBDevoloDoorWindowDevice = /** @class */ (function (_super) {
             this.timeOpen = this.loggingService.getExtraPersistedData()[0].timeOpen;
             this.timeClose = this.loggingService.getExtraPersistedData()[0].timeClose;
         }
+        // initial state post homebridge-restart, otherwise no graph - motion and door
+        this._addFakeGatoEntry({ status: this.dDevice.getState() });
         this.log.debug("%s (%s / %s) > FakeGato Characteristic loaded.", this.constructor.name, this.dDevice.id, this.dDevice.name);
     };
     return HBDevoloDoorWindowDevice;
