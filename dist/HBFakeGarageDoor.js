@@ -82,13 +82,15 @@ var HBFakeGarageDoor = /** @class */ (function () {
     };
     HBFakeGarageDoor.prototype.getCurrentDoorState = function (callback) {
         // dDoorDevice.state = 0 = contact is CLOSED = GarageDoorState = 1 || dDoorDevice.state = 1 = contact is OPENED = GarageDoorState = 0
-        this.log.debug('%s (%s / %s) > getCurrentDoorState', this.constructor.name, this.dDoorDevice.id, this.dDoorDevice.name);
-        return callback(null, !this.dDoorDevice.getState());
+        this.apiGetCurrentDoorState = !this.dDoorDevice.getState();
+        this.log.debug('%s (%s / %s) > getCurrentDoorState is %s', this.constructor.name, this.dDoorDevice.id, this.dDoorDevice.name, this.apiGetCurrentDoorState);
+        return callback(null, this.apiGetCurrentDoorState);
     };
     HBFakeGarageDoor.prototype.getTargetDoorState = function (callback) {
         // dDoorDevice.state = 0 = contact is CLOSED = GarageDoorState = 1 || dDoorDevice.state = 1 = contact is OPENED = GarageDoorState = 0
-        this.log.debug('%s (%s / %s) > getTargetDoorState', this.constructor.name, this.dDoorDevice.id, this.dDoorDevice.name);
-        return callback(null, !this.dDoorDevice.getState());
+        this.apiGetTargetDoorState = !this.dDoorDevice.getState();
+        this.log.debug('%s (%s / %s) > getTargetDoorState is %s', this.constructor.name, this.dDoorDevice.id, this.dDoorDevice.name, this.apiGetTargetDoorState);
+        return callback(null, this.apiGetTargetDoorState);
     };
     HBFakeGarageDoor.prototype.setTargetDoorState = function (value, callback) {
         this.log.debug('%s (%s / %s) > setTargetDoorState to %s', this.constructor.name, this.dRelayDevice.id, this.dRelayDevice.name, value);

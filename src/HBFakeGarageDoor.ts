@@ -22,6 +22,9 @@ export class HBFakeGarageDoor implements HBIDevoloDevice {
     garageDoorLastTargetDoorState;
     garageDoorLastCurrentDoorState;
 
+    apiGetCurrentDoorState;
+    apiGetTargetDoorState;
+
     informationService;
     garageDoorOpenerService;
 
@@ -123,14 +126,16 @@ export class HBFakeGarageDoor implements HBIDevoloDevice {
 
     getCurrentDoorState(callback) {
         // dDoorDevice.state = 0 = contact is CLOSED = GarageDoorState = 1 || dDoorDevice.state = 1 = contact is OPENED = GarageDoorState = 0
-        this.log.debug('%s (%s / %s) > getCurrentDoorState',  (this.constructor as any).name, this.dDoorDevice.id, this.dDoorDevice.name);
-        return callback(null, !this.dDoorDevice.getState());
+        this.apiGetCurrentDoorState = !this.dDoorDevice.getState();
+        this.log.debug('%s (%s / %s) > getCurrentDoorState is %s',  (this.constructor as any).name, this.dDoorDevice.id, this.dDoorDevice.name, this.apiGetCurrentDoorState);
+        return callback(null, this.apiGetCurrentDoorState);
     }
 
     getTargetDoorState(callback) {
         // dDoorDevice.state = 0 = contact is CLOSED = GarageDoorState = 1 || dDoorDevice.state = 1 = contact is OPENED = GarageDoorState = 0
-        this.log.debug('%s (%s / %s) > getTargetDoorState',  (this.constructor as any).name, this.dDoorDevice.id, this.dDoorDevice.name);
-        return callback(null, !this.dDoorDevice.getState());
+        this.apiGetTargetDoorState = !this.dDoorDevice.getState();
+        this.log.debug('%s (%s / %s) > getTargetDoorState is %s',  (this.constructor as any).name, this.dDoorDevice.id, this.dDoorDevice.name, this.apiGetTargetDoorState);
+        return callback(null, this.apiGetTargetDoorState);
     }
 
     setTargetDoorState(value, callback) {

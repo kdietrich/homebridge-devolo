@@ -122,9 +122,9 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 
 ## Changes
 
-#### v0.1.14-dev
+#### v0.1.14 (2019-04-10)
 - Bugfix API: Wrong reported state by `dDevice.getState`, because state not saved last `onStateChanged` for Devolo Motion Sensor, Door Sensor / Window Contact, Smoke Detector and Leak Sensor since v0.1.9 (not by state change, only when home app force close or room switch - automation was not affected)
-- Bugfix FakeGato: No graph for Devolo Motion Sensor and Door Sensor / Window Contact, if status was not changed for a long time
+- Bugfix FakeGato: No graphs if status was not changed for a long time
 - Bugfix: CurrentConsumption is reported before FakeGato History is loaded (Cannot add a Characteristic with the same UUID as another Characteristic in this Service)
 - add values and states from devolo requests in homebridge log
 
