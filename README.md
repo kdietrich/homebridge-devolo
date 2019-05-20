@@ -123,6 +123,7 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 ## Changes
 
 #### v0.1.15-dev
+- Update API: ModelUID changes since devolo homecontrol firmware from 2 may 2019 (Danfoss Thermostat, Qubino Flush)
 
 #### v0.1.14 (2019-04-10)
 - Bugfix API: Wrong reported state by `dDevice.getState`, because state not saved last `onStateChanged` for Devolo Motion Sensor, Door Sensor / Window Contact, Smoke Detector and Leak Sensor since v0.1.9 (not by state change, only when home app force close or room switch - automation was not affected)
