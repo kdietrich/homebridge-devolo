@@ -13,6 +13,8 @@ export class HBDevoloShutterDevice extends HBDevoloDevice {
     shutterLastTargetValue;
     shutterLastPositionState;
 
+    _delayedInterval;
+
     constructor(log, dAPI: Devolo, dDevice: Device, storage, config) {
         super(log, dAPI, dDevice, storage, config);
 
@@ -110,12 +112,21 @@ export class HBDevoloShutterDevice extends HBDevoloDevice {
             callback();
             return;
         }
+        this._setTargetValueDelayed(1500, value, callback);
+    }
+
+    _setTargetValueDelayed(delay, value, callback) {
         var self = this;
-        this.dDevice.setTargetValue('blinds', value, function(err) {
-            if(err) {
-                callback(err); return;
-            }
-            callback();
-        }, true);
+        if(self._delayedInterval) {
+            clearTimeout(self._delayedInterval);
+        }
+        self._delayedInterval = setTimeout(function() {
+            self.dDevice.setTargetValue('blinds', value, function(err) {
+                if(err) {
+                    callback(err); return;
+                }
+                callback();
+            }, true);
+        }, delay);
     }
 }
