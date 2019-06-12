@@ -102,19 +102,30 @@ var HBDevoloShutterDevice = /** @class */ (function (_super) {
         return callback(null, this.apiGetTargetValue);
     };
     HBDevoloShutterDevice.prototype.setTargetValue = function (value, callback) {
-        this.log.debug('%s (%s / %s) > setTargetValue to %s', this.constructor.name, this.dDevice.id, this.dDevice.name, value);
+        //this.log.debug('%s (%s / %s) > setTargetValue to %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, value);
         if (value == this.dDevice.getTargetValue('blinds')) {
             callback();
             return;
         }
+        if (value == 0 || value == 100) {
+            this.log.debug('%s (%s / %s) > setTargetValue to %s', this.constructor.name, this.dDevice.id, this.dDevice.name, value);
+            this.dDevice.setTargetValue('blinds', value, function (err) { }, true);
+        }
+        else {
+            this.log.debug('%s (%s / %s) > setTargetValue delayed to %s', this.constructor.name, this.dDevice.id, this.dDevice.name, value);
+            this._setTargetValueDelayed(1500, value);
+        }
+        callback();
+    };
+    HBDevoloShutterDevice.prototype._setTargetValueDelayed = function (delay, value) {
         var self = this;
-        this.dDevice.setTargetValue('blinds', value, function (err) {
-            if (err) {
-                callback(err);
-                return;
-            }
-            callback();
-        }, true);
+        if (self._delayedInterval) {
+            clearTimeout(self._delayedInterval);
+        }
+        self._delayedInterval = setTimeout(function () {
+            self.log.debug('%s (%s / %s) > setTargetValue now to %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
+            self.dDevice.setTargetValue('blinds', value, function (err) { }, true);
+        }, delay);
     };
     return HBDevoloShutterDevice;
 }(HBDevoloDevice_1.HBDevoloDevice));
