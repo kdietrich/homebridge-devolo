@@ -36,6 +36,11 @@ export class HBDevoloSirenDevice extends HBDevoloDevice {
                      .on('set', this.setSecuritySystemTargetState.bind(this));
 
         this.dDevice.listen();
+
+        // no notification when homebridge start/restart, set lastCurrentState before first getState
+        this.securitySystemService.getCharacteristic(this.Characteristic.SecuritySystemCurrentState).updateValue(this.currentState, null);
+        this.securitySystemService.getCharacteristic(this.Characteristic.SecuritySystemTargetState).updateValue(this.currentState, null);
+
         return [this.informationService, this.securitySystemService];
     }
 
