@@ -122,6 +122,9 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 
 ## Changes
 
+#### v0.1.16-dev
+- Fibaro Roller Shutter 2 (FGR-222) supported
+
 #### v0.1.15 (2019-08-21)
 - Update API: ModelUID changes since devolo homecontrol firmware from 2 may 2019 (Danfoss Thermostat, Qubino Flush, Fibaro Flood)
 - Bugfix: Shutter stutter fix - now is operated with a delay of 1500ms
