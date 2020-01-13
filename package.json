@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "fakegato-history": "^0.5.2",
-    "node-devolo": "git+https://github.com/kdietrich/node-devolo.git#f5685cf590a0d36f5ee27d4e174fd231d41d1686",
+    "node-devolo": "git+https://github.com/gwi2014/node-devolo.git#gwi2014-fix-fibaro-switch",
     "node-persist": "^2.1.0",
     "shelljs": "^0.8.2"
   },
