@@ -1,6 +1,6 @@
 {
   "name": "homebridge-devolo",
-  "version": "0.1.16-dev",
+  "version": "0.1.17-dev",
   "description": "Homebridge plugin for Devolo Home Control",
   "authors": [
     {

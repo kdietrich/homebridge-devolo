@@ -1,11 +1,8 @@
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -21,12 +18,15 @@ var HBDevoloShutterDevice = /** @class */ (function (_super) {
         var self = _this;
         self.dDevice.events.on('onValueChanged', function (type, value) {
             //self.windowCoveringService.getCharacteristic(self.Characteristic.CurrentPosition).updateValue(value, null);
-            self.log.info('%s (%s / %s) > onValueChanged > Current position was %s, wait of current consumption is 0, then set to %s', self.constructor.name, self.dDevice.id, self.dDevice.name, self.shutterLastCurrentValue, value);
+            self.log.info('%s (%s / %s) > onValueChanged > Current position was %s, now set to %s (sensor type: %s)', self.constructor.name, self.dDevice.id, self.dDevice.name, self.shutterLastCurrentValue, value, type);
             self.shutterLastCurrentValue = value;
+            if (value == this.shutterLastTargetValue) {
+                self.windowCoveringService.getCharacteristic(self.Characteristic.PositionState).updateValue(self.Characteristic.PositionState.STOPPED, null);
+            }
         });
         self.dDevice.events.on('onTargetValueChanged', function (type, value) {
             self.windowCoveringService.getCharacteristic(self.Characteristic.TargetPosition).updateValue(value, null);
-            self.log.info('%s (%s / %s) > onTargetValueChanged > Target position was %s, set to %s', self.constructor.name, self.dDevice.id, self.dDevice.name, self.shutterLastTargetValue, value);
+            self.log.info('%s (%s / %s) > onTargetValueChanged > Target position was %s, set to %s (sensor type: %s)', self.constructor.name, self.dDevice.id, self.dDevice.name, self.shutterLastTargetValue, value, type);
             if (value > self.shutterLastTargetValue) {
                 // Öffnen
                 self.windowCoveringService.getCharacteristic(self.Characteristic.PositionState).updateValue(self.Characteristic.PositionState.INCREASING, null);
@@ -42,9 +42,9 @@ var HBDevoloShutterDevice = /** @class */ (function (_super) {
             self.shutterLastTargetValue = value;
         });
         self.dDevice.events.on('onCurrentValueChanged', function (type, value) {
+            self.log.info('%s (%s / %s) > onCurrentValueChanged > CurrentConsumption is %s (sensor type: %s)', self.constructor.name, self.dDevice.id, self.dDevice.name, value, type);
             if (type === 'energy') {
                 self.windowCoveringService.getCharacteristic(self.Characteristic.DevoloCurrentConsumption).updateValue(value, null);
-                self.log.info('%s (%s / %s) > onCurrentValueChanged > CurrentConsumption is %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
                 if (value === 0) {
                     self.windowCoveringService.getCharacteristic(self.Characteristic.CurrentPosition).updateValue(self.shutterLastCurrentValue, null);
                     self.windowCoveringService.getCharacteristic(self.Characteristic.PositionState).updateValue(self.Characteristic.PositionState.STOPPED, null);
@@ -68,9 +68,17 @@ var HBDevoloShutterDevice = /** @class */ (function (_super) {
         return _this;
     }
     HBDevoloShutterDevice.prototype.getServices = function () {
+        this.log.info('shutter device manufacturer: %s ', this.dDevice.manID);
         this.informationService = new this.Service.AccessoryInformation();
+        if (this.dDevice.manID == '0x010f') {
+            this.informationService.setCharacteristic(this.Characteristic.Manufacturer, 'Fibaro');
+            this.sensorTypeName = 'base';
+        }
+        else {
+            this.informationService.setCharacteristic(this.Characteristic.Manufacturer, 'Devolo');
+            this.sensorTypeName = 'blinds';
+        }
         this.informationService
-            .setCharacteristic(this.Characteristic.Manufacturer, 'Devolo')
             .setCharacteristic(this.Characteristic.Model, 'Shutter')
             .setCharacteristic(this.Characteristic.SerialNumber, this.dDevice.id.replace('/', '-'));
         this.windowCoveringService = new this.Service.WindowCovering();
@@ -80,36 +88,45 @@ var HBDevoloShutterDevice = /** @class */ (function (_super) {
         this.windowCoveringService.getCharacteristic(this.Characteristic.TargetPosition)
             .on('get', this.getTargetValue.bind(this))
             .on('set', this.setTargetValue.bind(this));
-        this.windowCoveringService.getCharacteristic(this.Characteristic.TargetPosition).setProps({
-            minValue: 0,
-            maxValue: 100,
-            minStep: 5
-        });
-        this.shutterLastCurrentValue = this.dDevice.getValue('blinds');
-        this.shutterLastTargetValue = this.dDevice.getTargetValue('blinds');
+        if (this.dDevice.manID == '0x010f') { //Fibaro
+            this.windowCoveringService.getCharacteristic(this.Characteristic.TargetPosition).setProps({
+                minValue: 0,
+                maxValue: 99,
+                minStep: 1
+            });
+        }
+        else {
+            this.windowCoveringService.getCharacteristic(this.Characteristic.TargetPosition).setProps({
+                minValue: 0,
+                maxValue: 100,
+                minStep: 5
+            });
+        }
+        this.shutterLastCurrentValue = this.dDevice.getValue(this.sensorTypeName);
+        this.shutterLastTargetValue = this.dDevice.getTargetValue(this.sensorTypeName);
         this.shutterLastPositionState = this.Characteristic.PositionState.STOPPED;
         this.dDevice.listen();
         return [this.informationService, this.windowCoveringService];
     };
     HBDevoloShutterDevice.prototype.getValue = function (callback) {
-        this.apiGetValue = this.dDevice.getValue('blinds');
+        this.apiGetValue = this.dDevice.getValue(this.sensorTypeName);
         this.log.debug('%s (%s / %s) > getValue is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetValue);
         return callback(null, this.apiGetValue);
     };
     HBDevoloShutterDevice.prototype.getTargetValue = function (callback) {
-        this.apiGetTargetValue = this.dDevice.getTargetValue('blinds');
+        this.apiGetTargetValue = this.dDevice.getTargetValue(this.sensorTypeName);
         this.log.debug('%s (%s / %s) > getTargetValue is %s', this.constructor.name, this.dDevice.id, this.dDevice.name, this.apiGetTargetValue);
         return callback(null, this.apiGetTargetValue);
     };
     HBDevoloShutterDevice.prototype.setTargetValue = function (value, callback) {
         //this.log.debug('%s (%s / %s) > setTargetValue to %s', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, value);
-        if (value == this.dDevice.getTargetValue('blinds')) {
+        if (value == this.dDevice.getTargetValue(this.sensorTypeName)) {
             callback();
             return;
         }
         if (value == 0 || value == 100) {
             this.log.debug('%s (%s / %s) > setTargetValue to %s', this.constructor.name, this.dDevice.id, this.dDevice.name, value);
-            this.dDevice.setTargetValue('blinds', value, function (err) { }, true);
+            this.dDevice.setTargetValue(this.sensorTypeName, value, function (err) { }, true);
         }
         else {
             this.log.debug('%s (%s / %s) > setTargetValue delayed to %s', this.constructor.name, this.dDevice.id, this.dDevice.name, value);
@@ -124,7 +141,7 @@ var HBDevoloShutterDevice = /** @class */ (function (_super) {
         }
         self._delayedInterval = setTimeout(function () {
             self.log.debug('%s (%s / %s) > setTargetValue now to %s', self.constructor.name, self.dDevice.id, self.dDevice.name, value);
-            self.dDevice.setTargetValue('blinds', value, function (err) { }, true);
+            self.dDevice.setTargetValue(this.sensorTypeName, value, function (err) { }, true);
         }, delay);
     };
     return HBDevoloShutterDevice;
