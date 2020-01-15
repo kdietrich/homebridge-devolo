@@ -1,6 +1,6 @@
 {
   "name": "homebridge-devolo",
-  "version": "0.1.16-dev",
+  "version": "0.1.17-dev",
   "description": "Homebridge plugin for Devolo Home Control",
   "authors": [
     {
@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "fakegato-history": "^0.5.2",
-    "node-devolo": "git+https://github.com/kdietrich/node-devolo.git#f5685cf590a0d36f5ee27d4e174fd231d41d1686",
+    "node-devolo": "git+https://github.com/kdietrich/node-devolo.git#05d96559bdc54776560c65d08c0fd25ec66130cf",
     "node-persist": "^2.1.0",
     "shelljs": "^0.8.2"
   },

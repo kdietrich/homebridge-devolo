@@ -122,6 +122,9 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 
 ## Changes
 
+#### v0.1.17-dev
+- Fix for some Fibaro wall switches (FGS-211, FGS-213 and FGS-221) and [Home+ 4](https://apps.apple.com/de/app/home-4/id995994352) by @brutella
+
 #### v0.1.16-dev
 - Fibaro Roller Shutter 2 (FGR-222) supported
 
