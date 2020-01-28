@@ -36,6 +36,7 @@ This homebridge plugin allows you to control your Devolo Home Control devices vi
 - Qubino Flush Shutter
 - Aeotec Siren Gen5 (ZW080-C15)
 - Fibaro Switch/Relay 1st/2nd Gen (FGS-211, FGS-212, FGS-213, FGS-221, FGS-222, FGS-223)
+- Fibaro Roller Shutter FGR-222 - only partly, see below
 - Popp Z-Weather
 
 ![homekit-macos_180929](pictures/_homekit-macos_180929.jpg)
@@ -121,6 +122,14 @@ I'm happy to provide support for new devices. If you own an unsupported device y
 If you run into issues related to this plugin, feel free to open an issue. Please start your homebridge installation with the command `homebridge -D > logfile.txt 2>&1` and attach the generated logfile.
 
 ## Changes
+
+#### v0.1.18-dev
+- Added support for [Fibaro Roller Shutter FGR-222](https://manuals.fibaro.com/roller-shutter-2/). Since it is currently not fully supported by the devolo Home Control Central Unit, only the following functions are available: 
+    - Display of the current position
+    - Display of the power total consumption
+    - Display of the current power consumption
+    - complete opening and closing
+    - _Attention: partial opening or closing is currently not possible!_
 
 #### v0.1.17-dev
 - Fix for some Fibaro wall switches (FGS-211, FGS-213 and FGS-221) and [Home+ 4](https://apps.apple.com/de/app/home-4/id995994352) by @brutella
