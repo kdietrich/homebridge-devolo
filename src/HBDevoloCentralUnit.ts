@@ -15,6 +15,7 @@ import {HBDevoloSirenDevice} from './devices/HBDevoloSirenDevice';
 import {HBDevoloShutterDevice} from './devices/HBDevoloShutterDevice';
 import {HBDevoloRelayDevice} from './devices/HBDevoloRelayDevice';
 import {HBDevoloDimmerDevice} from './devices/HBDevoloDimmerDevice';
+import {HBFibaroShutterDevice} from './devices/HBFibaroShutterDevice';
 import {HBOtherRelaySwitchXDevice} from './devices/HBOtherRelaySwitchXDevice';
 import {HBPoppZWeatherDevice} from './devices/HBPoppZWeatherDevice';
 import {HBDevoloRule} from './devices/HBDevoloRule';
@@ -127,7 +128,12 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
                     d = new HBDevoloSirenDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else if((devices[i].constructor as any).name == (ShutterDevice as any).name) {
-                    d = new HBDevoloShutterDevice(self.log, self.dAPI, devices[i], storage, self.config);
+                    //self.log.info("%s > ShuterDevice \"%s\" manID=%s", (self.constructor as any).name, devices[i].model, devices[i].manID);
+                    if (devices[i].manID == '0x010f') { //Fibaro
+                        d = new HBFibaroShutterDevice(self.log, self.dAPI, devices[i], storage, self.config);
+                    } else {
+                        d = new HBDevoloShutterDevice(self.log, self.dAPI, devices[i], storage, self.config);
+                    }
                 }
                 else if((devices[i].constructor as any).name == (RelayDevice as any).name) {
                     d = new HBDevoloRelayDevice(self.log, self.dAPI, devices[i], storage, self.config);

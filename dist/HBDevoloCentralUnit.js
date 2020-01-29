@@ -15,6 +15,7 @@ var HBDevoloSirenDevice_1 = require("./devices/HBDevoloSirenDevice");
 var HBDevoloShutterDevice_1 = require("./devices/HBDevoloShutterDevice");
 var HBDevoloRelayDevice_1 = require("./devices/HBDevoloRelayDevice");
 var HBDevoloDimmerDevice_1 = require("./devices/HBDevoloDimmerDevice");
+var HBFibaroShutterDevice_1 = require("./devices/HBFibaroShutterDevice");
 var HBOtherRelaySwitchXDevice_1 = require("./devices/HBOtherRelaySwitchXDevice");
 var HBPoppZWeatherDevice_1 = require("./devices/HBPoppZWeatherDevice");
 var HBDevoloRule_1 = require("./devices/HBDevoloRule");
@@ -109,7 +110,13 @@ var HBDevoloCentralUnit = /** @class */ (function () {
                     d = new HBDevoloSirenDevice_1.HBDevoloSirenDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.ShutterDevice.name) {
-                    d = new HBDevoloShutterDevice_1.HBDevoloShutterDevice(self.log, self.dAPI, devices[i], storage, self.config);
+                    //self.log.info("%s > ShuterDevice \"%s\" manID=%s", (self.constructor as any).name, devices[i].model, devices[i].manID);
+                    if (devices[i].manID == '0x010f') { //Fibaro
+                        d = new HBFibaroShutterDevice_1.HBFibaroShutterDevice(self.log, self.dAPI, devices[i], storage, self.config);
+                    }
+                    else {
+                        d = new HBDevoloShutterDevice_1.HBDevoloShutterDevice(self.log, self.dAPI, devices[i], storage, self.config);
+                    }
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.RelayDevice.name) {
                     d = new HBDevoloRelayDevice_1.HBDevoloRelayDevice(self.log, self.dAPI, devices[i], storage, self.config);
