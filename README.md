@@ -123,6 +123,8 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 
 ## Changes
 
+#### v0.1.17-dev
+
 #### v0.1.16 (2020-01-31)
 - Bugfix: Fibaro wall switches (FGS-211, FGS-213 and FGS-221) and [Home+ 4](https://apps.apple.com/de/app/home-4/id995994352) by @brutella
 - Added support for [Fibaro Roller Shutter FGR-222](https://manuals.fibaro.com/roller-shutter-2/). Since it is currently not fully supported by the devolo Home Control Central Unit, only the following functions are available:
