@@ -9,7 +9,8 @@ export class HBOtherRelaySwitchXDevice extends HBDevoloDevice {
     manufacturers = {
         "0x010f" : "Fibaro",
         "0x0175" : "Devolo",
-        "0x0130" : "Qubino"
+        "0x0130" : "Qubino",
+        "0x0060" : "Everspring"
     };
 
     switchServices = [];
@@ -69,9 +70,9 @@ export class HBOtherRelaySwitchXDevice extends HBDevoloDevice {
                 this.switchServices[sensorCount].getCharacteristic(this.Characteristic.On)
                              .on('get', this.getSwitchState.bind([this, (sensorCount+1)]))
                              .on('set', this.setSwitchState.bind([this, (sensorCount+1)]));
-                
+
                 var meterSensor: MeterSensor = this.dDevice.getSensor(MeterSensor, 'energy', sensorCount+1) as MeterSensor;
-                
+
                 if (meterSensor) {
                     this.switchServices[sensorCount].addCharacteristic(this.Characteristic.DevoloCurrentConsumption)
                         .on('get', this.getDevoloCurrentConsumption.bind([this, (sensorCount+1)]))
