@@ -123,7 +123,7 @@ If you run into issues related to this plugin, feel free to open an issue. Pleas
 
 ## Changes
 
-#### v0.1.17 (2020-03-30)
+#### v0.1.17 (2020-03-10)
 - Everspring On/Off Switch (AN158-2) supported
 
 #### v0.1.16 (2020-01-31)
