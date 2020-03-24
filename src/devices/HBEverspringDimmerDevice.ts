@@ -23,7 +23,6 @@ Deshalb wird nicht immer der richtige Status in HomeKit angezeigt.
 
 */
 
-
 import { HBDevoloDevice } from '../HBDevoloDevice';
 import { Devolo } from 'node-devolo/dist/Devolo';
 import { Device } from 'node-devolo/dist/DevoloDevice';
@@ -74,7 +73,8 @@ export class HBEverspringDimmerDevice extends HBDevoloDevice {
                      .on('set', this.setBrightness.bind(this));
 
         this.switchService.getCharacteristic(this.Characteristic.Brightness).setProps({
-            maxValue: 99
+            maxValue: 99,
+            minStep: 1
         });
 
         var services = [this.informationService, this.switchService];
@@ -84,7 +84,6 @@ export class HBEverspringDimmerDevice extends HBDevoloDevice {
     }
 
     getSwitchState(callback) {
-        // no BinarySwitch
         this.apiGetBrightness = this.dDevice.getValue('base');
         if (this.apiGetBrightness>0) {
             this.apiGetSwitchState = 1
@@ -104,7 +103,6 @@ export class HBEverspringDimmerDevice extends HBDevoloDevice {
     }
 
     setSwitchState(value, callback) {
-        // no BinarySwitch
         this.log.debug('%s (%s / %s) > setSwitchState to %s, so set setBrightness to ...', (this.constructor as any).name, this.dDevice.id, this.dDevice.name, value);
         if(value==true) {
             this.dDevice.setTargetValue('base', 99, function(err) { // "switchType": "base"

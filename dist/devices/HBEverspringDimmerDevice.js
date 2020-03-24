@@ -73,7 +73,8 @@ var HBEverspringDimmerDevice = /** @class */ (function (_super) {
             .on('get', this.getBrightness.bind(this))
             .on('set', this.setBrightness.bind(this));
         this.switchService.getCharacteristic(this.Characteristic.Brightness).setProps({
-            maxValue: 99
+            maxValue: 99,
+            minStep: 1
         });
         var services = [this.informationService, this.switchService];
         this.dDevice.listen();
