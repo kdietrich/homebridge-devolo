@@ -15,6 +15,7 @@ var HBDevoloSirenDevice_1 = require("./devices/HBDevoloSirenDevice");
 var HBDevoloShutterDevice_1 = require("./devices/HBDevoloShutterDevice");
 var HBDevoloRelayDevice_1 = require("./devices/HBDevoloRelayDevice");
 var HBDevoloDimmerDevice_1 = require("./devices/HBDevoloDimmerDevice");
+var HBEverspringDimmerDevice_1 = require("./devices/HBEverspringDimmerDevice");
 var HBFibaroShutterDevice_1 = require("./devices/HBFibaroShutterDevice");
 var HBOtherRelaySwitchXDevice_1 = require("./devices/HBOtherRelaySwitchXDevice");
 var HBPoppZWeatherDevice_1 = require("./devices/HBPoppZWeatherDevice");
@@ -129,6 +130,9 @@ var HBDevoloCentralUnit = /** @class */ (function () {
                 }
                 else if (devices[i].constructor.name == DevoloDevice_1.ZWeatherDevice.name) {
                     d = new HBPoppZWeatherDevice_1.HBPoppZWeatherDevice(self.log, self.dAPI, devices[i], storage, self.config);
+                }
+                else if (devices[i].constructor.name == DevoloDevice_1.EverspringDimmerDevice.name) {
+                    d = new HBEverspringDimmerDevice_1.HBEverspringDimmerDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else {
                     self.log.info("%s > Device \"%s\" is not supported (yet). Open an issue on github and ask for adding it.", self.constructor.name, devices[i].model);

@@ -15,13 +15,14 @@ import {HBDevoloSirenDevice} from './devices/HBDevoloSirenDevice';
 import {HBDevoloShutterDevice} from './devices/HBDevoloShutterDevice';
 import {HBDevoloRelayDevice} from './devices/HBDevoloRelayDevice';
 import {HBDevoloDimmerDevice} from './devices/HBDevoloDimmerDevice';
+import {HBEverspringDimmerDevice} from './devices/HBEverspringDimmerDevice';
 import {HBFibaroShutterDevice} from './devices/HBFibaroShutterDevice';
 import {HBOtherRelaySwitchXDevice} from './devices/HBOtherRelaySwitchXDevice';
 import {HBPoppZWeatherDevice} from './devices/HBPoppZWeatherDevice';
 import {HBDevoloRule} from './devices/HBDevoloRule';
 import {HBDevoloScene} from './devices/HBDevoloScene';
 import {Devolo} from 'node-devolo/dist/Devolo';
-import {Device,SwitchMeterDevice,HumidityDevice,DoorWindowDevice,MotionDevice,FloodDevice,ThermostatValveDevice,SmokeDetectorDevice,RoomThermostatDevice,ShutterDevice,WallSwitchDevice,RemoteControlDevice,SirenDevice,RelayDevice,DimmerDevice,RelaySwitchXDevice,ZWeatherDevice} from 'node-devolo/dist/DevoloDevice';
+import {Device,SwitchMeterDevice,HumidityDevice,DoorWindowDevice,MotionDevice,FloodDevice,ThermostatValveDevice,SmokeDetectorDevice,RoomThermostatDevice,ShutterDevice,WallSwitchDevice,RemoteControlDevice,SirenDevice,RelayDevice,DimmerDevice,RelaySwitchXDevice,ZWeatherDevice,EverspringDimmerDevice} from 'node-devolo/dist/DevoloDevice';
 import {Rule,Scene} from 'node-devolo/dist/DevoloMisc';
 
 const storage = require('node-persist');
@@ -146,6 +147,9 @@ export class HBDevoloCentralUnit implements HBIDevoloDevice {
                 }
                 else if((devices[i].constructor as any).name == (ZWeatherDevice as any).name) {
                     d = new HBPoppZWeatherDevice(self.log, self.dAPI, devices[i], storage, self.config);
+                }
+                else if((devices[i].constructor as any).name == (EverspringDimmerDevice as any).name) {
+                    d = new HBEverspringDimmerDevice(self.log, self.dAPI, devices[i], storage, self.config);
                 }
                 else {
                     self.log.info("%s > Device \"%s\" is not supported (yet). Open an issue on github and ask for adding it.", (self.constructor as any).name, devices[i].model);
