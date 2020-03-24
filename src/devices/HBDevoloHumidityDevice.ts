@@ -4,6 +4,11 @@ import { Device } from 'node-devolo/dist/DevoloDevice';
 
 export class HBDevoloHumidityDevice extends HBDevoloDevice {
 
+    manufacturers = {
+        "0x0175" : "Devolo",
+        "0x0060" : "Everspring"
+    };
+
     humidityService;
     temperatureService;
     batteryService;
@@ -70,8 +75,14 @@ export class HBDevoloHumidityDevice extends HBDevoloDevice {
 
     getServices() {
         this.informationService = new this.Service.AccessoryInformation();
+        if (this.manufacturers[this.dDevice.manID]) {
+            this.log.info('manufacturer: %s ', this.manufacturers[this.dDevice.manID]);
+            this.informationService.setCharacteristic(this.Characteristic.Manufacturer, this.manufacturers[this.dDevice.manID]);
+        } else {
+            this.informationService.setCharacteristic(this.Characteristic.Manufacturer, 'Other');
+        }
+
         this.informationService
-            .setCharacteristic(this.Characteristic.Manufacturer, 'Devolo')
             .setCharacteristic(this.Characteristic.Model, 'Humidity Sensor')
             .setCharacteristic(this.Characteristic.SerialNumber, this.dDevice.id.replace('/','-'))
 
@@ -94,7 +105,11 @@ export class HBDevoloHumidityDevice extends HBDevoloDevice {
         this.lastTemperature = this.dDevice.getValue('temperature');
         this.lastHumidity = this.dDevice.getValue('humidity');
 
-        var services = [this.informationService, this.humidityService, this.temperatureService, this.batteryService];
+        var services = [this.informationService, this.humidityService, this.temperatureService];
+
+        if(this.manufacturers[this.dDevice.manID]==='Devolo') {
+            services = services.concat([this.batteryService]);
+        }
 
         // START FakeGato (eve app)
         if (this.config.fakeGato) {

@@ -18,6 +18,10 @@ var HBDevoloHumidityDevice = /** @class */ (function (_super) {
     __extends(HBDevoloHumidityDevice, _super);
     function HBDevoloHumidityDevice(log, dAPI, dDevice, storage, config) {
         var _this = _super.call(this, log, dAPI, dDevice, storage, config) || this;
+        _this.manufacturers = {
+            "0x0175": "Devolo",
+            "0x0060": "Everspring"
+        };
         var self = _this;
         self.dDevice.events.on('onValueChanged', function (type, value) {
             if (type === 'temperature') {
@@ -65,8 +69,14 @@ var HBDevoloHumidityDevice = /** @class */ (function (_super) {
     }
     HBDevoloHumidityDevice.prototype.getServices = function () {
         this.informationService = new this.Service.AccessoryInformation();
+        if (this.manufacturers[this.dDevice.manID]) {
+            this.log.info('manufacturer: %s ', this.manufacturers[this.dDevice.manID]);
+            this.informationService.setCharacteristic(this.Characteristic.Manufacturer, this.manufacturers[this.dDevice.manID]);
+        }
+        else {
+            this.informationService.setCharacteristic(this.Characteristic.Manufacturer, 'Other');
+        }
         this.informationService
-            .setCharacteristic(this.Characteristic.Manufacturer, 'Devolo')
             .setCharacteristic(this.Characteristic.Model, 'Humidity Sensor')
             .setCharacteristic(this.Characteristic.SerialNumber, this.dDevice.id.replace('/', '-'));
         this.humidityService = new this.Service.HumiditySensor();
@@ -84,7 +94,10 @@ var HBDevoloHumidityDevice = /** @class */ (function (_super) {
             .on('get', this.getStatusLowBattery.bind(this));
         this.lastTemperature = this.dDevice.getValue('temperature');
         this.lastHumidity = this.dDevice.getValue('humidity');
-        var services = [this.informationService, this.humidityService, this.temperatureService, this.batteryService];
+        var services = [this.informationService, this.humidityService, this.temperatureService];
+        if (this.manufacturers[this.dDevice.manID] === 'Devolo') {
+            services = services.concat([this.batteryService]);
+        }
         // START FakeGato (eve app)
         if (this.config.fakeGato) {
             this._addFakeGatoHistory('weather', false);
