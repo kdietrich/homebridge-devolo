@@ -122,7 +122,10 @@ I'm happy to provide support for new devices. If you own an unsupported device y
 If you run into issues related to this plugin, feel free to open an issue. Please start your homebridge installation with the command `homebridge -D > logfile.txt 2>&1` and attach the generated logfile.
 
 ## Changes
-#### v0.1.18-dev
+#### v0.1.18 (2020-05-20)
+- Everspring Dimmer (AD142-2) supported
+- Everspring Temp/Humidity (ST-814) supported
+- Merten Connect Dimmer (508619) supported
 
 #### v0.1.17 (2020-03-10)
 - Everspring On/Off Switch (AN158-2) supported
